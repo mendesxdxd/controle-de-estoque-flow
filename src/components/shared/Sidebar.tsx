@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
-const ADMIN_EMAIL = "mendesxd90@gmail.com";
+const ADMIN_EMAIL = process.env.NEXT_PUBLIC_ADMIN_EMAIL ?? "";
 
 const links = [
   { href: "/dashboard", label: "Dashboard" },

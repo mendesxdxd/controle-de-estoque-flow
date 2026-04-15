@@ -47,14 +47,18 @@ export default function TabelaUsuarios({ usuarios }: Props) {
 
     setEmail("");
     setSenha("");
+    setSalvando(false);
     setAbrirForm(false);
   }
 
   async function handleExcluir(id: string, emailUsuario?: string) {
     if (!confirm(`Deseja excluir o usuario ${emailUsuario ?? id}?`)) return;
     setExcluindo(id);
-    await excluirUsuario(id);
+    const resultado = await excluirUsuario(id);
     setExcluindo(null);
+    if (resultado?.erro) {
+      setErro(resultado.erro);
+    }
   }
 
   return (
