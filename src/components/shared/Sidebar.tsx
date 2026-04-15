@@ -1,9 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+
+const ADMIN_EMAIL = "mendesxd90@gmail.com";
 
 const links = [
   { href: "/dashboard", label: "Dashboard" },
@@ -17,6 +19,14 @@ export default function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
   const [aberto, setAberto] = useState(false);
+  const [emailUsuario, setEmailUsuario] = useState<string | null>(null);
+
+  useEffect(() => {
+    const supabase = createClient();
+    supabase.auth.getUser().then(({ data }) => {
+      setEmailUsuario(data.user?.email ?? null);
+    });
+  }, []);
 
   async function handleLogout() {
     const supabase = createClient();
@@ -99,6 +109,34 @@ export default function Sidebar() {
               </Link>
             );
           })}
+
+          <div className="mt-4 pt-4 border-t border-neutral-800 flex flex-col gap-1">
+            <Link
+              href="/perfil"
+              onClick={handleNavegar}
+              className={`px-3 py-2 text-sm font-medium transition-colors ${
+                pathname === "/perfil"
+                  ? "bg-white text-black"
+                  : "text-neutral-400 hover:text-white hover:bg-neutral-800"
+              }`}
+            >
+              Perfil
+            </Link>
+
+            {emailUsuario === ADMIN_EMAIL && (
+              <Link
+                href="/usuarios"
+                onClick={handleNavegar}
+                className={`px-3 py-2 text-sm font-medium transition-colors ${
+                  pathname === "/usuarios"
+                    ? "bg-white text-black"
+                    : "text-neutral-400 hover:text-white hover:bg-neutral-800"
+                }`}
+              >
+                Usuarios
+              </Link>
+            )}
+          </div>
         </nav>
 
         <div className="px-3 py-6 border-t border-neutral-800">
