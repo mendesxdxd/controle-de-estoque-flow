@@ -31,7 +31,7 @@ export default function FiltroMovimentacoes({ movimentacoes }: Props) {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="bg-white border border-zinc-200 shadow-sm p-4 flex flex-wrap gap-4 items-end">
+      <div className="bg-white border border-zinc-200 shadow-sm p-4 flex flex-col sm:flex-row flex-wrap gap-4 items-start sm:items-end">
         <div className="flex flex-col gap-1">
           <label className="text-xs font-semibold uppercase tracking-wider text-black">Tipo</label>
           <div className="flex border border-black">
@@ -96,8 +96,8 @@ export default function FiltroMovimentacoes({ movimentacoes }: Props) {
           <p className="text-sm text-zinc-400">Nenhuma movimentacao encontrada.</p>
         </div>
       ) : (
-        <div className="border border-zinc-200 bg-white shadow-sm overflow-hidden">
-          <table className="w-full text-sm border-collapse">
+        <div className="border border-zinc-200 bg-white shadow-sm overflow-x-auto">
+          <table className="w-full text-sm border-collapse min-w-[600px]">
             <thead>
               <tr className="table-header">
                 <th className="table-th">Data</th>

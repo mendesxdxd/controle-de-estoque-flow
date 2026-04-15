@@ -17,7 +17,7 @@ export default async function AuthLayout({
   return (
     <div className="min-h-screen bg-zinc-50 flex">
       <Sidebar />
-      <main className="flex-1 p-8 overflow-auto">
+      <main className="flex-1 p-4 lg:p-8 overflow-auto mt-14 lg:mt-0">
         {children}
       </main>
     </div>

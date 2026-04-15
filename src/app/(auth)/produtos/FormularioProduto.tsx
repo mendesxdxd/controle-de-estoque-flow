@@ -65,7 +65,7 @@ export default function FormularioProduto({ produto, categorias, onFechar }: Pro
         </button>
       </div>
 
-      <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4 max-w-2xl">
+      <form onSubmit={handleSubmit} className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl">
         <div className="flex flex-col gap-1 col-span-2">
           <label className="text-xs font-semibold uppercase tracking-wider text-black">Nome</label>
           <input

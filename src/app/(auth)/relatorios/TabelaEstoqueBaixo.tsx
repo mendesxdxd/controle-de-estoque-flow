@@ -8,8 +8,8 @@ type Props = {
 
 export default function TabelaEstoqueBaixo({ rows }: Props) {
   return (
-    <div className="border border-zinc-200 bg-white shadow-sm overflow-hidden">
-      <table className="w-full text-sm border-collapse">
+    <div className="border border-zinc-200 bg-white shadow-sm overflow-x-auto">
+      <table className="w-full text-sm border-collapse min-w-[400px]">
         <thead>
           <tr className="table-header">
             <th className="table-th">Produto</th>

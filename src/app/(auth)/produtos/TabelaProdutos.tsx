@@ -58,8 +58,8 @@ export default function TabelaProdutos({ produtos, categorias }: Props) {
           <p className="text-sm text-zinc-400">Nenhum produto cadastrado.</p>
         </div>
       ) : (
-        <div className="border border-zinc-200 bg-white shadow-sm overflow-hidden">
-          <table className="w-full text-sm border-collapse">
+        <div className="border border-zinc-200 bg-white shadow-sm overflow-x-auto">
+          <table className="w-full text-sm border-collapse min-w-[800px]">
             <thead>
               <tr className="table-header">
                 <th className="table-th">Codigo</th>

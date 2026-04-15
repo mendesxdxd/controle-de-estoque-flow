@@ -22,8 +22,8 @@ export default function TabelaEstoqueAtual({ rows }: Props) {
   const valorTotal = rows.reduce((acc, r) => acc + r.estoque_atual * r.preco_custo, 0);
 
   return (
-    <div className="border border-zinc-200 bg-white shadow-sm overflow-hidden">
-      <table className="w-full text-sm border-collapse">
+    <div className="border border-zinc-200 bg-white shadow-sm overflow-x-auto">
+      <table className="w-full text-sm border-collapse min-w-[700px]">
         <thead>
           <tr className="table-header">
             <th className="table-th">Produto</th>

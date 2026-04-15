@@ -35,7 +35,7 @@ export default async function DashboardPage() {
       </div>
 
       {/* Cards */}
-      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:grid-cols-4">
         <div className="bg-white border border-zinc-200 shadow-sm p-5 flex flex-col gap-3 hover:shadow-md transition-shadow duration-150">
           <span className="text-xs font-semibold uppercase tracking-wider text-zinc-500">Produtos</span>
           <span className="text-4xl font-bold text-black">{totalProdutos}</span>
