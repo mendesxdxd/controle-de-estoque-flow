@@ -4,7 +4,7 @@ import { useState, useMemo } from "react";
 import { Movimentacao } from "@/types";
 
 type Props = {
-  movimentacoes: (Movimentacao & { produtos: { id: string; nome: string; unidade: string } | null })[];
+  movimentacoes: Movimentacao[];
 };
 
 export default function FiltroMovimentacoes({ movimentacoes }: Props) {
