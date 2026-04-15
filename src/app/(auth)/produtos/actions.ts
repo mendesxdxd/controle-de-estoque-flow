@@ -16,6 +16,8 @@ type DadosProduto = {
 
 export async function salvarProduto(dados: DadosProduto) {
   const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { erro: "Nao autenticado." };
 
   const payload = {
     nome: dados.nome,
@@ -31,13 +33,14 @@ export async function salvarProduto(dados: DadosProduto) {
     const { error } = await supabase
       .from("produtos")
       .update(payload)
-      .eq("id", dados.id);
+      .eq("id", dados.id)
+      .eq("user_id", user.id);
 
     if (error) return { erro: "Erro ao atualizar produto." };
   } else {
     const { error } = await supabase
       .from("produtos")
-      .insert(payload);
+      .insert({ ...payload, user_id: user.id });
 
     if (error) return { erro: "Erro ao criar produto." };
   }
@@ -47,11 +50,14 @@ export async function salvarProduto(dados: DadosProduto) {
 
 export async function excluirProduto(id: string) {
   const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { erro: "Nao autenticado." };
 
   const { error } = await supabase
     .from("produtos")
     .delete()
-    .eq("id", id);
+    .eq("id", id)
+    .eq("user_id", user.id);
 
   if (error) return { erro: "Erro ao excluir produto." };
 

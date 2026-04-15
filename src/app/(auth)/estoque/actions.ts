@@ -12,12 +12,15 @@ type DadosMovimentacao = {
 
 export async function registrarMovimentacao(dados: DadosMovimentacao) {
   const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { erro: "Nao autenticado." };
 
   const { error } = await supabase.from("movimentacoes").insert({
     produto_id: dados.produto_id,
     tipo: dados.tipo,
     quantidade: dados.quantidade,
     observacao: dados.observacao,
+    user_id: user.id,
   });
 
   if (error) return { erro: "Erro ao registrar movimentacao." };
@@ -28,8 +31,14 @@ export async function registrarMovimentacao(dados: DadosMovimentacao) {
 
 export async function excluirMovimentacao(id: string) {
   const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { erro: "Nao autenticado." };
 
-  const { error } = await supabase.from("movimentacoes").delete().eq("id", id);
+  const { error } = await supabase
+    .from("movimentacoes")
+    .delete()
+    .eq("id", id)
+    .eq("user_id", user.id);
 
   if (error) return { erro: "Erro ao excluir movimentacao." };
 

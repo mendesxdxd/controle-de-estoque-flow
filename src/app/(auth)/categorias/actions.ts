@@ -11,18 +11,21 @@ type DadosCategoria = {
 
 export async function salvarCategoria(dados: DadosCategoria) {
   const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { erro: "Nao autenticado." };
 
   if (dados.id) {
     const { error } = await supabase
       .from("categorias")
       .update({ nome: dados.nome, descricao: dados.descricao })
-      .eq("id", dados.id);
+      .eq("id", dados.id)
+      .eq("user_id", user.id);
 
     if (error) return { erro: "Erro ao atualizar categoria." };
   } else {
     const { error } = await supabase
       .from("categorias")
-      .insert({ nome: dados.nome, descricao: dados.descricao });
+      .insert({ nome: dados.nome, descricao: dados.descricao, user_id: user.id });
 
     if (error) return { erro: "Erro ao criar categoria." };
   }
@@ -32,11 +35,14 @@ export async function salvarCategoria(dados: DadosCategoria) {
 
 export async function excluirCategoria(id: string) {
   const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { erro: "Nao autenticado." };
 
   const { error } = await supabase
     .from("categorias")
     .delete()
-    .eq("id", id);
+    .eq("id", id)
+    .eq("user_id", user.id);
 
   if (error) return { erro: "Erro ao excluir categoria." };
 
