@@ -30,25 +30,25 @@ export default async function DashboardPage() {
   return (
     <div className="flex flex-col gap-10">
       <div>
-        <h1 className="text-2xl font-bold text-black tracking-tight">Dashboard</h1>
-        <p className="text-sm text-zinc-500 mt-1">Visao geral do estoque</p>
+        <h1 className="page-title">Dashboard</h1>
+        <p className="page-subtitle">Visao geral do estoque</p>
       </div>
 
       {/* Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:grid-cols-4">
-        <div className="bg-white border border-zinc-200 shadow-sm p-5 flex flex-col gap-3 hover:shadow-md transition-shadow duration-150">
+        <div className="bg-white border border-zinc-200 border-t-2 border-t-black shadow-sm p-5 flex flex-col gap-3 hover:shadow-md transition-shadow duration-150">
           <span className="text-xs font-semibold uppercase tracking-wider text-zinc-500">Produtos</span>
           <span className="text-4xl font-bold text-black">{totalProdutos}</span>
           <span className="text-xs text-zinc-400 border-t border-zinc-100 pt-2">cadastrados</span>
         </div>
 
-        <div className="bg-white border border-zinc-200 shadow-sm p-5 flex flex-col gap-3 hover:shadow-md transition-shadow duration-150">
+        <div className="bg-white border border-zinc-200 border-t-2 border-t-black shadow-sm p-5 flex flex-col gap-3 hover:shadow-md transition-shadow duration-150">
           <span className="text-xs font-semibold uppercase tracking-wider text-zinc-500">Categorias</span>
           <span className="text-4xl font-bold text-black">{totalCategorias ?? 0}</span>
           <span className="text-xs text-zinc-400 border-t border-zinc-100 pt-2">cadastradas</span>
         </div>
 
-        <div className="bg-white border border-zinc-200 shadow-sm p-5 flex flex-col gap-3 hover:shadow-md transition-shadow duration-150">
+        <div className="bg-white border border-zinc-200 border-t-2 border-t-black shadow-sm p-5 flex flex-col gap-3 hover:shadow-md transition-shadow duration-150">
           <span className="text-xs font-semibold uppercase tracking-wider text-zinc-500">Valor em estoque</span>
           <span className="text-2xl font-bold text-black leading-tight">{formatarMoeda(valorEmEstoque)}</span>
           <span className="text-xs text-zinc-400 border-t border-zinc-100 pt-2">preco de custo</span>
@@ -56,11 +56,11 @@ export default async function DashboardPage() {
 
         <div className={`border shadow-sm p-5 flex flex-col gap-3 hover:shadow-md transition-shadow duration-150 ${
           estoqueBaixo.length > 0
-            ? "bg-red-50 border-red-200"
-            : "bg-white border-zinc-200"
+            ? "bg-white border-zinc-200 border-t-2 border-t-red-600"
+            : "bg-white border-zinc-200 border-t-2 border-t-black"
         }`}>
           <span className={`text-xs font-semibold uppercase tracking-wider ${
-            estoqueBaixo.length > 0 ? "text-red-500" : "text-zinc-500"
+            estoqueBaixo.length > 0 ? "text-red-600" : "text-zinc-500"
           }`}>
             Estoque baixo
           </span>
@@ -71,7 +71,7 @@ export default async function DashboardPage() {
           </span>
           <span className={`text-xs border-t pt-2 ${
             estoqueBaixo.length > 0
-              ? "text-red-400 border-red-200"
+              ? "text-red-400 border-zinc-100"
               : "text-zinc-400 border-zinc-100"
           }`}>
             {estoqueBaixo.length > 0

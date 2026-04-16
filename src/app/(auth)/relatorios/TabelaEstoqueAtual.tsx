@@ -33,6 +33,7 @@ export default function TabelaEstoqueAtual({ rows }: Props) {
             <th className="table-th-right">Est. Minimo</th>
             <th className="table-th-right">Preco Custo</th>
             <th className="table-th-right">Valor em Estoque</th>
+            <th className="table-th">Status</th>
           </tr>
         </thead>
         <tbody>
@@ -46,13 +47,18 @@ export default function TabelaEstoqueAtual({ rows }: Props) {
                 <td className="py-3 px-4 font-medium text-black">{row.nome}</td>
                 <td className="py-3 px-4 text-zinc-500">{row.categoria ?? "—"}</td>
                 <td className="py-3 px-4 text-zinc-500">{row.unidade}</td>
-                <td className={`py-3 px-4 text-right font-semibold ${baixo ? "text-red-600" : "text-black"}`}>
+                <td className={`py-3 px-4 text-right font-semibold td-num ${baixo ? "text-red-600" : "text-black"}`}>
                   {row.estoque_atual}
                 </td>
-                <td className="py-3 px-4 text-right text-zinc-500">{row.estoque_minimo}</td>
-                <td className="py-3 px-4 text-right text-zinc-500">{formatarMoeda(row.preco_custo)}</td>
-                <td className="py-3 px-4 text-right font-medium text-black">
+                <td className="py-3 px-4 text-right text-zinc-500 td-num">{row.estoque_minimo}</td>
+                <td className="py-3 px-4 text-right text-zinc-500 td-num">{formatarMoeda(row.preco_custo)}</td>
+                <td className="py-3 px-4 text-right font-medium text-black td-num">
                   {formatarMoeda(row.estoque_atual * row.preco_custo)}
+                </td>
+                <td className="py-3 px-4">
+                  <span className={baixo ? "badge-status-baixo" : "badge-status-ok"}>
+                    {baixo ? "Baixo" : "Ok"}
+                  </span>
                 </td>
               </tr>
             );

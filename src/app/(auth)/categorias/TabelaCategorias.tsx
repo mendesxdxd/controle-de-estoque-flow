@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Categoria } from "@/types";
 import FormularioCategoria from "./FormularioCategoria";
 import { excluirCategoria } from "./actions";
+import Toast from "@/components/shared/Toast";
 
 type Props = {
   categorias: Categoria[];
@@ -13,6 +14,7 @@ export default function TabelaCategorias({ categorias }: Props) {
   const [abrirForm, setAbrirForm] = useState(false);
   const [editando, setEditando] = useState<Categoria | null>(null);
   const [excluindo, setExcluindo] = useState<string | null>(null);
+  const [toast, setToast] = useState<string | null>(null);
 
   function handleEditar(categoria: Categoria) {
     setEditando(categoria);
@@ -34,6 +36,7 @@ export default function TabelaCategorias({ categorias }: Props) {
     setExcluindo(id);
     await excluirCategoria(id);
     setExcluindo(null);
+    setToast("Categoria excluida.");
   }
 
   return (
@@ -45,12 +48,19 @@ export default function TabelaCategorias({ categorias }: Props) {
       </div>
 
       {abrirForm && (
-        <FormularioCategoria categoria={editando} onFechar={handleFechar} />
+        <FormularioCategoria
+          categoria={editando}
+          onFechar={handleFechar}
+          onSucesso={() => setToast(editando ? "Categoria atualizada." : "Categoria criada.")}
+        />
       )}
 
       {categorias.length === 0 ? (
-        <div className="border border-zinc-200 bg-white py-16 text-center">
-          <p className="text-sm text-zinc-400">Nenhuma categoria cadastrada.</p>
+        <div className="empty-state">
+          <p className="empty-state-text">Nenhuma categoria cadastrada.</p>
+          <button onClick={handleNova} className="btn-primary">
+            Criar primeira categoria
+          </button>
         </div>
       ) : (
         <div className="border border-zinc-200 bg-white shadow-sm overflow-x-auto">
@@ -94,6 +104,7 @@ export default function TabelaCategorias({ categorias }: Props) {
           </table>
         </div>
       )}
+      {toast && <Toast mensagem={toast} onClose={() => setToast(null)} />}
     </div>
   );
 }

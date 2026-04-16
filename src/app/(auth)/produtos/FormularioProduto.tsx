@@ -8,9 +8,10 @@ type Props = {
   produto: Produto | null;
   categorias: Categoria[];
   onFechar: () => void;
+  onSucesso?: () => void;
 };
 
-export default function FormularioProduto({ produto, categorias, onFechar }: Props) {
+export default function FormularioProduto({ produto, categorias, onFechar, onSucesso }: Props) {
   const [nome, setNome] = useState(produto?.nome ?? "");
   const [codigo, setCodigo] = useState(produto?.codigo ?? "");
   const [categoriaId, setCategoriaId] = useState(produto?.categoria_id ?? "");
@@ -49,6 +50,7 @@ export default function FormularioProduto({ produto, categorias, onFechar }: Pro
     }
 
     onFechar();
+    onSucesso?.();
   }
 
   return (

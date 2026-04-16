@@ -44,8 +44,8 @@ export default function PerfilPage() {
   return (
     <div className="flex flex-col gap-8">
       <div>
-        <h1 className="text-2xl font-bold text-black tracking-tight">Perfil</h1>
-        <p className="text-sm text-zinc-500 mt-1">Gerencie suas informacoes de acesso</p>
+        <h1 className="page-title">Perfil</h1>
+        <p className="page-subtitle">Gerencie suas informacoes de acesso</p>
       </div>
 
       <div className="border border-zinc-200 bg-white shadow-sm p-6 max-w-md">

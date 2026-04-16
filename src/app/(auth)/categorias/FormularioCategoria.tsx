@@ -7,9 +7,10 @@ import { salvarCategoria } from "./actions";
 type Props = {
   categoria: Categoria | null;
   onFechar: () => void;
+  onSucesso?: () => void;
 };
 
-export default function FormularioCategoria({ categoria, onFechar }: Props) {
+export default function FormularioCategoria({ categoria, onFechar, onSucesso }: Props) {
   const [nome, setNome] = useState(categoria?.nome ?? "");
   const [descricao, setDescricao] = useState(categoria?.descricao ?? "");
   const [erro, setErro] = useState("");
@@ -38,6 +39,7 @@ export default function FormularioCategoria({ categoria, onFechar }: Props) {
     }
 
     onFechar();
+    onSucesso?.();
   }
 
   return (

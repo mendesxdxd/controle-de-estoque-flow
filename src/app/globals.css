@@ -175,16 +175,24 @@
            transition-all duration-150;
   }
 
+  .page-title {
+    @apply text-2xl font-bold text-black tracking-tight border-l-[3px] border-black pl-3;
+  }
+
+  .page-subtitle {
+    @apply text-sm text-zinc-500 mt-1 pl-[15px];
+  }
+
   .table-header {
-    @apply bg-zinc-100 border-b border-zinc-300;
+    @apply bg-black border-b border-black;
   }
 
   .table-th {
-    @apply text-left py-3 px-4 text-xs font-semibold uppercase tracking-wider text-zinc-600;
+    @apply text-left py-3 px-4 text-xs font-semibold uppercase tracking-wider text-white;
   }
 
   .table-th-right {
-    @apply text-right py-3 px-4 text-xs font-semibold uppercase tracking-wider text-zinc-600;
+    @apply text-right py-3 px-4 text-xs font-semibold uppercase tracking-wider text-white;
   }
 
   .table-row-even {
@@ -193,5 +201,25 @@
 
   .table-row-odd {
     @apply bg-zinc-50 hover:bg-zinc-100 transition-colors duration-100;
+  }
+
+  .td-num {
+    @apply font-mono tabular-nums;
+  }
+
+  .badge-status-ok {
+    @apply text-xs font-semibold uppercase tracking-wider px-2 py-0.5 bg-zinc-100 text-zinc-600;
+  }
+
+  .badge-status-baixo {
+    @apply text-xs font-semibold uppercase tracking-wider px-2 py-0.5 bg-red-600 text-white;
+  }
+
+  .empty-state {
+    @apply border border-zinc-200 bg-white py-16 flex flex-col items-center gap-4;
+  }
+
+  .empty-state-text {
+    @apply text-sm text-zinc-400 text-center;
   }
 }

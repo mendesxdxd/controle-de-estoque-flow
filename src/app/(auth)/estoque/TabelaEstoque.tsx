@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Movimentacao, Produto } from "@/types";
 import FormularioMovimentacao from "./FormularioMovimentacao";
 import { excluirMovimentacao } from "./actions";
+import Toast from "@/components/shared/Toast";
 
 type Props = {
   movimentacoes: Movimentacao[];
@@ -14,6 +15,7 @@ export default function TabelaEstoque({ movimentacoes, produtos }: Props) {
   const [abrirForm, setAbrirForm] = useState(false);
   const [tipoInicial, setTipoInicial] = useState<"entrada" | "saida">("entrada");
   const [excluindo, setExcluindo] = useState<string | null>(null);
+  const [toast, setToast] = useState<string | null>(null);
 
   function handleNova(tipo: "entrada" | "saida") {
     setTipoInicial(tipo);
@@ -29,6 +31,7 @@ export default function TabelaEstoque({ movimentacoes, produtos }: Props) {
     setExcluindo(id);
     await excluirMovimentacao(id);
     setExcluindo(null);
+    setToast("Movimentacao excluida.");
   }
 
   return (
@@ -43,12 +46,20 @@ export default function TabelaEstoque({ movimentacoes, produtos }: Props) {
       </div>
 
       {abrirForm && (
-        <FormularioMovimentacao produtos={produtos} tipoInicial={tipoInicial} onFechar={handleFechar} />
+        <FormularioMovimentacao
+          produtos={produtos}
+          tipoInicial={tipoInicial}
+          onFechar={handleFechar}
+          onSucesso={() => setToast("Movimentacao registrada.")}
+        />
       )}
 
       {movimentacoes.length === 0 ? (
-        <div className="border border-zinc-200 bg-white py-16 text-center">
-          <p className="text-sm text-zinc-400">Nenhuma movimentacao registrada.</p>
+        <div className="empty-state">
+          <p className="empty-state-text">Nenhuma movimentacao registrada.</p>
+          <button onClick={() => handleNova("entrada")} className="btn-primary">
+            Registrar primeira entrada
+          </button>
         </div>
       ) : (
         <div className="border border-zinc-200 bg-white shadow-sm overflow-x-auto">
@@ -82,7 +93,7 @@ export default function TabelaEstoque({ movimentacoes, produtos }: Props) {
                       {mov.tipo}
                     </span>
                   </td>
-                  <td className="py-3 px-4 text-right text-black font-medium">
+                  <td className="py-3 px-4 text-right text-black font-medium td-num">
                     {mov.quantidade} {mov.produtos?.unidade ?? ""}
                   </td>
                   <td className="py-3 px-4 text-zinc-500">{mov.observacao ?? "—"}</td>
@@ -101,6 +112,7 @@ export default function TabelaEstoque({ movimentacoes, produtos }: Props) {
           </table>
         </div>
       )}
+      {toast && <Toast mensagem={toast} onClose={() => setToast(null)} />}
     </div>
   );
 }

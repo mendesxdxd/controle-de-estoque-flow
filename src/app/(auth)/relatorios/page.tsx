@@ -24,8 +24,8 @@ export default async function RelatoriosPage() {
   return (
     <div className="flex flex-col gap-12">
       <div>
-        <h1 className="text-2xl font-bold text-black tracking-tight">Relatorios</h1>
-        <p className="text-sm text-neutral-500 mt-1">Visao detalhada do estoque e movimentacoes</p>
+        <h1 className="page-title">Relatorios</h1>
+        <p className="page-subtitle">Visao detalhada do estoque e movimentacoes</p>
       </div>
 
       <section className="flex flex-col gap-4">

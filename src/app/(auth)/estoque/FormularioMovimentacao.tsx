@@ -8,9 +8,10 @@ type Props = {
   produtos: Produto[];
   tipoInicial: "entrada" | "saida";
   onFechar: () => void;
+  onSucesso?: () => void;
 };
 
-export default function FormularioMovimentacao({ produtos, tipoInicial, onFechar }: Props) {
+export default function FormularioMovimentacao({ produtos, tipoInicial, onFechar, onSucesso }: Props) {
   const [tipo, setTipo] = useState<"entrada" | "saida">(tipoInicial);
   const [produtoId, setProdutoId] = useState("");
   const [quantidade, setQuantidade] = useState("1");
@@ -48,6 +49,7 @@ export default function FormularioMovimentacao({ produtos, tipoInicial, onFechar
     }
 
     onFechar();
+    onSucesso?.();
   }
 
   return (

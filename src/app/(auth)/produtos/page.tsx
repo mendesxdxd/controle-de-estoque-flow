@@ -19,8 +19,8 @@ export default async function ProdutosPage() {
   return (
     <div className="flex flex-col gap-8">
       <div>
-        <h1 className="text-2xl font-bold text-black tracking-tight">Produtos</h1>
-        <p className="text-sm text-neutral-500 mt-1">
+        <h1 className="page-title">Produtos</h1>
+        <p className="page-subtitle">
           {produtos?.length ?? 0} produto{(produtos?.length ?? 0) !== 1 ? "s" : ""} cadastrado{(produtos?.length ?? 0) !== 1 ? "s" : ""}
         </p>
       </div>

@@ -19,8 +19,8 @@ export default async function EstoquePage() {
   return (
     <div className="flex flex-col gap-8">
       <div>
-        <h1 className="text-2xl font-bold text-black tracking-tight">Estoque</h1>
-        <p className="text-sm text-neutral-500 mt-1">
+        <h1 className="page-title">Estoque</h1>
+        <p className="page-subtitle">
           {movimentacoes?.length ?? 0} movimentacao{(movimentacoes?.length ?? 0) !== 1 ? "s" : ""} registrada{(movimentacoes?.length ?? 0) !== 1 ? "s" : ""}
         </p>
       </div>

@@ -13,8 +13,8 @@ export default async function CategoriasPage() {
     <div className="flex flex-col gap-8">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-black tracking-tight">Categorias</h1>
-          <p className="text-sm text-neutral-500 mt-1">
+          <h1 className="page-title">Categorias</h1>
+          <p className="page-subtitle">
             {categorias?.length ?? 0} categoria{(categorias?.length ?? 0) !== 1 ? "s" : ""} cadastrada{(categorias?.length ?? 0) !== 1 ? "s" : ""}
           </p>
         </div>
