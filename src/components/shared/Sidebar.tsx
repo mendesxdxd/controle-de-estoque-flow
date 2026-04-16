@@ -1,11 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
-
-const ADMIN_EMAIL = process.env.NEXT_PUBLIC_ADMIN_EMAIL ?? "";
 
 const links = [
   { href: "/dashboard", label: "Dashboard" },
@@ -15,18 +13,10 @@ const links = [
   { href: "/relatorios", label: "Relatorios" },
 ];
 
-export default function Sidebar() {
+export default function Sidebar({ isAdmin }: { isAdmin: boolean }) {
   const pathname = usePathname();
   const router = useRouter();
   const [aberto, setAberto] = useState(false);
-  const [emailUsuario, setEmailUsuario] = useState<string | null>(null);
-
-  useEffect(() => {
-    const supabase = createClient();
-    supabase.auth.getUser().then(({ data }) => {
-      setEmailUsuario(data.user?.email ?? null);
-    });
-  }, []);
 
   async function handleLogout() {
     const supabase = createClient();
@@ -123,7 +113,7 @@ export default function Sidebar() {
               Perfil
             </Link>
 
-            {emailUsuario === ADMIN_EMAIL && (
+            {isAdmin && (
               <Link
                 href="/usuarios"
                 onClick={handleNavegar}
