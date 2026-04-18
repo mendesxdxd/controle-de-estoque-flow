@@ -22,7 +22,7 @@ export default function FormularioMovimentacao({ produtos, saldoPorProduto, tipo
 
   const saldoAtual = produtoId ? (saldoPorProduto[produtoId] ?? 0) : null;
 
-  async function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setErro("");
 
@@ -120,7 +120,6 @@ export default function FormularioMovimentacao({ produtos, saldoPorProduto, tipo
           <input
             type="number"
             min="1"
-            max={tipo === "saida" && saldoAtual !== null ? saldoAtual : undefined}
             value={quantidade}
             onChange={(e) => setQuantidade(e.target.value)}
             className="input-field"

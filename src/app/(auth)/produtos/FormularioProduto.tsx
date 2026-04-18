@@ -22,7 +22,7 @@ export default function FormularioProduto({ produto, categorias, onFechar, onSuc
   const [erro, setErro] = useState("");
   const [salvando, setSalvando] = useState(false);
 
-  async function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setErro("");
 

@@ -24,7 +24,7 @@ export default function TabelaUsuarios({ usuarios }: Props) {
   const [excluindo, setExcluindo] = useState<string | null>(null);
   const [toast, setToast] = useState<string | null>(null);
 
-  async function handleCriar(e: React.FormEvent) {
+  async function handleCriar(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setErro("");
 

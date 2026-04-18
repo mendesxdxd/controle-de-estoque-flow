@@ -10,7 +10,7 @@ export default function PerfilPage() {
   const [sucesso, setSucesso] = useState(false);
   const [salvando, setSalvando] = useState(false);
 
-  async function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setErro("");
     setSucesso(false);
