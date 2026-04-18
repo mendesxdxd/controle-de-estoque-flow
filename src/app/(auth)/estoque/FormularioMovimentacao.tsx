@@ -6,18 +6,21 @@ import { registrarMovimentacao } from "./actions";
 
 type Props = {
   produtos: Produto[];
+  saldoPorProduto: Record<string, number>;
   tipoInicial: "entrada" | "saida";
   onFechar: () => void;
   onSucesso?: () => void;
 };
 
-export default function FormularioMovimentacao({ produtos, tipoInicial, onFechar, onSucesso }: Props) {
+export default function FormularioMovimentacao({ produtos, saldoPorProduto, tipoInicial, onFechar, onSucesso }: Props) {
   const [tipo, setTipo] = useState<"entrada" | "saida">(tipoInicial);
   const [produtoId, setProdutoId] = useState("");
   const [quantidade, setQuantidade] = useState("1");
   const [observacao, setObservacao] = useState("");
   const [erro, setErro] = useState("");
   const [salvando, setSalvando] = useState(false);
+
+  const saldoAtual = produtoId ? (saldoPorProduto[produtoId] ?? 0) : null;
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -31,6 +34,11 @@ export default function FormularioMovimentacao({ produtos, tipoInicial, onFechar
     const qtd = parseInt(quantidade);
     if (!qtd || qtd <= 0) {
       setErro("A quantidade deve ser maior que zero.");
+      return;
+    }
+
+    if (tipo === "saida" && saldoAtual !== null && qtd > saldoAtual) {
+      setErro(`Estoque insuficiente. Saldo atual: ${saldoAtual}.`);
       return;
     }
 
@@ -89,7 +97,7 @@ export default function FormularioMovimentacao({ produtos, tipoInicial, onFechar
           <select
             value={produtoId}
             onChange={(e) => setProdutoId(e.target.value)}
-            className="input-field-strong"
+            className="input-field"
           >
             <option value="">Selecione um produto</option>
             {produtos.map((prod) => (
@@ -101,13 +109,21 @@ export default function FormularioMovimentacao({ produtos, tipoInicial, onFechar
         </div>
 
         <div className="flex flex-col gap-1">
-          <label className="text-xs font-semibold uppercase tracking-wider text-zinc-300">Quantidade</label>
+          <div className="flex items-center justify-between">
+            <label className="text-xs font-semibold uppercase tracking-wider text-zinc-300">Quantidade</label>
+            {tipo === "saida" && saldoAtual !== null && (
+              <span className="text-xs text-zinc-500">
+                Disponivel: <span className={saldoAtual === 0 ? "text-red-400" : "text-zinc-300"}>{saldoAtual}</span>
+              </span>
+            )}
+          </div>
           <input
             type="number"
             min="1"
+            max={tipo === "saida" && saldoAtual !== null ? saldoAtual : undefined}
             value={quantidade}
             onChange={(e) => setQuantidade(e.target.value)}
-            className="input-field-strong"
+            className="input-field"
           />
         </div>
 

@@ -34,9 +34,13 @@ export default function TabelaCategorias({ categorias }: Props) {
   async function handleExcluir(id: string) {
     if (!confirm("Deseja excluir esta categoria?")) return;
     setExcluindo(id);
-    await excluirCategoria(id);
+    const resultado = await excluirCategoria(id);
     setExcluindo(null);
-    setToast("Categoria excluida.");
+    if (resultado?.erro) {
+      setToast(resultado.erro);
+    } else {
+      setToast("Categoria excluida.");
+    }
   }
 
   return (

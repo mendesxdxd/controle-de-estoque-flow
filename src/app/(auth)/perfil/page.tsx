@@ -62,7 +62,7 @@ export default function PerfilPage() {
               type="password"
               value={novaSenha}
               onChange={(e) => setNovaSenha(e.target.value)}
-              className="input-field-strong"
+              className="input-field"
               placeholder="Minimo 6 caracteres"
             />
           </div>
@@ -75,7 +75,7 @@ export default function PerfilPage() {
               type="password"
               value={confirmarSenha}
               onChange={(e) => setConfirmarSenha(e.target.value)}
-              className="input-field-strong"
+              className="input-field"
               placeholder="Repita a nova senha"
             />
           </div>

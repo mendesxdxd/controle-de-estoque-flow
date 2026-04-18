@@ -22,7 +22,7 @@ export default function TabelaUsuarios({ usuarios }: Props) {
   const [erro, setErro] = useState("");
   const [salvando, setSalvando] = useState(false);
   const [excluindo, setExcluindo] = useState<string | null>(null);
-  const [toast, setToast] = useState("");
+  const [toast, setToast] = useState<string | null>(null);
 
   async function handleCriar(e: React.FormEvent) {
     e.preventDefault();
@@ -51,6 +51,7 @@ export default function TabelaUsuarios({ usuarios }: Props) {
     setSenha("");
     setSalvando(false);
     setAbrirForm(false);
+    setToast("Usuario criado.");
   }
 
   async function handleExcluir(id: string, emailUsuario?: string) {
@@ -92,7 +93,7 @@ export default function TabelaUsuarios({ usuarios }: Props) {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="input-field-strong"
+                className="input-field"
                 placeholder="email@exemplo.com"
               />
             </div>
@@ -103,7 +104,7 @@ export default function TabelaUsuarios({ usuarios }: Props) {
                 type="password"
                 value={senha}
                 onChange={(e) => setSenha(e.target.value)}
-                className="input-field-strong"
+                className="input-field"
                 placeholder="Minimo 6 caracteres"
               />
             </div>
@@ -170,7 +171,7 @@ export default function TabelaUsuarios({ usuarios }: Props) {
         </div>
       )}
 
-      {toast && <Toast mensagem={toast} onClose={() => setToast("")} />}
+      {toast && <Toast mensagem={toast} onClose={() => setToast(null)} />}
     </div>
   );
 }

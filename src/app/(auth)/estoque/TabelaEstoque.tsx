@@ -14,6 +14,11 @@ type Props = {
 export default function TabelaEstoque({ movimentacoes, produtos }: Props) {
   const [abrirForm, setAbrirForm] = useState(false);
   const [tipoInicial, setTipoInicial] = useState<"entrada" | "saida">("entrada");
+
+  const saldoPorProduto = movimentacoes.reduce<Record<string, number>>((acc, mov) => {
+    acc[mov.produto_id] = (acc[mov.produto_id] ?? 0) + (mov.tipo === "entrada" ? mov.quantidade : -mov.quantidade);
+    return acc;
+  }, {});
   const [excluindo, setExcluindo] = useState<string | null>(null);
   const [toast, setToast] = useState<string | null>(null);
 
@@ -29,9 +34,13 @@ export default function TabelaEstoque({ movimentacoes, produtos }: Props) {
   async function handleExcluir(id: string) {
     if (!confirm("Deseja excluir esta movimentacao?")) return;
     setExcluindo(id);
-    await excluirMovimentacao(id);
+    const resultado = await excluirMovimentacao(id);
     setExcluindo(null);
-    setToast("Movimentacao excluida.");
+    if (resultado?.erro) {
+      setToast(resultado.erro);
+    } else {
+      setToast("Movimentacao excluida.");
+    }
   }
 
   return (
@@ -48,6 +57,7 @@ export default function TabelaEstoque({ movimentacoes, produtos }: Props) {
       {abrirForm && (
         <FormularioMovimentacao
           produtos={produtos}
+          saldoPorProduto={saldoPorProduto}
           tipoInicial={tipoInicial}
           onFechar={handleFechar}
           onSucesso={() => setToast("Movimentacao registrada.")}

@@ -63,7 +63,7 @@ export default function FormularioCategoria({ categoria, onFechar, onSucesso }: 
             type="text"
             value={nome}
             onChange={(e) => setNome(e.target.value)}
-            className="input-field-strong"
+            className="input-field"
             placeholder="Nome da categoria"
           />
         </div>

@@ -36,9 +36,13 @@ export default function TabelaProdutos({ produtos, categorias }: Props) {
   async function handleExcluir(id: string) {
     if (!confirm("Deseja excluir este produto?")) return;
     setExcluindo(id);
-    await excluirProduto(id);
+    const resultado = await excluirProduto(id);
     setExcluindo(null);
-    setToast("Produto excluido.");
+    if (resultado?.erro) {
+      setToast(resultado.erro);
+    } else {
+      setToast("Produto excluido.");
+    }
   }
 
   return (

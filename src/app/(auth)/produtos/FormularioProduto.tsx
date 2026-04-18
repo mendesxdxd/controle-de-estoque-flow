@@ -74,7 +74,7 @@ export default function FormularioProduto({ produto, categorias, onFechar, onSuc
             type="text"
             value={nome}
             onChange={(e) => setNome(e.target.value)}
-            className="input-field-strong"
+            className="input-field"
             placeholder="Nome do produto"
           />
         </div>

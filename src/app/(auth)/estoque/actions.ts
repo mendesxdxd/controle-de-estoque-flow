@@ -15,6 +15,23 @@ export async function registrarMovimentacao(dados: DadosMovimentacao) {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { erro: "Nao autenticado." };
 
+  if (dados.tipo === "saida") {
+    const { data: movs } = await supabase
+      .from("movimentacoes")
+      .select("tipo, quantidade")
+      .eq("produto_id", dados.produto_id)
+      .eq("user_id", user.id);
+
+    const saldo = (movs ?? []).reduce(
+      (acc, m) => (m.tipo === "entrada" ? acc + m.quantidade : acc - m.quantidade),
+      0
+    );
+
+    if (dados.quantidade > saldo) {
+      return { erro: `Estoque insuficiente. Saldo atual: ${saldo}.` };
+    }
+  }
+
   const { error } = await supabase.from("movimentacoes").insert({
     produto_id: dados.produto_id,
     tipo: dados.tipo,
