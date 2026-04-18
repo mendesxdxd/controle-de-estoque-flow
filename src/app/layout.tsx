@@ -2,8 +2,11 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Controle do CHIP",
+  title: "FlowStock",
   description: "Sistema de controle de estoque",
+  icons: {
+    icon: "/favicon.svg",
+  },
 };
 
 export default function RootLayout({

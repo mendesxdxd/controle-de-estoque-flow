@@ -48,14 +48,14 @@ export default function PerfilPage() {
         <p className="page-subtitle">Gerencie suas informacoes de acesso</p>
       </div>
 
-      <div className="border border-zinc-200 bg-white shadow-sm p-6 max-w-md">
-        <h2 className="text-sm font-bold uppercase tracking-wider text-black mb-6">
+      <div className="glass-panel p-6 max-w-md">
+        <h2 className="text-sm font-bold uppercase tracking-wider text-white mb-6">
           Alterar senha
         </h2>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <div className="flex flex-col gap-1">
-            <label className="text-xs font-semibold uppercase tracking-wider text-black">
+            <label className="text-xs font-semibold uppercase tracking-wider text-zinc-300">
               Nova senha
             </label>
             <input
@@ -68,7 +68,7 @@ export default function PerfilPage() {
           </div>
 
           <div className="flex flex-col gap-1">
-            <label className="text-xs font-semibold uppercase tracking-wider text-black">
+            <label className="text-xs font-semibold uppercase tracking-wider text-zinc-300">
               Confirmar nova senha
             </label>
             <input
@@ -81,11 +81,11 @@ export default function PerfilPage() {
           </div>
 
           {erro && (
-            <p className="text-xs text-red-600 bg-red-50 border border-red-200 px-3 py-2">{erro}</p>
+            <p className="text-xs text-red-400 bg-red-950/50 border border-red-800 px-3 py-2">{erro}</p>
           )}
 
           {sucesso && (
-            <p className="text-xs text-black bg-zinc-100 border border-zinc-300 px-3 py-2 font-semibold">
+            <p className="text-xs text-white bg-indigo-500/10 border border-indigo-500/20 rounded-xl px-4 py-2.5 font-semibold">
               Senha alterada com sucesso.
             </p>
           )}

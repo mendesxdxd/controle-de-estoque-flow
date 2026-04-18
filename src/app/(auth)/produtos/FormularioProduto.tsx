@@ -54,14 +54,14 @@ export default function FormularioProduto({ produto, categorias, onFechar, onSuc
   }
 
   return (
-    <div className="border border-zinc-200 bg-white shadow-sm p-6">
+    <div className="glass-panel p-6">
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-sm font-bold uppercase tracking-wider text-black">
+        <h2 className="text-sm font-bold uppercase tracking-wider text-white">
           {produto ? "Editar produto" : "Novo produto"}
         </h2>
         <button
           onClick={onFechar}
-          className="text-xs text-zinc-400 hover:text-black transition-colors"
+          className="text-xs text-zinc-500 hover:text-white transition-colors"
         >
           Fechar
         </button>
@@ -69,7 +69,7 @@ export default function FormularioProduto({ produto, categorias, onFechar, onSuc
 
       <form onSubmit={handleSubmit} className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl">
         <div className="flex flex-col gap-1 col-span-2">
-          <label className="text-xs font-semibold uppercase tracking-wider text-black">Nome</label>
+          <label className="text-xs font-semibold uppercase tracking-wider text-zinc-300">Nome</label>
           <input
             type="text"
             value={nome}
@@ -80,7 +80,7 @@ export default function FormularioProduto({ produto, categorias, onFechar, onSuc
         </div>
 
         <div className="flex flex-col gap-1">
-          <label className="text-xs font-semibold uppercase tracking-wider text-black">
+          <label className="text-xs font-semibold uppercase tracking-wider text-zinc-300">
             Codigo <span className="text-zinc-400 normal-case font-normal">(opcional)</span>
           </label>
           <input
@@ -93,7 +93,7 @@ export default function FormularioProduto({ produto, categorias, onFechar, onSuc
         </div>
 
         <div className="flex flex-col gap-1">
-          <label className="text-xs font-semibold uppercase tracking-wider text-black">Categoria</label>
+          <label className="text-xs font-semibold uppercase tracking-wider text-zinc-300">Categoria</label>
           <select
             value={categoriaId}
             onChange={(e) => setCategoriaId(e.target.value)}
@@ -107,7 +107,7 @@ export default function FormularioProduto({ produto, categorias, onFechar, onSuc
         </div>
 
         <div className="flex flex-col gap-1">
-          <label className="text-xs font-semibold uppercase tracking-wider text-black">Unidade</label>
+          <label className="text-xs font-semibold uppercase tracking-wider text-zinc-300">Unidade</label>
           <select
             value={unidade}
             onChange={(e) => setUnidade(e.target.value)}
@@ -125,7 +125,7 @@ export default function FormularioProduto({ produto, categorias, onFechar, onSuc
         </div>
 
         <div className="flex flex-col gap-1">
-          <label className="text-xs font-semibold uppercase tracking-wider text-black">Estoque minimo</label>
+          <label className="text-xs font-semibold uppercase tracking-wider text-zinc-300">Estoque minimo</label>
           <input
             type="number"
             min="0"
@@ -136,7 +136,7 @@ export default function FormularioProduto({ produto, categorias, onFechar, onSuc
         </div>
 
         <div className="flex flex-col gap-1">
-          <label className="text-xs font-semibold uppercase tracking-wider text-black">Preco de custo</label>
+          <label className="text-xs font-semibold uppercase tracking-wider text-zinc-300">Preco de custo</label>
           <input
             type="number"
             min="0"
@@ -148,7 +148,7 @@ export default function FormularioProduto({ produto, categorias, onFechar, onSuc
         </div>
 
         <div className="flex flex-col gap-1">
-          <label className="text-xs font-semibold uppercase tracking-wider text-black">Preco de venda</label>
+          <label className="text-xs font-semibold uppercase tracking-wider text-zinc-300">Preco de venda</label>
           <input
             type="number"
             min="0"
@@ -160,7 +160,7 @@ export default function FormularioProduto({ produto, categorias, onFechar, onSuc
         </div>
 
         {erro && (
-          <p className="text-xs text-red-600 bg-red-50 border border-red-200 px-3 py-2 col-span-2">{erro}</p>
+          <p className="text-xs text-red-400 bg-red-950/50 border border-red-800 px-3 py-2 col-span-2">{erro}</p>
         )}
 
         <div className="flex gap-3 col-span-2 mt-2">

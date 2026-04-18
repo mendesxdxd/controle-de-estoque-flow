@@ -53,30 +53,30 @@ export default function FormularioMovimentacao({ produtos, tipoInicial, onFechar
   }
 
   return (
-    <div className="border border-zinc-200 bg-white shadow-sm p-6">
+    <div className="glass-panel p-6">
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-sm font-bold uppercase tracking-wider text-black">
+        <h2 className="text-sm font-bold uppercase tracking-wider text-white">
           Registrar movimentacao
         </h2>
         <button
           onClick={onFechar}
-          className="text-xs text-zinc-400 hover:text-black transition-colors"
+          className="text-xs text-zinc-500 hover:text-white transition-colors"
         >
           Fechar
         </button>
       </div>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-4 max-w-md">
-        <div className="flex border border-black w-fit">
+        <div className="flex bg-white/5 border border-white/[0.08] rounded-xl p-1 w-fit gap-1">
           {(["entrada", "saida"] as const).map((t) => (
             <button
               key={t}
               type="button"
               onClick={() => setTipo(t)}
-              className={`px-5 py-2 text-sm font-semibold capitalize transition-all duration-150 ${
+              className={`px-5 py-2 text-sm font-semibold capitalize rounded-lg transition-all duration-150 ${
                 tipo === t
-                  ? "bg-black text-white"
-                  : "bg-white text-black hover:bg-zinc-100"
+                  ? "bg-white/10 text-white"
+                  : "text-zinc-500 hover:text-white hover:bg-white/5"
               }`}
             >
               {t}
@@ -85,7 +85,7 @@ export default function FormularioMovimentacao({ produtos, tipoInicial, onFechar
         </div>
 
         <div className="flex flex-col gap-1">
-          <label className="text-xs font-semibold uppercase tracking-wider text-black">Produto</label>
+          <label className="text-xs font-semibold uppercase tracking-wider text-zinc-300">Produto</label>
           <select
             value={produtoId}
             onChange={(e) => setProdutoId(e.target.value)}
@@ -101,7 +101,7 @@ export default function FormularioMovimentacao({ produtos, tipoInicial, onFechar
         </div>
 
         <div className="flex flex-col gap-1">
-          <label className="text-xs font-semibold uppercase tracking-wider text-black">Quantidade</label>
+          <label className="text-xs font-semibold uppercase tracking-wider text-zinc-300">Quantidade</label>
           <input
             type="number"
             min="1"
@@ -112,7 +112,7 @@ export default function FormularioMovimentacao({ produtos, tipoInicial, onFechar
         </div>
 
         <div className="flex flex-col gap-1">
-          <label className="text-xs font-semibold uppercase tracking-wider text-black">
+          <label className="text-xs font-semibold uppercase tracking-wider text-zinc-300">
             Observacao <span className="text-zinc-400 normal-case font-normal">(opcional)</span>
           </label>
           <input
@@ -125,7 +125,7 @@ export default function FormularioMovimentacao({ produtos, tipoInicial, onFechar
         </div>
 
         {erro && (
-          <p className="text-xs text-red-600 bg-red-50 border border-red-200 px-3 py-2">{erro}</p>
+          <p className="text-xs text-red-400 bg-red-950/50 border border-red-800 px-3 py-2">{erro}</p>
         )}
 
         <div className="flex gap-3 mt-2">

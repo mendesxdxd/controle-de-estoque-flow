@@ -62,7 +62,7 @@ export default function TabelaEstoque({ movimentacoes, produtos }: Props) {
           </button>
         </div>
       ) : (
-        <div className="border border-zinc-200 bg-white shadow-sm overflow-x-auto">
+        <div className="glass-table overflow-x-auto">
           <table className="w-full text-sm border-collapse min-w-[600px]">
             <thead>
               <tr className="table-header">
@@ -78,22 +78,22 @@ export default function TabelaEstoque({ movimentacoes, produtos }: Props) {
               {movimentacoes.map((mov, i) => (
                 <tr
                   key={mov.id}
-                  className={`border-b border-zinc-100 ${i % 2 === 0 ? "table-row-even" : "table-row-odd"}`}
+                  className={`border-b border-white/[0.04] ${i % 2 === 0 ? "table-row-even" : "table-row-odd"}`}
                 >
-                  <td className="py-3 px-4 text-zinc-500 whitespace-nowrap">
+                  <td className="py-3 px-4 text-zinc-400 whitespace-nowrap">
                     {new Date(mov.created_at).toLocaleDateString("pt-BR")}
                   </td>
-                  <td className="py-3 px-4 font-medium text-black">{mov.produtos?.nome ?? "—"}</td>
+                  <td className="py-3 px-4 font-medium text-white">{mov.produtos?.nome ?? "—"}</td>
                   <td className="py-3 px-4">
-                    <span className={`text-xs font-semibold uppercase tracking-wider px-2 py-1 ${
+                    <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${
                       mov.tipo === "entrada"
-                        ? "bg-black text-white"
-                        : "bg-zinc-200 text-zinc-700"
+                        ? "bg-indigo-500/15 text-indigo-400"
+                        : "bg-zinc-700/50 text-zinc-400"
                     }`}>
                       {mov.tipo}
                     </span>
                   </td>
-                  <td className="py-3 px-4 text-right text-black font-medium td-num">
+                  <td className="py-3 px-4 text-right text-white font-medium td-num">
                     {mov.quantidade} {mov.produtos?.unidade ?? ""}
                   </td>
                   <td className="py-3 px-4 text-zinc-500">{mov.observacao ?? "—"}</td>

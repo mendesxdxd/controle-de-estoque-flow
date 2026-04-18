@@ -63,7 +63,7 @@ export default function TabelaCategorias({ categorias }: Props) {
           </button>
         </div>
       ) : (
-        <div className="border border-zinc-200 bg-white shadow-sm overflow-x-auto">
+        <div className="glass-table overflow-x-auto">
           <table className="w-full text-sm border-collapse min-w-[500px]">
             <thead>
               <tr className="table-header">
@@ -77,9 +77,9 @@ export default function TabelaCategorias({ categorias }: Props) {
               {categorias.map((cat, i) => (
                 <tr
                   key={cat.id}
-                  className={`border-b border-zinc-100 ${i % 2 === 0 ? "table-row-even" : "table-row-odd"}`}
+                  className={`border-b border-white/[0.04] ${i % 2 === 0 ? "table-row-even" : "table-row-odd"}`}
                 >
-                  <td className="py-3 px-4 font-medium text-black">{cat.nome}</td>
+                  <td className="py-3 px-4 font-medium text-white">{cat.nome}</td>
                   <td className="py-3 px-4 text-zinc-500">{cat.descricao ?? "—"}</td>
                   <td className="py-3 px-4 text-zinc-500">
                     {new Date(cat.created_at).toLocaleDateString("pt-BR")}

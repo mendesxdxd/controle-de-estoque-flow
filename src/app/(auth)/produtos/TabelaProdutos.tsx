@@ -5,15 +5,12 @@ import { Produto, Categoria } from "@/types";
 import FormularioProduto from "./FormularioProduto";
 import { excluirProduto } from "./actions";
 import Toast from "@/components/shared/Toast";
+import { formatarMoeda } from "@/lib/utils";
 
 type Props = {
   produtos: Produto[];
   categorias: Categoria[];
 };
-
-function formatarMoeda(valor: number) {
-  return valor.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
-}
 
 export default function TabelaProdutos({ produtos, categorias }: Props) {
   const [abrirForm, setAbrirForm] = useState(false);
@@ -69,7 +66,7 @@ export default function TabelaProdutos({ produtos, categorias }: Props) {
           </button>
         </div>
       ) : (
-        <div className="border border-zinc-200 bg-white shadow-sm overflow-x-auto">
+        <div className="glass-table overflow-x-auto">
           <table className="w-full text-sm border-collapse min-w-[800px]">
             <thead>
               <tr className="table-header">
@@ -87,15 +84,15 @@ export default function TabelaProdutos({ produtos, categorias }: Props) {
               {produtos.map((prod, i) => (
                 <tr
                   key={prod.id}
-                  className={`border-b border-zinc-100 ${i % 2 === 0 ? "table-row-even" : "table-row-odd"}`}
+                  className={`border-b border-white/[0.04] ${i % 2 === 0 ? "table-row-even" : "table-row-odd"}`}
                 >
                   <td className="py-3 px-4 text-zinc-500">{prod.codigo ?? "—"}</td>
-                  <td className="py-3 px-4 font-medium text-black">{prod.nome}</td>
+                  <td className="py-3 px-4 font-medium text-white">{prod.nome}</td>
                   <td className="py-3 px-4 text-zinc-500">{prod.categorias?.nome ?? "—"}</td>
                   <td className="py-3 px-4 text-zinc-500">{prod.unidade}</td>
-                  <td className="py-3 px-4 text-right text-zinc-500 td-num">{formatarMoeda(prod.preco_custo)}</td>
-                  <td className="py-3 px-4 text-right text-zinc-500 td-num">{formatarMoeda(prod.preco_venda)}</td>
-                  <td className="py-3 px-4 text-right text-zinc-500 td-num">{prod.estoque_minimo}</td>
+                  <td className="py-3 px-4 text-right text-zinc-400 td-num">{formatarMoeda(prod.preco_custo)}</td>
+                  <td className="py-3 px-4 text-right text-zinc-400 td-num">{formatarMoeda(prod.preco_venda)}</td>
+                  <td className="py-3 px-4 text-right text-zinc-400 td-num">{prod.estoque_minimo}</td>
                   <td className="py-3 px-4">
                     <div className="flex gap-4 justify-end">
                       <button onClick={() => handleEditar(prod)} className="btn-action">
