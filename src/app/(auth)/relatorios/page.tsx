@@ -4,7 +4,6 @@ import TabelaEstoqueAtual from "./TabelaEstoqueAtual";
 import TabelaEstoqueBaixo from "./TabelaEstoqueBaixo";
 import FiltroMovimentacoes from "./FiltroMovimentacoes";
 
-export type { EstoqueAtualRow };
 
 export default async function RelatoriosPage() {
   const supabase = await createClient();

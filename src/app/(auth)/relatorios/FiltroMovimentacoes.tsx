@@ -12,8 +12,8 @@ export default function FiltroMovimentacoes({ movimentacoes }: Props) {
   const [dataInicio, setDataInicio] = useState("");
   const [dataFim, setDataFim] = useState("");
 
-  const filtradas = useMemo(() => {
-    return movimentacoes.filter((mov) => {
+  const { filtradas, totalEntradas, totalSaidas } = useMemo(() => {
+    const filtradas = movimentacoes.filter((mov) => {
       if (tipo !== "todos" && mov.tipo !== tipo) return false;
       const data = new Date(mov.created_at);
       if (dataInicio && data < new Date(dataInicio)) return false;
@@ -24,10 +24,10 @@ export default function FiltroMovimentacoes({ movimentacoes }: Props) {
       }
       return true;
     });
+    const totalEntradas = filtradas.filter((m) => m.tipo === "entrada").reduce((acc, m) => acc + m.quantidade, 0);
+    const totalSaidas = filtradas.filter((m) => m.tipo === "saida").reduce((acc, m) => acc + m.quantidade, 0);
+    return { filtradas, totalEntradas, totalSaidas };
   }, [movimentacoes, tipo, dataInicio, dataFim]);
-
-  const totalEntradas = filtradas.filter((m) => m.tipo === "entrada").reduce((acc, m) => acc + m.quantidade, 0);
-  const totalSaidas = filtradas.filter((m) => m.tipo === "saida").reduce((acc, m) => acc + m.quantidade, 0);
 
   return (
     <div className="flex flex-col gap-4">

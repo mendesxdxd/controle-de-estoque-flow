@@ -60,7 +60,7 @@ export default function TabelaUsuarios({ usuarios }: Props) {
     const resultado = await excluirUsuario(id);
     setExcluindo(null);
     if (resultado?.erro) {
-      setErro(resultado.erro);
+      setToast(resultado.erro);
     } else {
       setToast("Usuario excluido.");
     }

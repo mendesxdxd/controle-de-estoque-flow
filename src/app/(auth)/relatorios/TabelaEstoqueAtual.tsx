@@ -158,17 +158,12 @@ function gerarFechamento(rows: EstoqueAtualRow[], movimentacoes: Movimentacao[])
     );
   });
 
-  const saldoPorProduto: Record<string, number> = {};
-  rows.forEach((r) => {
-    if (r.caixas_por_palete) saldoPorProduto[r.id] = r.estoque_atual / r.caixas_por_palete;
-  });
-
   function agruparMovs(tipo: "entrada" | "saida") {
     const mapa: Record<string, { nome: string; paletes: number }> = {};
     movsHoje
       .filter((m) => m.tipo === tipo)
       .forEach((m) => {
-        const cxPal = (m.produtos as any)?.caixas_por_palete ?? null;
+        const cxPal = m.produtos?.caixas_por_palete ?? null;
         const paletes = cxPal ? m.quantidade / cxPal : null;
         const nome = m.produtos?.nome ?? "Desconhecido";
         if (!mapa[nome]) mapa[nome] = { nome, paletes: 0 };
@@ -266,17 +261,21 @@ export default function TabelaEstoqueAtual({ rows, movimentacoes, podeFechamento
   }
 
   async function handleCopiar() {
-    const mensagem = gerarMensagem(rows, valorTotal, totalPaletes);
-    await navigator.clipboard.writeText(mensagem);
-    setCopiado(true);
-    setTimeout(() => setCopiado(false), 2500);
+    try {
+      const mensagem = gerarMensagem(rows, valorTotal, totalPaletes);
+      await navigator.clipboard.writeText(mensagem);
+      setCopiado(true);
+      setTimeout(() => setCopiado(false), 2500);
+    } catch {}
   }
 
   async function handleCopiarFechamento() {
-    const mensagem = gerarFechamento(rows, movimentacoes);
-    await navigator.clipboard.writeText(mensagem);
-    setCopiadoFechamento(true);
-    setTimeout(() => setCopiadoFechamento(false), 2500);
+    try {
+      const mensagem = gerarFechamento(rows, movimentacoes);
+      await navigator.clipboard.writeText(mensagem);
+      setCopiadoFechamento(true);
+      setTimeout(() => setCopiadoFechamento(false), 2500);
+    } catch {}
   }
 
   return (
