@@ -9,6 +9,7 @@ const CAPACIDADE_ARMAZEM = 1700;
 type Props = {
   rows: EstoqueAtualRow[];
   movimentacoes: Movimentacao[];
+  podeFechamento: boolean;
 };
 
 function gerarPDF(rows: EstoqueAtualRow[], valorTotal: number, totalPaletes: number) {
@@ -246,7 +247,7 @@ function gerarMensagem(rows: EstoqueAtualRow[], valorTotal: number, totalPaletes
     .join("\n");
 }
 
-export default function TabelaEstoqueAtual({ rows, movimentacoes }: Props) {
+export default function TabelaEstoqueAtual({ rows, movimentacoes, podeFechamento }: Props) {
   const [copiado, setCopiado] = useState(false);
   const [copiadoFechamento, setCopiadoFechamento] = useState(false);
 
@@ -281,26 +282,28 @@ export default function TabelaEstoqueAtual({ rows, movimentacoes }: Props) {
   return (
     <div className="flex flex-col gap-3">
       <div className="flex justify-end gap-2 flex-wrap">
-        <button
-          onClick={handleCopiarFechamento}
-          className="btn-secondary flex items-center gap-2"
-        >
-          {copiadoFechamento ? (
-            <>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <polyline points="20 6 9 17 4 12" />
-              </svg>
-              Copiado!
-            </>
-          ) : (
-            <>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-              </svg>
-              Fechamento do dia
-            </>
-          )}
-        </button>
+        {podeFechamento && (
+          <button
+            onClick={handleCopiarFechamento}
+            className="btn-secondary flex items-center gap-2"
+          >
+            {copiadoFechamento ? (
+              <>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
+                Copiado!
+              </>
+            ) : (
+              <>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                </svg>
+                Fechamento do dia
+              </>
+            )}
+          </button>
+        )}
         <button
           onClick={handleCopiar}
           className="btn-secondary flex items-center gap-2"

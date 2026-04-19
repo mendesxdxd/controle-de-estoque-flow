@@ -9,13 +9,18 @@ export type { EstoqueAtualRow };
 export default async function RelatoriosPage() {
   const supabase = await createClient();
 
-  const [{ data: estoqueAtual }, { data: movimentacoes }] = await Promise.all([
+  const { data: { user } } = await supabase.auth.getUser();
+
+  const [{ data: estoqueAtual }, { data: movimentacoes }, { data: perfil }] = await Promise.all([
     supabase.from("estoque_atual").select("*").order("nome"),
     supabase
       .from("movimentacoes")
       .select("*, produtos(id, nome, unidade, caixas_por_palete)")
       .order("created_at", { ascending: false }),
+    supabase.from("perfis").select("pode_fechamento").eq("user_id", user?.id ?? "").single(),
   ]);
+
+  const podeFechamento = perfil?.pode_fechamento ?? false;
 
   const estoqueBaixo = (estoqueAtual as EstoqueAtualRow[])?.filter(
     (p) => p.estoque_atual <= p.estoque_minimo
@@ -34,9 +39,10 @@ export default async function RelatoriosPage() {
           <span className="text-xs text-zinc-500">{estoqueAtual?.length ?? 0} produtos</span>
         </div>
         <TabelaEstoqueAtual
-        rows={(estoqueAtual as EstoqueAtualRow[]) ?? []}
-        movimentacoes={(movimentacoes as Movimentacao[]) ?? []}
-      />
+          rows={(estoqueAtual as EstoqueAtualRow[]) ?? []}
+          movimentacoes={(movimentacoes as Movimentacao[]) ?? []}
+          podeFechamento={podeFechamento}
+        />
       </section>
 
       {estoqueBaixo.length > 0 && (
