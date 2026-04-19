@@ -46,6 +46,11 @@ export default function TabelaEstoqueAtual({ rows }: Props) {
                 <td className="py-3 px-4 text-zinc-500">{row.unidade}</td>
                 <td className={`py-3 px-4 text-right font-semibold td-num ${baixo ? "text-red-400" : "text-white"}`}>
                   {row.estoque_atual}
+                  {row.caixas_por_palete && row.estoque_atual > 0 && (
+                    <span className="block text-xs font-normal text-zinc-500">
+                      {(row.estoque_atual / row.caixas_por_palete).toFixed(1)} pal.
+                    </span>
+                  )}
                 </td>
                 <td className="py-3 px-4 text-right text-zinc-400 td-num">{row.estoque_minimo}</td>
                 <td className="py-3 px-4 text-right text-zinc-400 td-num">{formatarMoeda(row.preco_custo)}</td>

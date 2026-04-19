@@ -19,6 +19,7 @@ export default function FormularioProduto({ produto, categorias, onFechar, onSuc
   const [precoCusto, setPrecoCusto] = useState(produto?.preco_custo?.toString() ?? "0");
   const [precoVenda, setPrecoVenda] = useState(produto?.preco_venda?.toString() ?? "0");
   const [estoqueMinimo, setEstoqueMinimo] = useState(produto?.estoque_minimo?.toString() ?? "0");
+  const [caixasPorPalete, setCaixasPorPalete] = useState(produto?.caixas_por_palete?.toString() ?? "");
   const [erro, setErro] = useState("");
   const [salvando, setSalvando] = useState(false);
 
@@ -41,6 +42,7 @@ export default function FormularioProduto({ produto, categorias, onFechar, onSuc
       preco_custo: parseFloat(precoCusto) || 0,
       preco_venda: parseFloat(precoVenda) || 0,
       estoque_minimo: parseInt(estoqueMinimo) || 0,
+      caixas_por_palete: caixasPorPalete.trim() ? parseInt(caixasPorPalete) : null,
     });
 
     if (resultado?.erro) {
@@ -132,6 +134,20 @@ export default function FormularioProduto({ produto, categorias, onFechar, onSuc
             value={estoqueMinimo}
             onChange={(e) => setEstoqueMinimo(e.target.value)}
             className="input-field"
+          />
+        </div>
+
+        <div className="flex flex-col gap-1">
+          <label className="text-xs font-semibold uppercase tracking-wider text-zinc-300">
+            Caixas por palete <span className="text-zinc-400 normal-case font-normal">(opcional)</span>
+          </label>
+          <input
+            type="number"
+            min="1"
+            value={caixasPorPalete}
+            onChange={(e) => setCaixasPorPalete(e.target.value)}
+            className="input-field"
+            placeholder="Ex: 180"
           />
         </div>
 

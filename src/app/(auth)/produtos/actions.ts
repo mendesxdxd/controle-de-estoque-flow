@@ -12,6 +12,7 @@ type DadosProduto = {
   preco_custo: number;
   preco_venda: number;
   estoque_minimo: number;
+  caixas_por_palete: number | null;
 };
 
 export async function salvarProduto(dados: DadosProduto) {
@@ -27,6 +28,7 @@ export async function salvarProduto(dados: DadosProduto) {
     preco_custo: dados.preco_custo,
     preco_venda: dados.preco_venda,
     estoque_minimo: dados.estoque_minimo,
+    caixas_por_palete: dados.caixas_por_palete,
   };
 
   if (dados.id) {

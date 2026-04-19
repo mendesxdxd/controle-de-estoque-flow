@@ -14,6 +14,7 @@ export type Produto = {
   preco_custo: number;
   preco_venda: number;
   estoque_minimo: number;
+  caixas_por_palete: number | null;
   created_at: string;
   categorias?: Categoria | null;
 };
@@ -37,6 +38,7 @@ export type EstoqueAtualRow = {
   preco_custo: number;
   preco_venda: number;
   estoque_minimo: number;
+  caixas_por_palete: number | null;
   categoria: string | null;
   estoque_atual: number;
 };

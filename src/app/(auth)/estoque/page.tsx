@@ -12,7 +12,7 @@ export default async function EstoquePage() {
       .order("created_at", { ascending: false }),
     supabase
       .from("produtos")
-      .select("id, nome, unidade")
+      .select("id, nome, unidade, caixas_por_palete")
       .order("nome"),
   ]);
 

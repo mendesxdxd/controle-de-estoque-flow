@@ -16,11 +16,22 @@ export default function FormularioMovimentacao({ produtos, saldoPorProduto, tipo
   const [tipo, setTipo] = useState<"entrada" | "saida">(tipoInicial);
   const [produtoId, setProdutoId] = useState("");
   const [quantidade, setQuantidade] = useState("1");
+  const [unidadeEntrada, setUnidadeEntrada] = useState<"cx" | "palete">("cx");
   const [observacao, setObservacao] = useState("");
   const [erro, setErro] = useState("");
   const [salvando, setSalvando] = useState(false);
 
+  const produtoSelecionado = produtos.find((p) => p.id === produtoId) ?? null;
+  const caixasPorPalete = produtoSelecionado?.caixas_por_palete ?? null;
   const saldoAtual = produtoId ? (saldoPorProduto[produtoId] ?? 0) : null;
+
+  const qtdNum = parseInt(quantidade) || 0;
+  const qtdEmCaixas = unidadeEntrada === "palete" && caixasPorPalete ? qtdNum * caixasPorPalete : qtdNum;
+
+  function handleProdutoChange(id: string) {
+    setProdutoId(id);
+    setUnidadeEntrada("cx");
+  }
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -31,23 +42,26 @@ export default function FormularioMovimentacao({ produtos, saldoPorProduto, tipo
       return;
     }
 
-    const qtd = parseInt(quantidade);
-    if (!qtd || qtd <= 0) {
+    if (!qtdNum || qtdNum <= 0) {
       setErro("A quantidade deve ser maior que zero.");
       return;
     }
 
-    if (tipo === "saida" && saldoAtual !== null && qtd > saldoAtual) {
-      setErro(`Estoque insuficiente. Saldo atual: ${saldoAtual}.`);
+    if (tipo === "saida" && saldoAtual !== null && qtdEmCaixas > saldoAtual) {
+      setErro(`Estoque insuficiente. Saldo atual: ${saldoAtual} cx.`);
       return;
     }
+
+    const obsAuto = unidadeEntrada === "palete" && caixasPorPalete
+      ? `${qtdNum} palete${qtdNum > 1 ? "s" : ""} (${qtdEmCaixas} cx)${observacao.trim() ? " — " + observacao.trim() : ""}`
+      : observacao.trim() || null;
 
     setSalvando(true);
     const resultado = await registrarMovimentacao({
       produto_id: produtoId,
       tipo,
-      quantidade: qtd,
-      observacao: observacao.trim() || null,
+      quantidade: qtdEmCaixas,
+      observacao: obsAuto,
     });
 
     if (resultado?.erro) {
@@ -96,7 +110,7 @@ export default function FormularioMovimentacao({ produtos, saldoPorProduto, tipo
           <label className="text-xs font-semibold uppercase tracking-wider text-zinc-300">Produto</label>
           <select
             value={produtoId}
-            onChange={(e) => setProdutoId(e.target.value)}
+            onChange={(e) => handleProdutoChange(e.target.value)}
             className="input-field"
           >
             <option value="">Selecione um produto</option>
@@ -108,12 +122,44 @@ export default function FormularioMovimentacao({ produtos, saldoPorProduto, tipo
           </select>
         </div>
 
+        {caixasPorPalete && (
+          <div className="flex flex-col gap-1">
+            <label className="text-xs font-semibold uppercase tracking-wider text-zinc-300">Registrar por</label>
+            <div className="flex bg-white/5 border border-white/[0.08] rounded-xl p-1 w-fit gap-1">
+              <button
+                type="button"
+                onClick={() => setUnidadeEntrada("cx")}
+                className={`px-4 py-1.5 text-sm font-semibold rounded-lg transition-all duration-150 ${
+                  unidadeEntrada === "cx"
+                    ? "bg-white/10 text-white"
+                    : "text-zinc-500 hover:text-white hover:bg-white/5"
+                }`}
+              >
+                Caixa
+              </button>
+              <button
+                type="button"
+                onClick={() => setUnidadeEntrada("palete")}
+                className={`px-4 py-1.5 text-sm font-semibold rounded-lg transition-all duration-150 ${
+                  unidadeEntrada === "palete"
+                    ? "bg-white/10 text-white"
+                    : "text-zinc-500 hover:text-white hover:bg-white/5"
+                }`}
+              >
+                Palete
+              </button>
+            </div>
+          </div>
+        )}
+
         <div className="flex flex-col gap-1">
           <div className="flex items-center justify-between">
-            <label className="text-xs font-semibold uppercase tracking-wider text-zinc-300">Quantidade</label>
+            <label className="text-xs font-semibold uppercase tracking-wider text-zinc-300">
+              Quantidade {unidadeEntrada === "palete" ? "(paletes)" : "(caixas)"}
+            </label>
             {tipo === "saida" && saldoAtual !== null && (
               <span className="text-xs text-zinc-500">
-                Disponivel: <span className={saldoAtual === 0 ? "text-red-400" : "text-zinc-300"}>{saldoAtual}</span>
+                Disponivel: <span className={saldoAtual === 0 ? "text-red-400" : "text-zinc-300"}>{saldoAtual} cx</span>
               </span>
             )}
           </div>
@@ -124,6 +170,11 @@ export default function FormularioMovimentacao({ produtos, saldoPorProduto, tipo
             onChange={(e) => setQuantidade(e.target.value)}
             className="input-field"
           />
+          {unidadeEntrada === "palete" && caixasPorPalete && qtdNum > 0 && (
+            <p className="text-xs text-indigo-400 mt-1">
+              {qtdNum} palete{qtdNum > 1 ? "s" : ""} × {caixasPorPalete} cx = <span className="font-semibold">{qtdEmCaixas} cx</span>
+            </p>
+          )}
         </div>
 
         <div className="flex flex-col gap-1">
