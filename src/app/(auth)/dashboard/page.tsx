@@ -143,7 +143,7 @@ export default async function DashboardPage() {
                       </span>
                     </td>
                     <td className="py-3 px-5 text-right text-white font-medium text-xs tabular-nums">
-                      {mov.quantidade} {mov.produtos?.unidade ?? ""}
+                      {mov.quantidade.toLocaleString("pt-BR")} {mov.produtos?.unidade ?? ""}
                     </td>
                   </tr>
                 ))}
@@ -178,8 +178,8 @@ export default async function DashboardPage() {
                 {estoqueBaixo.map((row, i) => (
                   <tr key={row.id} className={`border-b border-white/[0.04] ${i % 2 === 0 ? "" : "bg-white/[0.02]"} hover:bg-white/[0.04] transition-colors`}>
                     <td className="py-3 px-5 font-medium text-white text-xs">{row.nome}</td>
-                    <td className="py-3 px-5 text-right font-bold text-red-400 text-xs tabular-nums">{row.estoque_atual}</td>
-                    <td className="py-3 px-5 text-right text-zinc-500 text-xs tabular-nums">{row.estoque_minimo}</td>
+                    <td className="py-3 px-5 text-right font-bold text-red-400 text-xs tabular-nums">{row.estoque_atual.toLocaleString("pt-BR")}</td>
+                    <td className="py-3 px-5 text-right text-zinc-500 text-xs tabular-nums">{row.estoque_minimo.toLocaleString("pt-BR")}</td>
                   </tr>
                 ))}
               </tbody>

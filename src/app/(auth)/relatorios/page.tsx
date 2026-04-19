@@ -13,7 +13,7 @@ export default async function RelatoriosPage() {
     supabase.from("estoque_atual").select("*").order("nome"),
     supabase
       .from("movimentacoes")
-      .select("*, produtos(id, nome, unidade)")
+      .select("*, produtos(id, nome, unidade, caixas_por_palete)")
       .order("created_at", { ascending: false }),
   ]);
 
@@ -33,7 +33,10 @@ export default async function RelatoriosPage() {
           <h2 className="text-sm font-bold uppercase tracking-wider text-white">Estoque atual</h2>
           <span className="text-xs text-zinc-500">{estoqueAtual?.length ?? 0} produtos</span>
         </div>
-        <TabelaEstoqueAtual rows={(estoqueAtual as EstoqueAtualRow[]) ?? []} />
+        <TabelaEstoqueAtual
+        rows={(estoqueAtual as EstoqueAtualRow[]) ?? []}
+        movimentacoes={(movimentacoes as Movimentacao[]) ?? []}
+      />
       </section>
 
       {estoqueBaixo.length > 0 && (
