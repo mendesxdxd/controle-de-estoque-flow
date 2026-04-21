@@ -25,6 +25,7 @@ export type Movimentacao = {
   tipo: "entrada" | "saida";
   quantidade: number;
   observacao: string | null;
+  nota_fiscal: string | null;
   created_at: string;
   produtos?: Produto | null;
 };

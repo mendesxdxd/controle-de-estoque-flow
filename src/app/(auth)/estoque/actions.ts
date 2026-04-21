@@ -4,15 +4,19 @@ import { createClient } from "@/lib/supabase/server";
 import { getTenant } from "@/lib/tenant";
 import { revalidatePath } from "next/cache";
 
-type DadosMovimentacao = {
+type ItemNota = {
   produto_id: string;
-  tipo: "entrada" | "saida";
   quantidade: number;
   observacao: string | null;
-  nota_fiscal: string;
 };
 
-export async function registrarMovimentacao(dados: DadosMovimentacao) {
+type DadosNota = {
+  nota_fiscal: string;
+  tipo: "entrada" | "saida";
+  itens: ItemNota[];
+};
+
+export async function registrarNota(dados: DadosNota) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { erro: "Nao autenticado." };
@@ -21,32 +25,35 @@ export async function registrarMovimentacao(dados: DadosMovimentacao) {
   if (!tenant) return { erro: "Tenant nao encontrado." };
 
   if (dados.tipo === "saida") {
-    const { data: movs } = await supabase
-      .from("movimentacoes")
-      .select("tipo, quantidade")
-      .eq("produto_id", dados.produto_id)
-      .eq("tenant_id", tenant.id);
+    for (const item of dados.itens) {
+      const { data: movs } = await supabase
+        .from("movimentacoes")
+        .select("tipo, quantidade")
+        .eq("produto_id", item.produto_id)
+        .eq("tenant_id", tenant.id);
 
-    const saldo = (movs ?? []).reduce(
-      (acc, m) => (m.tipo === "entrada" ? acc + m.quantidade : acc - m.quantidade),
-      0
-    );
+      const saldo = (movs ?? []).reduce(
+        (acc, m) => (m.tipo === "entrada" ? acc + m.quantidade : acc - m.quantidade),
+        0
+      );
 
-    if (dados.quantidade > saldo) {
-      return { erro: `Estoque insuficiente. Saldo atual: ${saldo}.` };
+      if (item.quantidade > saldo) {
+        return { erro: `Estoque insuficiente para um dos produtos. Saldo: ${saldo}.` };
+      }
     }
   }
 
-  const { error } = await supabase.from("movimentacoes").insert({
-    produto_id: dados.produto_id,
+  const registros = dados.itens.map((item) => ({
+    produto_id: item.produto_id,
     tipo: dados.tipo,
-    quantidade: dados.quantidade,
-    observacao: dados.observacao,
+    quantidade: item.quantidade,
+    observacao: item.observacao,
     nota_fiscal: dados.nota_fiscal,
     user_id: user.id,
     tenant_id: tenant.id,
-  });
+  }));
 
+  const { error } = await supabase.from("movimentacoes").insert(registros);
   if (error) return { erro: "Erro ao registrar movimentacao." };
 
   revalidatePath("/estoque");

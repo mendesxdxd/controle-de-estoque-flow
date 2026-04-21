@@ -2,7 +2,13 @@
 
 import { useState } from "react";
 import { Produto } from "@/types";
-import { registrarMovimentacao } from "./actions";
+import { registrarNota } from "./actions";
+
+type ItemForm = {
+  produto_id: string;
+  quantidade: string;
+  unidade: "cx" | "palete";
+};
 
 type Props = {
   produtos: Produto[];
@@ -12,26 +18,32 @@ type Props = {
   onSucesso?: () => void;
 };
 
+function novoItem(): ItemForm {
+  return { produto_id: "", quantidade: "1", unidade: "cx" };
+}
+
 export default function FormularioMovimentacao({ produtos, saldoPorProduto, tipoInicial, onFechar, onSucesso }: Props) {
   const [tipo, setTipo] = useState<"entrada" | "saida">(tipoInicial);
   const [notaFiscal, setNotaFiscal] = useState("");
-  const [produtoId, setProdutoId] = useState("");
-  const [quantidade, setQuantidade] = useState("1");
-  const [unidadeEntrada, setUnidadeEntrada] = useState<"cx" | "palete">("cx");
-  const [observacao, setObservacao] = useState("");
+  const [itens, setItens] = useState<ItemForm[]>([novoItem()]);
   const [erro, setErro] = useState("");
   const [salvando, setSalvando] = useState(false);
 
-  const produtoSelecionado = produtos.find((p) => p.id === produtoId) ?? null;
-  const caixasPorPalete = produtoSelecionado?.caixas_por_palete ?? null;
-  const saldoAtual = produtoId ? (saldoPorProduto[produtoId] ?? 0) : null;
+  function atualizarItem(index: number, campo: keyof ItemForm, valor: string) {
+    setItens((prev) => prev.map((item, i) => {
+      if (i !== index) return item;
+      if (campo === "produto_id") return { ...item, produto_id: valor, unidade: "cx" };
+      return { ...item, [campo]: valor };
+    }));
+  }
 
-  const qtdNum = parseInt(quantidade) || 0;
-  const qtdEmCaixas = unidadeEntrada === "palete" && caixasPorPalete ? qtdNum * caixasPorPalete : qtdNum;
-
-  function handleProdutoChange(id: string) {
-    setProdutoId(id);
-    setUnidadeEntrada("cx");
+  function calcularQtdCaixas(item: ItemForm): number {
+    const produto = produtos.find((p) => p.id === item.produto_id);
+    const qtd = parseInt(item.quantidade) || 0;
+    if (item.unidade === "palete" && produto?.caixas_por_palete) {
+      return qtd * produto.caixas_por_palete;
+    }
+    return qtd;
   }
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -43,32 +55,32 @@ export default function FormularioMovimentacao({ produtos, saldoPorProduto, tipo
       return;
     }
 
-    if (!produtoId) {
-      setErro("Selecione um produto.");
-      return;
+    for (const item of itens) {
+      if (!item.produto_id) {
+        setErro("Selecione o produto em todos os itens.");
+        return;
+      }
+      if (!parseInt(item.quantidade) || parseInt(item.quantidade) <= 0) {
+        setErro("A quantidade deve ser maior que zero.");
+        return;
+      }
     }
 
-    if (!qtdNum || qtdNum <= 0) {
-      setErro("A quantidade deve ser maior que zero.");
-      return;
-    }
-
-    if (tipo === "saida" && saldoAtual !== null && qtdEmCaixas > saldoAtual) {
-      setErro(`Estoque insuficiente. Saldo atual: ${saldoAtual} cx.`);
-      return;
-    }
-
-    const obsAuto = unidadeEntrada === "palete" && caixasPorPalete
-      ? `${qtdNum} palete${qtdNum > 1 ? "s" : ""} (${qtdEmCaixas} cx)${observacao.trim() ? " — " + observacao.trim() : ""}`
-      : observacao.trim() || null;
+    const itensMapeados = itens.map((item) => {
+      const produto = produtos.find((p) => p.id === item.produto_id);
+      const qtdCaixas = calcularQtdCaixas(item);
+      const qtd = parseInt(item.quantidade);
+      const obs = item.unidade === "palete" && produto?.caixas_por_palete
+        ? `${qtd} palete${qtd > 1 ? "s" : ""} (${qtdCaixas} cx)`
+        : null;
+      return { produto_id: item.produto_id, quantidade: qtdCaixas, observacao: obs };
+    });
 
     setSalvando(true);
-    const resultado = await registrarMovimentacao({
-      produto_id: produtoId,
-      tipo,
-      quantidade: qtdEmCaixas,
-      observacao: obsAuto,
+    const resultado = await registrarNota({
       nota_fiscal: notaFiscal.trim(),
+      tipo,
+      itens: itensMapeados,
     });
 
     if (resultado?.erro) {
@@ -119,88 +131,100 @@ export default function FormularioMovimentacao({ produtos, saldoPorProduto, tipo
           />
         </div>
 
-        <div className="flex flex-col gap-1">
-          <label className="text-xs font-semibold uppercase tracking-wider text-zinc-300">Produto</label>
-          <select
-            value={produtoId}
-            onChange={(e) => handleProdutoChange(e.target.value)}
-            className="input-field"
-          >
-            <option value="">Selecione um produto</option>
-            {produtos.map((prod) => (
-              <option key={prod.id} value={prod.id}>
-                {prod.nome} ({prod.unidade})
-              </option>
-            ))}
-          </select>
-        </div>
+        {itens.map((item, index) => {
+          const produto = produtos.find((p) => p.id === item.produto_id);
+          const caixasPorPalete = produto?.caixas_por_palete ?? null;
+          const qtdNum = parseInt(item.quantidade) || 0;
+          const qtdEmCaixas = item.unidade === "palete" && caixasPorPalete ? qtdNum * caixasPorPalete : qtdNum;
+          const saldoAtual = item.produto_id ? (saldoPorProduto[item.produto_id] ?? 0) : null;
 
-        {caixasPorPalete && (
-          <div className="flex flex-col gap-1">
-            <label className="text-xs font-semibold uppercase tracking-wider text-zinc-300">Registrar por</label>
-            <div className="flex bg-white/5 border border-white/[0.08] rounded-xl p-1 w-fit gap-1">
-              <button
-                type="button"
-                onClick={() => setUnidadeEntrada("cx")}
-                className={`px-4 py-1.5 text-sm font-semibold rounded-lg transition-all duration-150 ${
-                  unidadeEntrada === "cx" ? "bg-white/10 text-white" : "text-zinc-500 hover:text-white hover:bg-white/5"
-                }`}
-              >
-                Caixa
-              </button>
-              <button
-                type="button"
-                onClick={() => setUnidadeEntrada("palete")}
-                className={`px-4 py-1.5 text-sm font-semibold rounded-lg transition-all duration-150 ${
-                  unidadeEntrada === "palete" ? "bg-white/10 text-white" : "text-zinc-500 hover:text-white hover:bg-white/5"
-                }`}
-              >
-                Palete
-              </button>
+          return (
+            <div key={index} className="flex flex-col gap-3 border-t border-white/[0.06] pt-4">
+              {itens.length > 1 && (
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-zinc-500">Produto {index + 1}</span>
+                  <button
+                    type="button"
+                    onClick={() => setItens((prev) => prev.filter((_, i) => i !== index))}
+                    className="text-xs text-zinc-600 hover:text-red-400 transition-colors"
+                  >
+                    Remover
+                  </button>
+                </div>
+              )}
+
+              <div className="flex flex-col gap-1">
+                <label className="text-xs font-semibold uppercase tracking-wider text-zinc-300">Produto</label>
+                <select
+                  value={item.produto_id}
+                  onChange={(e) => atualizarItem(index, "produto_id", e.target.value)}
+                  className="input-field"
+                >
+                  <option value="">Selecione um produto</option>
+                  {produtos.map((p) => (
+                    <option key={p.id} value={p.id}>{p.nome} ({p.unidade})</option>
+                  ))}
+                </select>
+              </div>
+
+              {caixasPorPalete && (
+                <div className="flex flex-col gap-1">
+                  <label className="text-xs font-semibold uppercase tracking-wider text-zinc-300">Registrar por</label>
+                  <div className="flex bg-white/5 border border-white/[0.08] rounded-xl p-1 w-fit gap-1">
+                    {(["cx", "palete"] as const).map((u) => (
+                      <button
+                        key={u}
+                        type="button"
+                        onClick={() => atualizarItem(index, "unidade", u)}
+                        className={`px-4 py-1.5 text-sm font-semibold rounded-lg transition-all duration-150 ${
+                          item.unidade === u ? "bg-white/10 text-white" : "text-zinc-500 hover:text-white hover:bg-white/5"
+                        }`}
+                      >
+                        {u === "cx" ? "Caixa" : "Palete"}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <div className="flex flex-col gap-1">
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-semibold uppercase tracking-wider text-zinc-300">
+                    Quantidade {item.unidade === "palete" ? "(paletes)" : "(caixas)"}
+                  </label>
+                  {tipo === "saida" && saldoAtual !== null && (
+                    <span className="text-xs text-zinc-500">
+                      Disponivel: <span className={saldoAtual === 0 ? "text-red-400" : "text-zinc-300"}>{saldoAtual} cx</span>
+                    </span>
+                  )}
+                </div>
+                <input
+                  type="number"
+                  min="1"
+                  value={item.quantidade}
+                  onChange={(e) => atualizarItem(index, "quantidade", e.target.value)}
+                  className="input-field"
+                />
+                {item.unidade === "palete" && caixasPorPalete && qtdNum > 0 && (
+                  <p className="text-xs text-indigo-400 mt-1">
+                    {qtdNum} palete{qtdNum > 1 ? "s" : ""} × {caixasPorPalete} cx = <span className="font-semibold">{qtdEmCaixas} cx</span>
+                  </p>
+                )}
+              </div>
             </div>
-          </div>
-        )}
+          );
+        })}
 
-        <div className="flex flex-col gap-1">
-          <div className="flex items-center justify-between">
-            <label className="text-xs font-semibold uppercase tracking-wider text-zinc-300">
-              Quantidade {unidadeEntrada === "palete" ? "(paletes)" : "(caixas)"}
-            </label>
-            {tipo === "saida" && saldoAtual !== null && (
-              <span className="text-xs text-zinc-500">
-                Disponivel: <span className={saldoAtual === 0 ? "text-red-400" : "text-zinc-300"}>{saldoAtual} cx</span>
-              </span>
-            )}
-          </div>
-          <input
-            type="number"
-            min="1"
-            value={quantidade}
-            onChange={(e) => setQuantidade(e.target.value)}
-            className="input-field"
-          />
-          {unidadeEntrada === "palete" && caixasPorPalete && qtdNum > 0 && (
-            <p className="text-xs text-indigo-400 mt-1">
-              {qtdNum} palete{qtdNum > 1 ? "s" : ""} × {caixasPorPalete} cx = <span className="font-semibold">{qtdEmCaixas} cx</span>
-            </p>
-          )}
-        </div>
-
-        <div className="flex flex-col gap-1">
-          <label className="text-xs font-semibold uppercase tracking-wider text-zinc-300">
-            Observacao <span className="text-zinc-400 normal-case font-normal">(opcional)</span>
-          </label>
-          <input
-            type="text"
-            value={observacao}
-            onChange={(e) => setObservacao(e.target.value)}
-            className="input-field"
-            placeholder="Ex: observacao adicional"
-          />
-        </div>
+        <button
+          type="button"
+          onClick={() => setItens((prev) => [...prev, novoItem()])}
+          className="text-xs text-zinc-400 hover:text-white transition-colors text-left pt-1"
+        >
+          + Adicionar produto
+        </button>
 
         {erro && (
-          <p className="text-xs text-red-400 bg-red-950/50 border border-red-800 px-3 py-2">{erro}</p>
+          <p className="text-xs text-red-400 bg-red-950/50 border border-red-800 px-3 py-2 rounded-lg">{erro}</p>
         )}
 
         <div className="flex gap-3 mt-2">

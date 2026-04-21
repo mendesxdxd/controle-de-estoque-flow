@@ -158,36 +158,44 @@ function gerarFechamento(rows: EstoqueAtualRow[], movimentacoes: Movimentacao[],
     );
   });
 
-  function agruparMovs(tipo: "entrada" | "saida") {
-    const mapa: Record<string, { nome: string; paletes: number }> = {};
+  function linhasPorNota(tipo: "entrada" | "saida"): string[] {
+    const porNota: Record<string, { nota: string | null; itens: string[] }> = {};
+    const semNota: string[] = [];
+
     movsHoje
       .filter((m) => m.tipo === tipo)
       .forEach((m) => {
         const cxPal = m.produtos?.caixas_por_palete ?? null;
-        const paletes = cxPal ? m.quantidade / cxPal : null;
-        const nome = m.produtos?.nome ?? "Desconhecido";
-        if (!mapa[nome]) mapa[nome] = { nome, paletes: 0 };
-        if (paletes !== null) mapa[nome].paletes += paletes;
+        const paletes = cxPal ? Math.round(m.quantidade / cxPal) : m.quantidade;
+        const nome = m.produtos?.nome?.toUpperCase() ?? "DESCONHECIDO";
+        const item = `${paletes} PALETES DE ${nome}`;
+
+        if (m.nota_fiscal) {
+          if (!porNota[m.nota_fiscal]) porNota[m.nota_fiscal] = { nota: m.nota_fiscal, itens: [] };
+          porNota[m.nota_fiscal].itens.push(item);
+        } else {
+          semNota.push(`• ${item}`);
+        }
       });
-    return Object.values(mapa);
+
+    const linhasNota = Object.values(porNota).map(
+      ({ nota, itens }) => `${nota} - ${itens.join(" / ")}`
+    );
+
+    return [...linhasNota, ...semNota];
   }
 
-  const entradas = agruparMovs("entrada");
-  const saidas = agruparMovs("saida");
+  const linhasEntradas = linhasPorNota("entrada");
+  const linhasSaidas = linhasPorNota("saida");
+
+  if (linhasEntradas.length === 0) linhasEntradas.push("• Nenhuma");
+  if (linhasSaidas.length === 0) linhasSaidas.push("• Nenhuma");
 
   const totalPaletes = rows.reduce((acc, r) => {
     if (!r.caixas_por_palete) return acc;
     return acc + r.estoque_atual / r.caixas_por_palete;
   }, 0);
   const espacoDisponivel = capacidadeArmazem - totalPaletes;
-
-  const linhasEntradas = entradas.length > 0
-    ? entradas.map((e) => `• ${e.nome}: ${Number(e.paletes.toFixed(1)).toLocaleString("pt-BR")} paletes`)
-    : ["• Nenhuma"];
-
-  const linhasSaidas = saidas.length > 0
-    ? saidas.map((s) => `• ${s.nome}: ${Number(s.paletes.toFixed(1)).toLocaleString("pt-BR")} paletes`)
-    : ["• Nenhuma"];
 
   function emojiProduto(nome: string): string {
     const n = nome.toUpperCase();
