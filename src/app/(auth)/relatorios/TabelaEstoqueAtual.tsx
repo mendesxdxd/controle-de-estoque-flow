@@ -189,12 +189,22 @@ function gerarFechamento(rows: EstoqueAtualRow[], movimentacoes: Movimentacao[],
     ? saidas.map((s) => `• ${s.nome}: ${Number(s.paletes.toFixed(1)).toLocaleString("pt-BR")} paletes`)
     : ["• Nenhuma"];
 
+  function emojiProduto(nome: string): string {
+    const n = nome.toUpperCase();
+    if (n.includes("CREME")) return "🥫";
+    if (n.includes("LEITE")) return "🥛";
+    if (n.includes("MANTEIGA") || n.includes("BUTTER")) return "🧈";
+    if (n.includes("IOGURTE") || n.includes("YOGURT")) return "🫙";
+    if (n.includes("QUEIJO") || n.includes("CHEESE")) return "🧀";
+    return "📦";
+  }
+
   const linhasEstoque = rows
     .filter((r) => r.caixas_por_palete && r.estoque_atual > 0)
     .map((r) => {
       const pal = Number((r.estoque_atual / r.caixas_por_palete!).toFixed(1)).toLocaleString("pt-BR");
       const cx = r.estoque_atual.toLocaleString("pt-BR");
-      return `📦 ${r.nome.toUpperCase()}: ${pal} paletes (${cx} cx)\n`;
+      return `${emojiProduto(r.nome)} ${r.nome.toUpperCase()}: ${pal} paletes (${cx} cx)\n`;
     });
 
   return [
