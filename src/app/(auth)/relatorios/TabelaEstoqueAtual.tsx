@@ -14,7 +14,7 @@ type Props = {
 
 function gerarPDF(rows: EstoqueAtualRow[], valorTotal: number, totalPaletes: number) {
   import("jspdf").then(({ default: jsPDF }) => {
-    import("jspdf-autotable").then(({ default: autoTable }) => {
+    import("jspdf-autotable").then(({ default: autoTable }) => { try {
       const doc = new jsPDF({ orientation: "landscape" });
       const pageW = doc.internal.pageSize.getWidth();
       const pageH = doc.internal.pageSize.getHeight();
@@ -121,7 +121,7 @@ function gerarPDF(rows: EstoqueAtualRow[], valorTotal: number, totalPaletes: num
       doc.text("FlowStock — Sistema de Controle de Estoque", 14, pageH - 6);
       doc.text(hoje, pageW - 14, pageH - 6, { align: "right" });
 
-      const finalY = (doc as any).lastAutoTable.finalY + 8;
+      const finalY = ((doc as any).lastAutoTable?.finalY ?? 34) + 8;
 
       doc.setFontSize(8);
       doc.setFont("helvetica", "normal");
@@ -141,7 +141,7 @@ function gerarPDF(rows: EstoqueAtualRow[], valorTotal: number, totalPaletes: num
       }
 
       doc.save(`estoque-${hoje.replace(/\//g, "-")}.pdf`);
-    });
+    } catch {} });
   });
 }
 
