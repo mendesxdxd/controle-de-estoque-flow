@@ -1,6 +1,7 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
+import { getTenant } from "@/lib/tenant";
 import { revalidatePath } from "next/cache";
 
 type DadosCategoria = {
@@ -14,6 +15,9 @@ export async function salvarCategoria(dados: DadosCategoria) {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { erro: "Nao autenticado." };
 
+  const tenant = await getTenant();
+  if (!tenant) return { erro: "Tenant nao encontrado." };
+
   if (dados.id) {
     const { error } = await supabase
       .from("categorias")
@@ -25,7 +29,7 @@ export async function salvarCategoria(dados: DadosCategoria) {
   } else {
     const { error } = await supabase
       .from("categorias")
-      .insert({ nome: dados.nome, descricao: dados.descricao, user_id: user.id });
+      .insert({ nome: dados.nome, descricao: dados.descricao, user_id: user.id, tenant_id: tenant.id });
 
     if (error) return { erro: "Erro ao criar categoria." };
   }

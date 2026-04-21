@@ -3,20 +3,19 @@
 import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
 import { EstoqueAtualRow } from "@/types";
 
-const CAPACIDADE_ARMAZEM = 1700;
-
 type Props = {
   estoqueAtual: EstoqueAtualRow[];
+  capacidadeArmazem: number;
 };
 
-export default function GraficoCapacidade({ estoqueAtual }: Props) {
+export default function GraficoCapacidade({ estoqueAtual, capacidadeArmazem }: Props) {
   const totalPaletes = estoqueAtual.reduce((acc, r) => {
     if (!r.caixas_por_palete) return acc;
     return acc + r.estoque_atual / r.caixas_por_palete;
   }, 0);
 
-  const disponivel = Math.max(CAPACIDADE_ARMAZEM - totalPaletes, 0);
-  const percentual = Math.min((totalPaletes / CAPACIDADE_ARMAZEM) * 100, 100);
+  const disponivel = Math.max(capacidadeArmazem - totalPaletes, 0);
+  const percentual = capacidadeArmazem > 0 ? Math.min((totalPaletes / capacidadeArmazem) * 100, 100) : 0;
 
   const dados = [
     { nome: "Ocupado", valor: Number(totalPaletes.toFixed(1)) },
@@ -72,7 +71,7 @@ export default function GraficoCapacidade({ estoqueAtual }: Props) {
         <div className="w-px bg-white/[0.06]" />
         <div>
           <p className="text-lg font-bold text-white tabular-nums">
-            {CAPACIDADE_ARMAZEM.toLocaleString("pt-BR")}
+            {capacidadeArmazem.toLocaleString("pt-BR")}
           </p>
           <p className="text-xs text-zinc-500">capacidade total</p>
         </div>

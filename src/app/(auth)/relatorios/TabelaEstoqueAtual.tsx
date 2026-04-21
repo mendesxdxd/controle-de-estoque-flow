@@ -4,12 +4,12 @@ import { useState } from "react";
 import { EstoqueAtualRow, Movimentacao } from "@/types";
 import { formatarMoeda } from "@/lib/utils";
 
-const CAPACIDADE_ARMAZEM = 1700;
-
 type Props = {
   rows: EstoqueAtualRow[];
   movimentacoes: Movimentacao[];
   podeFechamento: boolean;
+  capacidadeArmazem: number;
+  tenantNome: string;
 };
 
 function gerarPDF(rows: EstoqueAtualRow[], valorTotal: number, totalPaletes: number) {
@@ -145,7 +145,7 @@ function gerarPDF(rows: EstoqueAtualRow[], valorTotal: number, totalPaletes: num
   });
 }
 
-function gerarFechamento(rows: EstoqueAtualRow[], movimentacoes: Movimentacao[]) {
+function gerarFechamento(rows: EstoqueAtualRow[], movimentacoes: Movimentacao[], capacidadeArmazem: number, tenantNome: string) {
   const hoje = new Date();
   const hojeStr = hoje.toLocaleDateString("pt-BR");
 
@@ -179,7 +179,7 @@ function gerarFechamento(rows: EstoqueAtualRow[], movimentacoes: Movimentacao[])
     if (!r.caixas_por_palete) return acc;
     return acc + r.estoque_atual / r.caixas_por_palete;
   }, 0);
-  const espacoDisponivel = CAPACIDADE_ARMAZEM - totalPaletes;
+  const espacoDisponivel = capacidadeArmazem - totalPaletes;
 
   const linhasEntradas = entradas.length > 0
     ? entradas.map((e) => `• ${e.nome}: ${Number(e.paletes.toFixed(1)).toLocaleString("pt-BR")} paletes`)
@@ -194,12 +194,11 @@ function gerarFechamento(rows: EstoqueAtualRow[], movimentacoes: Movimentacao[])
     .map((r) => {
       const pal = Number((r.estoque_atual / r.caixas_por_palete!).toFixed(1)).toLocaleString("pt-BR");
       const cx = r.estoque_atual.toLocaleString("pt-BR");
-      const icone = r.nome.toUpperCase().includes("CREME DE LEITE") ? "🥫" : "🥛";
-      return `${icone} ${r.nome.toUpperCase()}: ${pal} paletes (${cx} cx)\n`;
+      return `📦 ${r.nome.toUpperCase()}: ${pal} paletes (${cx} cx)\n`;
     });
 
   return [
-    `*FECHAMENTO OPL - MA - ${hojeStr}*`,
+    `*FECHAMENTO ${tenantNome.toUpperCase()} - ${hojeStr}*`,
     ``,
     `📦 Movimentação do dia`,
     ``,
@@ -242,7 +241,7 @@ function gerarMensagem(rows: EstoqueAtualRow[], valorTotal: number, totalPaletes
     .join("\n");
 }
 
-export default function TabelaEstoqueAtual({ rows, movimentacoes, podeFechamento }: Props) {
+export default function TabelaEstoqueAtual({ rows, movimentacoes, podeFechamento, capacidadeArmazem, tenantNome }: Props) {
   const [copiado, setCopiado] = useState(false);
   const [copiadoFechamento, setCopiadoFechamento] = useState(false);
 
@@ -271,7 +270,7 @@ export default function TabelaEstoqueAtual({ rows, movimentacoes, podeFechamento
 
   async function handleCopiarFechamento() {
     try {
-      const mensagem = gerarFechamento(rows, movimentacoes);
+      const mensagem = gerarFechamento(rows, movimentacoes, capacidadeArmazem, tenantNome);
       await navigator.clipboard.writeText(mensagem);
       setCopiadoFechamento(true);
       setTimeout(() => setCopiadoFechamento(false), 2500);

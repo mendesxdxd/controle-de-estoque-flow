@@ -1,25 +1,24 @@
 import { createClient } from "@/lib/supabase/server";
+import { getTenant } from "@/lib/tenant";
 import { EstoqueAtualRow, Movimentacao } from "@/types";
 import TabelaEstoqueAtual from "./TabelaEstoqueAtual";
 import TabelaEstoqueBaixo from "./TabelaEstoqueBaixo";
 import FiltroMovimentacoes from "./FiltroMovimentacoes";
 
-
 export default async function RelatoriosPage() {
   const supabase = await createClient();
+  const tenant = await getTenant();
 
-  const { data: { user } } = await supabase.auth.getUser();
-
-  const [{ data: estoqueAtual }, { data: movimentacoes }, { data: perfil }] = await Promise.all([
+  const [{ data: estoqueAtual }, { data: movimentacoes }] = await Promise.all([
     supabase.from("estoque_atual").select("*").order("nome"),
     supabase
       .from("movimentacoes")
       .select("*, produtos(id, nome, unidade, caixas_por_palete)")
       .order("created_at", { ascending: false }),
-    supabase.from("perfis").select("pode_fechamento").eq("user_id", user?.id ?? "").single(),
   ]);
 
-  const podeFechamento = perfil?.pode_fechamento ?? false;
+  const podeFechamento = tenant?.pode_fechamento ?? false;
+  const capacidadeArmazem = tenant?.capacidade_armazem ?? 0;
 
   const estoqueBaixo = (estoqueAtual as EstoqueAtualRow[])?.filter(
     (p) => p.estoque_atual <= p.estoque_minimo
@@ -41,6 +40,8 @@ export default async function RelatoriosPage() {
           rows={(estoqueAtual as EstoqueAtualRow[]) ?? []}
           movimentacoes={(movimentacoes as Movimentacao[]) ?? []}
           podeFechamento={podeFechamento}
+          capacidadeArmazem={capacidadeArmazem}
+          tenantNome={tenant?.nome ?? ""}
         />
       </section>
 

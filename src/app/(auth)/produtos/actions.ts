@@ -1,6 +1,7 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
+import { getTenant } from "@/lib/tenant";
 import { revalidatePath } from "next/cache";
 
 type DadosProduto = {
@@ -19,6 +20,9 @@ export async function salvarProduto(dados: DadosProduto) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { erro: "Nao autenticado." };
+
+  const tenant = await getTenant();
+  if (!tenant) return { erro: "Tenant nao encontrado." };
 
   const payload = {
     nome: dados.nome,
@@ -42,7 +46,7 @@ export async function salvarProduto(dados: DadosProduto) {
   } else {
     const { error } = await supabase
       .from("produtos")
-      .insert({ ...payload, user_id: user.id });
+      .insert({ ...payload, user_id: user.id, tenant_id: tenant.id });
 
     if (error) return { erro: "Erro ao criar produto." };
   }

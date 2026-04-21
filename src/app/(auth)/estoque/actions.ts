@@ -1,6 +1,7 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
+import { getTenant } from "@/lib/tenant";
 import { revalidatePath } from "next/cache";
 
 type DadosMovimentacao = {
@@ -14,6 +15,9 @@ export async function registrarMovimentacao(dados: DadosMovimentacao) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { erro: "Nao autenticado." };
+
+  const tenant = await getTenant();
+  if (!tenant) return { erro: "Tenant nao encontrado." };
 
   if (dados.tipo === "saida") {
     const { data: movs } = await supabase
@@ -38,6 +42,7 @@ export async function registrarMovimentacao(dados: DadosMovimentacao) {
     quantidade: dados.quantidade,
     observacao: dados.observacao,
     user_id: user.id,
+    tenant_id: tenant.id,
   });
 
   if (error) return { erro: "Erro ao registrar movimentacao." };

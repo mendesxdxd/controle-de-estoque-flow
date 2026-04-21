@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { getTenant } from "@/lib/tenant";
 import { EstoqueAtualRow, Movimentacao } from "@/types";
 import { formatarMoeda } from "@/lib/utils";
 import GraficoMovimentacoes from "./GraficoMovimentacoes";
@@ -6,14 +7,12 @@ import GraficoCapacidade from "./GraficoCapacidade";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
-
-  const { data: { user } } = await supabase.auth.getUser();
+  const tenant = await getTenant();
 
   const [
     { data: estoqueAtual },
     { count: totalCategorias },
     { data: ultimasMovimentacoes },
-    { data: perfil },
   ] = await Promise.all([
     supabase.from("estoque_atual").select("*"),
     supabase.from("categorias").select("*", { count: "exact", head: true }),
@@ -22,10 +21,10 @@ export default async function DashboardPage() {
       .select("*, produtos(id, nome, unidade)")
       .gte("created_at", new Date(new Date().setHours(0, 0, 0, 0)).toISOString())
       .order("created_at", { ascending: false }),
-    supabase.from("perfis").select("pode_fechamento").eq("user_id", user?.id ?? "").single(),
   ]);
 
-  const podeGraficos = perfil?.pode_fechamento ?? false;
+  const podeGraficos = tenant?.pode_fechamento ?? false;
+  const capacidadeArmazem = tenant?.capacidade_armazem ?? 0;
 
   const rows = (estoqueAtual as EstoqueAtualRow[]) ?? [];
   const totalProdutos = rows.length;
@@ -131,7 +130,7 @@ export default async function DashboardPage() {
               <h2 className="text-sm font-semibold text-white">Capacidade do galpao</h2>
             </div>
             <div className="p-5">
-              <GraficoCapacidade estoqueAtual={rows} />
+              <GraficoCapacidade estoqueAtual={rows} capacidadeArmazem={capacidadeArmazem} />
             </div>
           </section>
         </div>
