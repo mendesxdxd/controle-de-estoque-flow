@@ -1,23 +1,31 @@
 import { createClient } from "@/lib/supabase/server";
 import { EstoqueAtualRow, Movimentacao } from "@/types";
 import { formatarMoeda } from "@/lib/utils";
+import GraficoMovimentacoes from "./GraficoMovimentacoes";
+import GraficoCapacidade from "./GraficoCapacidade";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
+
+  const { data: { user } } = await supabase.auth.getUser();
 
   const [
     { data: estoqueAtual },
     { count: totalCategorias },
     { data: ultimasMovimentacoes },
+    { data: perfil },
   ] = await Promise.all([
     supabase.from("estoque_atual").select("*"),
     supabase.from("categorias").select("*", { count: "exact", head: true }),
     supabase
       .from("movimentacoes")
       .select("*, produtos(id, nome, unidade)")
-      .order("created_at", { ascending: false })
-      .limit(8),
+      .gte("created_at", new Date(new Date().setHours(0, 0, 0, 0)).toISOString())
+      .order("created_at", { ascending: false }),
+    supabase.from("perfis").select("pode_fechamento").eq("user_id", user?.id ?? "").single(),
   ]);
+
+  const podeGraficos = perfil?.pode_fechamento ?? false;
 
   const rows = (estoqueAtual as EstoqueAtualRow[]) ?? [];
   const totalProdutos = rows.length;
@@ -106,12 +114,35 @@ export default async function DashboardPage() {
         </div>
       </div>
 
+      {/* Graficos */}
+      {podeGraficos && (
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+          <section className="bg-zinc-900/60 backdrop-blur-sm border border-white/[0.08] rounded-2xl overflow-hidden">
+            <div className="px-5 py-4 border-b border-white/[0.06]">
+              <h2 className="text-sm font-semibold text-white">Movimentacao do dia</h2>
+            </div>
+            <div className="p-5">
+              <GraficoMovimentacoes movimentacoes={(ultimasMovimentacoes as Movimentacao[]) ?? []} />
+            </div>
+          </section>
+
+          <section className="bg-zinc-900/60 backdrop-blur-sm border border-white/[0.08] rounded-2xl overflow-hidden">
+            <div className="px-5 py-4 border-b border-white/[0.06]">
+              <h2 className="text-sm font-semibold text-white">Capacidade do galpao</h2>
+            </div>
+            <div className="p-5">
+              <GraficoCapacidade estoqueAtual={rows} />
+            </div>
+          </section>
+        </div>
+      )}
+
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        {/* Ultimas movimentacoes */}
+        {/* Movimentacoes de hoje */}
         <section className="bg-zinc-900/60 backdrop-blur-sm border border-white/[0.08] rounded-2xl overflow-hidden">
           <div className="px-5 py-4 border-b border-white/[0.06] flex items-center justify-between">
-            <h2 className="text-sm font-semibold text-white">Ultimas movimentacoes</h2>
-            <span className="text-xs text-zinc-600">ultimas 8</span>
+            <h2 className="text-sm font-semibold text-white">Movimentacoes de hoje</h2>
+            <span className="text-xs text-zinc-600">hoje</span>
           </div>
 
           {!ultimasMovimentacoes || ultimasMovimentacoes.length === 0 ? (
