@@ -43,18 +43,18 @@ export default function NovoClientePage() {
           Admin
         </Link>
         <span className="text-zinc-700">/</span>
-        <span className="text-sm text-white">Novo cliente</span>
+        <span className="text-sm text-white">Nova empresa</span>
       </div>
 
       <div>
-        <h1 className="page-title">Novo cliente</h1>
-        <p className="page-subtitle">Cadastrar um novo tenant no sistema</p>
+        <h1 className="page-title">Nova empresa</h1>
+        <p className="page-subtitle">Cadastrar uma nova empresa no sistema</p>
       </div>
 
       <div className="glass-panel p-6">
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <div className="flex flex-col gap-1">
-            <label className="text-xs font-semibold uppercase tracking-wider text-zinc-300">Nome do cliente</label>
+            <label className="text-xs font-semibold uppercase tracking-wider text-zinc-300">Nome da empresa</label>
             <input
               type="text"
               value={nome}
@@ -82,7 +82,7 @@ export default function NovoClientePage() {
 
           <div className="flex gap-3 mt-2">
             <button type="submit" disabled={salvando} className="btn-primary">
-              {salvando ? "Criando..." : "Criar cliente"}
+              {salvando ? "Criando..." : "Criar empresa"}
             </button>
             <Link href="/admin" className="btn-secondary">
               Cancelar

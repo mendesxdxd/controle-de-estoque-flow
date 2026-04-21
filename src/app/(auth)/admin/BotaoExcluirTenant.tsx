@@ -7,7 +7,7 @@ export default function BotaoExcluirTenant({ id, nome }: { id: string; nome: str
   const [excluindo, setExcluindo] = useState(false);
 
   async function handleExcluir() {
-    if (!confirm(`Deseja excluir o cliente "${nome}"? Todos os dados vinculados serao perdidos.`)) return;
+    if (!confirm(`Deseja excluir a empresa "${nome}"? Todos os dados vinculados serao perdidos.`)) return;
     setExcluindo(true);
     await excluirTenant(id);
     setExcluindo(false);

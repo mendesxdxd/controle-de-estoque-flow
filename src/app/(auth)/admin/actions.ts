@@ -15,7 +15,7 @@ export async function listarTenants() {
     .from("tenants")
     .select("*")
     .order("created_at", { ascending: false });
-  if (error) return { erro: "Erro ao listar clientes.", tenants: [] };
+  if (error) return { erro: "Erro ao listar empresas.", tenants: [] };
   return { tenants: data };
 }
 
@@ -25,7 +25,7 @@ export async function criarTenant(nome: string, capacidadeArmazem: number | null
   const { error } = await admin
     .from("tenants")
     .insert({ nome, capacidade_armazem: capacidadeArmazem });
-  if (error) return { erro: "Erro ao criar cliente." };
+  if (error) return { erro: "Erro ao criar empresa." };
   revalidatePath("/admin");
 }
 
@@ -46,7 +46,7 @@ export async function excluirTenant(id: string) {
   }
 
   const { error } = await admin.from("tenants").delete().eq("id", id);
-  if (error) return { erro: "Erro ao excluir cliente." };
+  if (error) return { erro: "Erro ao excluir empresa." };
 
   revalidatePath("/admin");
 }
@@ -58,7 +58,7 @@ export async function atualizarTenant(id: string, nome: string, capacidadeArmaze
     .from("tenants")
     .update({ nome, capacidade_armazem: capacidadeArmazem })
     .eq("id", id);
-  if (error) return { erro: "Erro ao atualizar cliente." };
+  if (error) return { erro: "Erro ao atualizar empresa." };
   revalidatePath("/admin");
   revalidatePath(`/admin/clientes/${id}`);
 }
@@ -113,7 +113,7 @@ export async function criarUsuarioTenant(
 
   if (perfilError) {
     await admin.auth.admin.deleteUser(data.user.id);
-    return { erro: "Erro ao vincular usuario ao cliente." };
+    return { erro: "Erro ao vincular usuario a empresa." };
   }
 
   revalidatePath(`/admin/clientes/${tenantId}`);

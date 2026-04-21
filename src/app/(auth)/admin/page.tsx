@@ -17,23 +17,23 @@ export default async function AdminPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="page-title">Admin</h1>
-          <p className="page-subtitle">Gerenciamento de clientes</p>
+          <p className="page-subtitle">Gerenciamento de empresas</p>
         </div>
         <Link href="/admin/clientes/novo" className="btn-primary">
-          Novo cliente
+          Nova empresa
         </Link>
       </div>
 
       {tenants.length === 0 ? (
         <div className="glass-panel py-16 text-center">
-          <p className="text-sm text-zinc-400">Nenhum cliente cadastrado.</p>
+          <p className="text-sm text-zinc-400">Nenhuma empresa cadastrada.</p>
         </div>
       ) : (
         <div className="glass-table overflow-x-auto">
           <table className="w-full text-sm border-collapse">
             <thead>
               <tr className="table-header">
-                <th className="table-th">Cliente</th>
+                <th className="table-th">Empresa</th>
                 <th className="table-th-right">Capacidade</th>
                 <th className="table-th">Criado em</th>
                 <th className="py-3 px-4" />

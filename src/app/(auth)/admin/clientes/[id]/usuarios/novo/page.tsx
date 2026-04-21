@@ -53,14 +53,14 @@ export default function NovoUsuarioPage() {
       <div className="flex items-center gap-3 flex-wrap">
         <Link href="/admin" className="text-zinc-500 hover:text-white transition-colors text-sm">Admin</Link>
         <span className="text-zinc-700">/</span>
-        <Link href={`/admin/clientes/${tenantId}`} className="text-zinc-500 hover:text-white transition-colors text-sm">Cliente</Link>
+        <Link href={`/admin/clientes/${tenantId}`} className="text-zinc-500 hover:text-white transition-colors text-sm">Empresa</Link>
         <span className="text-zinc-700">/</span>
         <span className="text-sm text-white">Novo usuario</span>
       </div>
 
       <div>
         <h1 className="page-title">Novo usuario</h1>
-        <p className="page-subtitle">Criar e vincular usuario ao cliente</p>
+        <p className="page-subtitle">Criar e vincular usuario a empresa</p>
       </div>
 
       <div className="glass-panel p-6">

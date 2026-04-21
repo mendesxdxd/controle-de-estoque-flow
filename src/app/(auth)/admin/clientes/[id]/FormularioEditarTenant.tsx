@@ -57,7 +57,7 @@ export default function FormularioEditarTenant({ id, nomeInicial, capacidadeInic
           value={nome}
           onChange={(e) => setNome(e.target.value)}
           className="input-field"
-          placeholder="Nome do cliente"
+          placeholder="Nome da empresa"
         />
       </div>
       <div className="flex flex-col gap-1">
