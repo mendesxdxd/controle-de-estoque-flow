@@ -1,16 +1,11 @@
 "use server";
 
-import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { isAdminUser } from "@/lib/admin";
 import { revalidatePath } from "next/cache";
 
 async function verificarAdmin() {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user || user.email !== process.env.ADMIN_EMAIL) {
-    throw new Error("Acesso negado.");
-  }
-  return user;
+  if (!(await isAdminUser())) throw new Error("Acesso negado.");
 }
 
 export async function listarTenants() {
@@ -160,7 +155,8 @@ export async function atualizarPermissao(userId: string, podeFechamento: boolean
   const { error } = await admin
     .from("perfis")
     .update({ pode_fechamento: podeFechamento })
-    .eq("user_id", userId);
+    .eq("user_id", userId)
+    .eq("tenant_id", tenantId);
   if (error) return { erro: "Erro ao atualizar permissao." };
   revalidatePath(`/admin/clientes/${tenantId}`);
 }
@@ -169,7 +165,7 @@ export async function excluirUsuarioTenant(userId: string, tenantId: string) {
   await verificarAdmin();
   const admin = createAdminClient();
 
-  await admin.from("perfis").delete().eq("user_id", userId);
+  await admin.from("perfis").delete().eq("user_id", userId).eq("tenant_id", tenantId);
   const { error } = await admin.auth.admin.deleteUser(userId);
   if (error) return { erro: "Erro ao excluir usuario." };
 

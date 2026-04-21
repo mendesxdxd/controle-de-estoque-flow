@@ -1,16 +1,11 @@
 "use server";
 
 import { createAdminClient } from "@/lib/supabase/admin";
-import { createClient } from "@/lib/supabase/server";
+import { isAdminUser } from "@/lib/admin";
 import { revalidatePath } from "next/cache";
 
 async function verificarAdmin() {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user || user.email !== process.env.ADMIN_EMAIL) {
-    throw new Error("Acesso negado.");
-  }
-  return user;
+  if (!(await isAdminUser())) throw new Error("Acesso negado.");
 }
 
 export async function listarUsuarios() {
