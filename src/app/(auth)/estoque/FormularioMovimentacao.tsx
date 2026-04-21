@@ -38,6 +38,11 @@ export default function FormularioMovimentacao({ produtos, saldoPorProduto, tipo
     e.preventDefault();
     setErro("");
 
+    if (!notaFiscal.trim()) {
+      setErro("Numero da nota e obrigatorio.");
+      return;
+    }
+
     if (!produtoId) {
       setErro("Selecione um produto.");
       return;
@@ -63,7 +68,7 @@ export default function FormularioMovimentacao({ produtos, saldoPorProduto, tipo
       tipo,
       quantidade: qtdEmCaixas,
       observacao: obsAuto,
-      nota_fiscal: notaFiscal.trim() || null,
+      nota_fiscal: notaFiscal.trim(),
     });
 
     if (resultado?.erro) {
@@ -104,7 +109,7 @@ export default function FormularioMovimentacao({ produtos, saldoPorProduto, tipo
         </div>
 
         <div className="flex flex-col gap-1">
-          <label className="text-xs font-semibold uppercase tracking-wider text-zinc-300">Numero da nota <span className="text-zinc-500 normal-case font-normal">(opcional)</span></label>
+          <label className="text-xs font-semibold uppercase tracking-wider text-zinc-300">Numero da nota</label>
           <input
             type="text"
             value={notaFiscal}

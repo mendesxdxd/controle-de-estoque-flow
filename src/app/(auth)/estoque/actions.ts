@@ -9,7 +9,7 @@ type DadosMovimentacao = {
   tipo: "entrada" | "saida";
   quantidade: number;
   observacao: string | null;
-  nota_fiscal: string | null;
+  nota_fiscal: string;
 };
 
 export async function registrarMovimentacao(dados: DadosMovimentacao) {
