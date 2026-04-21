@@ -161,6 +161,18 @@ export async function atualizarPermissao(userId: string, podeFechamento: boolean
   revalidatePath(`/admin/clientes/${tenantId}`);
 }
 
+export async function desvincularUsuario(userId: string, tenantId: string) {
+  await verificarAdmin();
+  const admin = createAdminClient();
+  const { error } = await admin
+    .from("perfis")
+    .delete()
+    .eq("user_id", userId)
+    .eq("tenant_id", tenantId);
+  if (error) return { erro: "Erro ao desvincular usuario." };
+  revalidatePath(`/admin/clientes/${tenantId}`);
+}
+
 export async function excluirUsuarioTenant(userId: string, tenantId: string) {
   await verificarAdmin();
   const admin = createAdminClient();
