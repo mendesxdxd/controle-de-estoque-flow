@@ -40,7 +40,7 @@ export async function salvarProduto(dados: DadosProduto) {
       .from("produtos")
       .update(payload)
       .eq("id", dados.id)
-      .eq("user_id", user.id);
+      .eq("tenant_id", tenant.id);
 
     if (error) return { erro: "Erro ao atualizar produto." };
   } else {
@@ -56,14 +56,14 @@ export async function salvarProduto(dados: DadosProduto) {
 
 export async function excluirProduto(id: string) {
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return { erro: "Nao autenticado." };
+  const tenant = await getTenant();
+  if (!tenant) return { erro: "Tenant nao encontrado." };
 
   const { error } = await supabase
     .from("produtos")
     .delete()
     .eq("id", id)
-    .eq("user_id", user.id);
+    .eq("tenant_id", tenant.id);
 
   if (error) return { erro: "Erro ao excluir produto." };
 

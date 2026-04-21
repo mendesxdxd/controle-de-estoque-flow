@@ -87,6 +87,18 @@ const secondaryLinks = [
       </svg>
     ),
   },
+  {
+    href: "/admin",
+    label: "Admin",
+    adminOnly: true,
+    icon: (
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 2a5 5 0 0 1 5 5c0 3.5-2.5 6-5 8-2.5-2-5-4.5-5-8a5 5 0 0 1 5-5z" />
+        <path d="M12 22v-4" />
+        <path d="M8 22h8" />
+      </svg>
+    ),
+  },
 ];
 
 export default function Sidebar({ isAdmin, userEmail }: { isAdmin: boolean; userEmail: string }) {

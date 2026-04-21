@@ -23,7 +23,7 @@ export async function salvarCategoria(dados: DadosCategoria) {
       .from("categorias")
       .update({ nome: dados.nome, descricao: dados.descricao })
       .eq("id", dados.id)
-      .eq("user_id", user.id);
+      .eq("tenant_id", tenant.id);
 
     if (error) return { erro: "Erro ao atualizar categoria." };
   } else {
@@ -39,14 +39,14 @@ export async function salvarCategoria(dados: DadosCategoria) {
 
 export async function excluirCategoria(id: string) {
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return { erro: "Nao autenticado." };
+  const tenant = await getTenant();
+  if (!tenant) return { erro: "Tenant nao encontrado." };
 
   const { error } = await supabase
     .from("categorias")
     .delete()
     .eq("id", id)
-    .eq("user_id", user.id);
+    .eq("tenant_id", tenant.id);
 
   if (error) return { erro: "Erro ao excluir categoria." };
 

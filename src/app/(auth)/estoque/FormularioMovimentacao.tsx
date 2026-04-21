@@ -14,6 +14,7 @@ type Props = {
 
 export default function FormularioMovimentacao({ produtos, saldoPorProduto, tipoInicial, onFechar, onSucesso }: Props) {
   const [tipo, setTipo] = useState<"entrada" | "saida">(tipoInicial);
+  const [notaFiscal, setNotaFiscal] = useState("");
   const [produtoId, setProdutoId] = useState("");
   const [quantidade, setQuantidade] = useState("1");
   const [unidadeEntrada, setUnidadeEntrada] = useState<"cx" | "palete">("cx");
@@ -36,6 +37,11 @@ export default function FormularioMovimentacao({ produtos, saldoPorProduto, tipo
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setErro("");
+
+    if (!notaFiscal.trim()) {
+      setErro("Numero da nota e obrigatorio.");
+      return;
+    }
 
     if (!produtoId) {
       setErro("Selecione um produto.");
@@ -62,6 +68,7 @@ export default function FormularioMovimentacao({ produtos, saldoPorProduto, tipo
       tipo,
       quantidade: qtdEmCaixas,
       observacao: obsAuto,
+      nota_fiscal: notaFiscal.trim(),
     });
 
     if (resultado?.erro) {
@@ -80,10 +87,7 @@ export default function FormularioMovimentacao({ produtos, saldoPorProduto, tipo
         <h2 className="text-sm font-bold uppercase tracking-wider text-white">
           Registrar movimentacao
         </h2>
-        <button
-          onClick={onFechar}
-          className="text-xs text-zinc-500 hover:text-white transition-colors"
-        >
+        <button onClick={onFechar} className="text-xs text-zinc-500 hover:text-white transition-colors">
           Fechar
         </button>
       </div>
@@ -96,14 +100,23 @@ export default function FormularioMovimentacao({ produtos, saldoPorProduto, tipo
               type="button"
               onClick={() => setTipo(t)}
               className={`px-5 py-2 text-sm font-semibold capitalize rounded-lg transition-all duration-150 ${
-                tipo === t
-                  ? "bg-white/10 text-white"
-                  : "text-zinc-500 hover:text-white hover:bg-white/5"
+                tipo === t ? "bg-white/10 text-white" : "text-zinc-500 hover:text-white hover:bg-white/5"
               }`}
             >
               {t}
             </button>
           ))}
+        </div>
+
+        <div className="flex flex-col gap-1">
+          <label className="text-xs font-semibold uppercase tracking-wider text-zinc-300">Numero da nota</label>
+          <input
+            type="text"
+            value={notaFiscal}
+            onChange={(e) => setNotaFiscal(e.target.value)}
+            className="input-field"
+            placeholder="Ex: 6100181424"
+          />
         </div>
 
         <div className="flex flex-col gap-1">
@@ -130,9 +143,7 @@ export default function FormularioMovimentacao({ produtos, saldoPorProduto, tipo
                 type="button"
                 onClick={() => setUnidadeEntrada("cx")}
                 className={`px-4 py-1.5 text-sm font-semibold rounded-lg transition-all duration-150 ${
-                  unidadeEntrada === "cx"
-                    ? "bg-white/10 text-white"
-                    : "text-zinc-500 hover:text-white hover:bg-white/5"
+                  unidadeEntrada === "cx" ? "bg-white/10 text-white" : "text-zinc-500 hover:text-white hover:bg-white/5"
                 }`}
               >
                 Caixa
@@ -141,9 +152,7 @@ export default function FormularioMovimentacao({ produtos, saldoPorProduto, tipo
                 type="button"
                 onClick={() => setUnidadeEntrada("palete")}
                 className={`px-4 py-1.5 text-sm font-semibold rounded-lg transition-all duration-150 ${
-                  unidadeEntrada === "palete"
-                    ? "bg-white/10 text-white"
-                    : "text-zinc-500 hover:text-white hover:bg-white/5"
+                  unidadeEntrada === "palete" ? "bg-white/10 text-white" : "text-zinc-500 hover:text-white hover:bg-white/5"
                 }`}
               >
                 Palete
@@ -186,7 +195,7 @@ export default function FormularioMovimentacao({ produtos, saldoPorProduto, tipo
             value={observacao}
             onChange={(e) => setObservacao(e.target.value)}
             className="input-field"
-            placeholder="Ex: compra NF 1234"
+            placeholder="Ex: observacao adicional"
           />
         </div>
 
