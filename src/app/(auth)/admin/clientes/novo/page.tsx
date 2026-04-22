@@ -65,7 +65,7 @@ export default function NovoClientePage() {
           </div>
 
           <div className="flex flex-col gap-1">
-            <label className="text-xs font-semibold uppercase tracking-wider text-zinc-300">Capacidade do armazem (paletes)</label>
+            <label className="text-xs font-semibold uppercase tracking-wider text-zinc-300">Capacidade</label>
             <input
               type="number"
               value={capacidade}

@@ -44,7 +44,7 @@ export default async function AdminPage() {
                 <tr key={t.id} className={`border-b border-white/[0.04] ${i % 2 === 0 ? "table-row-even" : "table-row-odd"}`}>
                   <td className="py-3 px-4 font-medium text-white">{t.nome}</td>
                   <td className="py-3 px-4 text-right text-zinc-400 td-num">
-                    {t.capacidade_armazem?.toLocaleString("pt-BR") ?? "—"} paletes
+                    {t.capacidade_armazem?.toLocaleString("pt-BR") ?? "—"}
                   </td>
                   <td className="py-3 px-4 text-zinc-500">
                     {new Date(t.created_at).toLocaleDateString("pt-BR")}

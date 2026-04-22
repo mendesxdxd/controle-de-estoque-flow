@@ -14,7 +14,6 @@ export default function VincularUsuario({ tenantId, usuariosSemTenant }: Props) 
   const [aberto, setAberto] = useState(false);
   const [userId, setUserId] = useState("");
   const [nome, setNome] = useState("");
-  const [podeFechamento, setPodeFechamento] = useState(false);
   const [salvando, setSalvando] = useState(false);
   const [erro, setErro] = useState("");
 
@@ -23,7 +22,6 @@ export default function VincularUsuario({ tenantId, usuariosSemTenant }: Props) 
   function handleAbrir() {
     setUserId("");
     setNome("");
-    setPodeFechamento(false);
     setErro("");
     setAberto(true);
   }
@@ -38,7 +36,7 @@ export default function VincularUsuario({ tenantId, usuariosSemTenant }: Props) 
       return;
     }
     setSalvando(true);
-    const resultado = await vincularUsuarioExistente(userId, tenantId, nome.trim(), podeFechamento);
+    const resultado = await vincularUsuarioExistente(userId, tenantId, nome.trim(), false);
     setSalvando(false);
     if (resultado?.erro) {
       setErro(resultado.erro);
@@ -80,19 +78,6 @@ export default function VincularUsuario({ tenantId, usuariosSemTenant }: Props) 
           className="input-field"
           placeholder="Nome do usuario"
         />
-      </div>
-
-      <div className="flex items-center gap-3 py-1">
-        <input
-          type="checkbox"
-          id="vincular-fechamento"
-          checked={podeFechamento}
-          onChange={(e) => setPodeFechamento(e.target.checked)}
-          className="w-4 h-4 accent-indigo-500"
-        />
-        <label htmlFor="vincular-fechamento" className="text-sm text-zinc-300">
-          Liberar fechamento do dia
-        </label>
       </div>
 
       {erro && (

@@ -93,7 +93,8 @@ export default function TabelaEstoque({ movimentacoes, produtos, notaObrigatoria
                   className={`border-b border-white/[0.04] ${i % 2 === 0 ? "table-row-even" : "table-row-odd"}`}
                 >
                   <td className="py-3 px-4 text-zinc-400 whitespace-nowrap">
-                    {new Date(mov.created_at).toLocaleDateString("pt-BR")}
+                    <div>{new Date(mov.created_at).toLocaleDateString("pt-BR")}</div>
+                    <div className="text-xs text-zinc-600">{new Date(mov.created_at).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}</div>
                   </td>
                   <td className="py-3 px-4 font-medium text-white">{mov.produtos?.nome ?? "—"}</td>
                   <td className="py-3 px-4">

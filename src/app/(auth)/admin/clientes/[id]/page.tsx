@@ -33,7 +33,7 @@ export default async function DetalheClientePage({ params }: { params: Promise<{
         <div>
           <h1 className="page-title">{tenant.nome}</h1>
           <p className="page-subtitle">
-            Capacidade: {tenant.capacidade_armazem?.toLocaleString("pt-BR") ?? "—"} paletes
+            {tenant.capacidade_armazem ? `Capacidade: ${tenant.capacidade_armazem.toLocaleString("pt-BR")}` : ""}
           </p>
         </div>
         <div className="flex gap-2 items-start flex-wrap justify-end">
@@ -41,7 +41,6 @@ export default async function DetalheClientePage({ params }: { params: Promise<{
             id={id}
             nomeInicial={tenant.nome}
             capacidadeInicial={tenant.capacidade_armazem ?? null}
-            notaObrigatoriaInicial={tenant.nota_obrigatoria ?? false}
           />
           <VincularUsuario tenantId={id} usuariosSemTenant={semTenant} />
           <Link href={`/admin/clientes/${id}/usuarios/novo`} className="btn-primary">
