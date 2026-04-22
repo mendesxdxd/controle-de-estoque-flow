@@ -7,7 +7,7 @@ export async function getTenant() {
 
   const { data: perfil } = await supabase
     .from("perfis")
-    .select("tenant_id, pode_fechamento")
+    .select("tenant_id, pode_fechamento, nota_obrigatoria")
     .eq("user_id", user.id)
     .single();
 
@@ -15,9 +15,13 @@ export async function getTenant() {
 
   const { data: tenant } = await supabase
     .from("tenants")
-    .select("id, nome, capacidade_armazem, nota_obrigatoria")
+    .select("id, nome, capacidade_armazem")
     .eq("id", perfil.tenant_id)
     .single();
 
-  return tenant ? { ...tenant, pode_fechamento: perfil.pode_fechamento ?? false } : null;
+  return tenant ? {
+    ...tenant,
+    pode_fechamento: perfil.pode_fechamento ?? false,
+    nota_obrigatoria: perfil.nota_obrigatoria ?? false,
+  } : null;
 }

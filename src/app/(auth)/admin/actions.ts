@@ -69,7 +69,7 @@ export async function listarUsuariosTenant(tenantId: string) {
 
   const { data: perfis } = await admin
     .from("perfis")
-    .select("user_id, pode_fechamento, nome")
+    .select("user_id, pode_fechamento, nota_obrigatoria, nome")
     .eq("tenant_id", tenantId);
 
   if (!perfis || perfis.length === 0) return { usuarios: [] };
@@ -83,6 +83,7 @@ export async function listarUsuariosTenant(tenantId: string) {
       created_at: u.created_at,
       last_sign_in_at: u.last_sign_in_at,
       pode_fechamento: perfis.find((p) => p.user_id === u.id)?.pode_fechamento ?? false,
+      nota_obrigatoria: perfis.find((p) => p.user_id === u.id)?.nota_obrigatoria ?? false,
       nome: perfis.find((p) => p.user_id === u.id)?.nome ?? null,
     }));
 
@@ -149,12 +150,17 @@ export async function vincularUsuarioExistente(
   revalidatePath(`/admin/clientes/${tenantId}`);
 }
 
-export async function atualizarPermissao(userId: string, podeFechamento: boolean, tenantId: string) {
+export async function atualizarPermissao(
+  userId: string,
+  tenantId: string,
+  campo: "pode_fechamento" | "nota_obrigatoria",
+  valor: boolean
+) {
   await verificarAdmin();
   const admin = createAdminClient();
   const { error } = await admin
     .from("perfis")
-    .update({ pode_fechamento: podeFechamento })
+    .update({ [campo]: valor })
     .eq("user_id", userId)
     .eq("tenant_id", tenantId);
   if (error) return { erro: "Erro ao atualizar permissao." };

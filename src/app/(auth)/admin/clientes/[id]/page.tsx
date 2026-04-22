@@ -68,7 +68,6 @@ export default async function DetalheClientePage({ params }: { params: Promise<{
                   <th className="table-th">Nome</th>
                   <th className="table-th">Email</th>
                   <th className="table-th">Ultimo acesso</th>
-                  <th className="table-th">Fechamento</th>
                   <th className="py-3 px-4" />
                 </tr>
               </thead>
@@ -80,19 +79,13 @@ export default async function DetalheClientePage({ params }: { params: Promise<{
                     <td className="py-3 px-4 text-zinc-500">
                       {u.last_sign_in_at ? new Date(u.last_sign_in_at).toLocaleDateString("pt-BR") : "Nunca"}
                     </td>
-                    <td className="py-3 px-4">
-                      <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${
-                        u.pode_fechamento ? "bg-indigo-500/15 text-indigo-400" : "bg-zinc-700/50 text-zinc-400"
-                      }`}>
-                        {u.pode_fechamento ? "Liberado" : "Bloqueado"}
-                      </span>
-                    </td>
                     <td className="py-3 px-4 text-right">
                       <BotoesUsuario
                         userId={u.id}
                         tenantId={id}
                         emailUsuario={u.email ?? ""}
                         podeFechamento={u.pode_fechamento}
+                        notaObrigatoria={u.nota_obrigatoria}
                         atualizarPermissao={atualizarPermissao}
                         desvincularUsuario={desvincularUsuario}
                         excluirUsuario={excluirUsuarioTenantComSenha}

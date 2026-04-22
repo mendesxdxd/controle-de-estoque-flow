@@ -1,10 +1,12 @@
+import Link from "next/link";
+
 type Usuario = {
   id: string;
   email?: string;
   created_at: string;
   last_sign_in_at?: string;
   nome: string | null;
-  pode_fechamento: boolean;
+  tenant_id: string | null;
   tenant_nome: string | null;
 };
 
@@ -30,7 +32,6 @@ export default function TabelaUsuarios({ usuarios }: Props) {
             <th className="table-th">Email</th>
             <th className="table-th">Cliente</th>
             <th className="table-th">Ultimo acesso</th>
-            <th className="table-th">Fechamento</th>
           </tr>
         </thead>
         <tbody>
@@ -41,20 +42,22 @@ export default function TabelaUsuarios({ usuarios }: Props) {
             >
               <td className="py-3 px-4 font-medium text-white">{u.nome ?? "—"}</td>
               <td className="py-3 px-4 text-zinc-400">{u.email ?? "—"}</td>
-              <td className="py-3 px-4 text-zinc-400">{u.tenant_nome ?? "—"}</td>
+              <td className="py-3 px-4">
+                {u.tenant_id ? (
+                  <Link
+                    href={`/admin/clientes/${u.tenant_id}`}
+                    className="text-indigo-400 hover:text-indigo-300 transition-colors"
+                  >
+                    {u.tenant_nome ?? "—"}
+                  </Link>
+                ) : (
+                  <span className="text-zinc-500">—</span>
+                )}
+              </td>
               <td className="py-3 px-4 text-zinc-500">
                 {u.last_sign_in_at
                   ? new Date(u.last_sign_in_at).toLocaleDateString("pt-BR")
                   : "Nunca"}
-              </td>
-              <td className="py-3 px-4">
-                <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${
-                  u.pode_fechamento
-                    ? "bg-indigo-500/15 text-indigo-400"
-                    : "bg-zinc-700/50 text-zinc-400"
-                }`}>
-                  {u.pode_fechamento ? "Liberado" : "Bloqueado"}
-                </span>
               </td>
             </tr>
           ))}

@@ -27,7 +27,7 @@ export async function listarUsuarios() {
       created_at: u.created_at,
       last_sign_in_at: u.last_sign_in_at,
       nome: perfil?.nome ?? null,
-      pode_fechamento: perfil?.pode_fechamento ?? false,
+      tenant_id: perfil?.tenant_id ?? null,
       tenant_nome: (perfil?.tenants as any)?.nome ?? null,
     };
   });

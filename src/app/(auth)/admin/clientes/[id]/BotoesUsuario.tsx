@@ -7,13 +7,15 @@ type Props = {
   tenantId: string;
   emailUsuario: string;
   podeFechamento: boolean;
-  atualizarPermissao: (userId: string, podeFechamento: boolean, tenantId: string) => Promise<{ erro: string } | undefined>;
+  notaObrigatoria: boolean;
+  atualizarPermissao: (userId: string, tenantId: string, campo: "pode_fechamento" | "nota_obrigatoria", valor: boolean) => Promise<{ erro: string } | undefined>;
   desvincularUsuario: (userId: string, tenantId: string) => Promise<{ erro: string } | undefined>;
   excluirUsuario: (userId: string, emailUsuario: string, tenantId: string, senhaAdmin: string) => Promise<{ erro: string } | undefined>;
 };
 
-export default function BotoesUsuario({ userId, tenantId, emailUsuario, podeFechamento, atualizarPermissao, desvincularUsuario, excluirUsuario }: Props) {
-  const [atualizando, setAtualizando] = useState(false);
+export default function BotoesUsuario({ userId, tenantId, emailUsuario, podeFechamento, notaObrigatoria, atualizarPermissao, desvincularUsuario, excluirUsuario }: Props) {
+  const [atualizandoFechamento, setAtualizandoFechamento] = useState(false);
+  const [atualizandoNota, setAtualizandoNota] = useState(false);
   const [desvinculando, setDesvinculando] = useState(false);
   const [modalAberto, setModalAberto] = useState(false);
   const [emailConfirm, setEmailConfirm] = useState("");
@@ -21,10 +23,16 @@ export default function BotoesUsuario({ userId, tenantId, emailUsuario, podeFech
   const [excluindo, setExcluindo] = useState(false);
   const [erro, setErro] = useState("");
 
-  async function handleToggle() {
-    setAtualizando(true);
-    await atualizarPermissao(userId, !podeFechamento, tenantId);
-    setAtualizando(false);
+  async function handleToggleFechamento() {
+    setAtualizandoFechamento(true);
+    await atualizarPermissao(userId, tenantId, "pode_fechamento", !podeFechamento);
+    setAtualizandoFechamento(false);
+  }
+
+  async function handleToggleNota() {
+    setAtualizandoNota(true);
+    await atualizarPermissao(userId, tenantId, "nota_obrigatoria", !notaObrigatoria);
+    setAtualizandoNota(false);
   }
 
   async function handleDesvincular() {
@@ -59,15 +67,29 @@ export default function BotoesUsuario({ userId, tenantId, emailUsuario, podeFech
 
   return (
     <>
-      <div className="flex gap-3 justify-end items-center">
+      <div className="flex gap-4 justify-end items-center">
+        <div className="flex items-center gap-2">
+          <span className="text-xs text-zinc-500">Nota</span>
+          <button
+            onClick={handleToggleNota}
+            disabled={atualizandoNota}
+            className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors duration-200 focus:outline-none ${
+              notaObrigatoria ? "bg-indigo-500" : "bg-zinc-700"
+            } ${atualizandoNota ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
+          >
+            <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white shadow transition-transform duration-200 ${
+              notaObrigatoria ? "translate-x-4" : "translate-x-0.5"
+            }`} />
+          </button>
+        </div>
         <div className="flex items-center gap-2">
           <span className="text-xs text-zinc-500">Fechamento</span>
           <button
-            onClick={handleToggle}
-            disabled={atualizando}
+            onClick={handleToggleFechamento}
+            disabled={atualizandoFechamento}
             className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors duration-200 focus:outline-none ${
               podeFechamento ? "bg-indigo-500" : "bg-zinc-700"
-            } ${atualizando ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
+            } ${atualizandoFechamento ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
           >
             <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white shadow transition-transform duration-200 ${
               podeFechamento ? "translate-x-4" : "translate-x-0.5"
