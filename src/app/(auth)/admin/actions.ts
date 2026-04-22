@@ -1,12 +1,8 @@
 "use server";
 
 import { createAdminClient } from "@/lib/supabase/admin";
-import { isAdminUser } from "@/lib/admin";
+import { verificarAdmin } from "@/lib/admin";
 import { revalidatePath } from "next/cache";
-
-async function verificarAdmin() {
-  if (!(await isAdminUser())) throw new Error("Acesso negado.");
-}
 
 export async function listarTenants() {
   await verificarAdmin();
@@ -16,7 +12,7 @@ export async function listarTenants() {
     .select("*")
     .order("created_at", { ascending: false });
   if (error) return { erro: "Erro ao listar empresas.", tenants: [] };
-  return { tenants: data };
+  return { tenants: data ?? [] };
 }
 
 export async function criarTenant(nome: string, capacidadeArmazem: number | null) {
@@ -75,17 +71,21 @@ export async function listarUsuariosTenant(tenantId: string) {
   if (!perfis || perfis.length === 0) return { usuarios: [] };
 
   const { data: authData } = await admin.auth.admin.listUsers();
+  const perfilMap = new Map(perfis.map((p) => [p.user_id, p]));
   const usuarios = (authData?.users ?? [])
-    .filter((u) => perfis.some((p) => p.user_id === u.id))
-    .map((u) => ({
-      id: u.id,
-      email: u.email,
-      created_at: u.created_at,
-      last_sign_in_at: u.last_sign_in_at,
-      pode_fechamento: perfis.find((p) => p.user_id === u.id)?.pode_fechamento ?? false,
-      nota_obrigatoria: perfis.find((p) => p.user_id === u.id)?.nota_obrigatoria ?? false,
-      nome: perfis.find((p) => p.user_id === u.id)?.nome ?? null,
-    }));
+    .filter((u) => perfilMap.has(u.id))
+    .map((u) => {
+      const perfil = perfilMap.get(u.id)!;
+      return {
+        id: u.id,
+        email: u.email,
+        created_at: u.created_at,
+        last_sign_in_at: u.last_sign_in_at,
+        pode_fechamento: perfil.pode_fechamento ?? false,
+        nota_obrigatoria: perfil.nota_obrigatoria ?? false,
+        nome: perfil.nome ?? null,
+      };
+    });
 
   return { usuarios };
 }

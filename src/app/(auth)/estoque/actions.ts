@@ -24,6 +24,10 @@ export async function registrarNota(dados: DadosNota) {
   const tenant = await getTenant();
   if (!tenant) return { erro: "Tenant nao encontrado." };
 
+  if (tenant.nota_obrigatoria && !dados.nota_fiscal?.trim()) {
+    return { erro: "Numero da nota e obrigatorio." };
+  }
+
   if (dados.tipo === "saida") {
     for (const item of dados.itens) {
       const { data: movs } = await supabase

@@ -14,6 +14,8 @@ type Props = {
 };
 
 export default function BotoesUsuario({ userId, tenantId, emailUsuario, podeFechamento, notaObrigatoria, atualizarPermissao, desvincularUsuario, excluirUsuario }: Props) {
+  const [fechamento, setFechamento] = useState(podeFechamento);
+  const [nota, setNota] = useState(notaObrigatoria);
   const [atualizandoFechamento, setAtualizandoFechamento] = useState(false);
   const [atualizandoNota, setAtualizandoNota] = useState(false);
   const [desvinculando, setDesvinculando] = useState(false);
@@ -24,15 +26,21 @@ export default function BotoesUsuario({ userId, tenantId, emailUsuario, podeFech
   const [erro, setErro] = useState("");
 
   async function handleToggleFechamento() {
+    const novo = !fechamento;
+    setFechamento(novo);
     setAtualizandoFechamento(true);
-    await atualizarPermissao(userId, tenantId, "pode_fechamento", !podeFechamento);
+    const resultado = await atualizarPermissao(userId, tenantId, "pode_fechamento", novo);
     setAtualizandoFechamento(false);
+    if (resultado?.erro) setFechamento(!novo);
   }
 
   async function handleToggleNota() {
+    const novo = !nota;
+    setNota(novo);
     setAtualizandoNota(true);
-    await atualizarPermissao(userId, tenantId, "nota_obrigatoria", !notaObrigatoria);
+    const resultado = await atualizarPermissao(userId, tenantId, "nota_obrigatoria", novo);
     setAtualizandoNota(false);
+    if (resultado?.erro) setNota(!novo);
   }
 
   async function handleDesvincular() {
@@ -74,11 +82,11 @@ export default function BotoesUsuario({ userId, tenantId, emailUsuario, podeFech
             onClick={handleToggleNota}
             disabled={atualizandoNota}
             className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors duration-200 focus:outline-none ${
-              notaObrigatoria ? "bg-indigo-500" : "bg-zinc-700"
+              nota ? "bg-indigo-500" : "bg-zinc-700"
             } ${atualizandoNota ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
           >
             <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white shadow transition-transform duration-200 ${
-              notaObrigatoria ? "translate-x-4" : "translate-x-0.5"
+              nota ? "translate-x-4" : "translate-x-0.5"
             }`} />
           </button>
         </div>
@@ -88,11 +96,11 @@ export default function BotoesUsuario({ userId, tenantId, emailUsuario, podeFech
             onClick={handleToggleFechamento}
             disabled={atualizandoFechamento}
             className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors duration-200 focus:outline-none ${
-              podeFechamento ? "bg-indigo-500" : "bg-zinc-700"
+              fechamento ? "bg-indigo-500" : "bg-zinc-700"
             } ${atualizandoFechamento ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
           >
             <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white shadow transition-transform duration-200 ${
-              podeFechamento ? "translate-x-4" : "translate-x-0.5"
+              fechamento ? "translate-x-4" : "translate-x-0.5"
             }`} />
           </button>
         </div>
@@ -119,7 +127,7 @@ export default function BotoesUsuario({ userId, tenantId, emailUsuario, podeFech
                 value={emailConfirm}
                 onChange={(e) => setEmailConfirm(e.target.value)}
                 className="input-field"
-                placeholder={emailUsuario}
+                placeholder="Confirme o email do usuario"
                 autoFocus
               />
             </div>

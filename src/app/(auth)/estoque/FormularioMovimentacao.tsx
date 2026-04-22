@@ -78,20 +78,23 @@ export default function FormularioMovimentacao({ produtos, saldoPorProduto, tipo
     });
 
     setSalvando(true);
-    const resultado = await registrarNota({
-      nota_fiscal: notaFiscal.trim(),
-      tipo,
-      itens: itensMapeados,
-    });
+    try {
+      const resultado = await registrarNota({
+        nota_fiscal: notaFiscal.trim(),
+        tipo,
+        itens: itensMapeados,
+      });
 
-    if (resultado?.erro) {
-      setErro(resultado.erro);
+      if (resultado?.erro) {
+        setErro(resultado.erro);
+        return;
+      }
+
+      onFechar();
+      onSucesso?.();
+    } finally {
       setSalvando(false);
-      return;
     }
-
-    onFechar();
-    onSucesso?.();
   }
 
   return (

@@ -141,7 +141,9 @@ function gerarPDF(rows: EstoqueAtualRow[], valorTotal: number, totalPaletes: num
       }
 
       doc.save(`estoque-${hoje.replace(/\//g, "-")}.pdf`);
-    } catch {} });
+    } catch (err) {
+      console.error("Erro ao gerar PDF:", err);
+    } });
   });
 }
 
@@ -283,7 +285,9 @@ export default function TabelaEstoqueAtual({ rows, movimentacoes, podeFechamento
       await navigator.clipboard.writeText(mensagem);
       setCopiado(true);
       setTimeout(() => setCopiado(false), 2500);
-    } catch {}
+    } catch (err) {
+      console.error("Erro ao copiar relatorio:", err);
+    }
   }
 
   async function handleCopiarFechamento() {
@@ -292,7 +296,9 @@ export default function TabelaEstoqueAtual({ rows, movimentacoes, podeFechamento
       await navigator.clipboard.writeText(mensagem);
       setCopiadoFechamento(true);
       setTimeout(() => setCopiadoFechamento(false), 2500);
-    } catch {}
+    } catch (err) {
+      console.error("Erro ao copiar fechamento:", err);
+    }
   }
 
   return (
