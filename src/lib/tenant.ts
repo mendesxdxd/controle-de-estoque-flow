@@ -15,7 +15,7 @@ export async function getTenant() {
 
   const { data: tenant } = await supabase
     .from("tenants")
-    .select("id, nome, capacidade_armazem")
+    .select("id, nome, capacidade_armazem, nota_obrigatoria")
     .eq("id", perfil.tenant_id)
     .single();
 

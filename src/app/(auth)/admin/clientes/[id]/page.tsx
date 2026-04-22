@@ -41,6 +41,7 @@ export default async function DetalheClientePage({ params }: { params: Promise<{
             id={id}
             nomeInicial={tenant.nome}
             capacidadeInicial={tenant.capacidade_armazem ?? null}
+            notaObrigatoriaInicial={tenant.nota_obrigatoria ?? false}
           />
           <VincularUsuario tenantId={id} usuariosSemTenant={semTenant} />
           <Link href={`/admin/clientes/${id}/usuarios/novo`} className="btn-primary">

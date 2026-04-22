@@ -1,9 +1,11 @@
 import { createClient } from "@/lib/supabase/server";
+import { getTenant } from "@/lib/tenant";
 import { Movimentacao, Produto } from "@/types";
 import TabelaEstoque from "./TabelaEstoque";
 
 export default async function EstoquePage() {
   const supabase = await createClient();
+  const tenant = await getTenant();
 
   const [{ data: movimentacoes }, { data: produtos }] = await Promise.all([
     supabase
@@ -28,6 +30,7 @@ export default async function EstoquePage() {
       <TabelaEstoque
         movimentacoes={(movimentacoes as Movimentacao[]) ?? []}
         produtos={(produtos as Produto[]) ?? []}
+        notaObrigatoria={tenant?.nota_obrigatoria ?? false}
       />
     </div>
   );

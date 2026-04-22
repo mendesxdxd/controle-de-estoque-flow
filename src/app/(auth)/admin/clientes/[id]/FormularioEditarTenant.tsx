@@ -7,18 +7,21 @@ interface Props {
   id: string;
   nomeInicial: string;
   capacidadeInicial: number | null;
+  notaObrigatoriaInicial: boolean;
 }
 
-export default function FormularioEditarTenant({ id, nomeInicial, capacidadeInicial }: Props) {
+export default function FormularioEditarTenant({ id, nomeInicial, capacidadeInicial, notaObrigatoriaInicial }: Props) {
   const [editando, setEditando] = useState(false);
   const [nome, setNome] = useState(nomeInicial);
   const [capacidade, setCapacidade] = useState(capacidadeInicial?.toString() ?? "");
+  const [notaObrigatoria, setNotaObrigatoria] = useState(notaObrigatoriaInicial);
   const [salvando, setSalvando] = useState(false);
   const [erro, setErro] = useState("");
 
   function handleCancelar() {
     setNome(nomeInicial);
     setCapacidade(capacidadeInicial?.toString() ?? "");
+    setNotaObrigatoria(notaObrigatoriaInicial);
     setErro("");
     setEditando(false);
   }
@@ -31,7 +34,7 @@ export default function FormularioEditarTenant({ id, nomeInicial, capacidadeInic
     setSalvando(true);
     setErro("");
     const cap = capacidade.trim() ? parseInt(capacidade, 10) : null;
-    const resultado = await atualizarTenant(id, nome.trim(), cap);
+    const resultado = await atualizarTenant(id, nome.trim(), cap, notaObrigatoria);
     setSalvando(false);
     if (resultado?.erro) {
       setErro(resultado.erro);
@@ -70,6 +73,18 @@ export default function FormularioEditarTenant({ id, nomeInicial, capacidadeInic
           placeholder="Ex: 1700"
           min={0}
         />
+      </div>
+      <div className="flex items-center gap-3 py-1">
+        <input
+          type="checkbox"
+          id="nota-obrigatoria"
+          checked={notaObrigatoria}
+          onChange={(e) => setNotaObrigatoria(e.target.checked)}
+          className="w-4 h-4 accent-indigo-500"
+        />
+        <label htmlFor="nota-obrigatoria" className="text-sm text-zinc-300">
+          Nota fiscal obrigatoria
+        </label>
       </div>
       {erro && (
         <p className="text-xs text-red-400 bg-red-950/50 border border-red-800 px-3 py-2 rounded-lg">{erro}</p>

@@ -51,12 +51,12 @@ export async function excluirTenant(id: string) {
   revalidatePath("/admin");
 }
 
-export async function atualizarTenant(id: string, nome: string, capacidadeArmazem: number | null) {
+export async function atualizarTenant(id: string, nome: string, capacidadeArmazem: number | null, notaObrigatoria: boolean = false) {
   await verificarAdmin();
   const admin = createAdminClient();
   const { error } = await admin
     .from("tenants")
-    .update({ nome, capacidade_armazem: capacidadeArmazem })
+    .update({ nome, capacidade_armazem: capacidadeArmazem, nota_obrigatoria: notaObrigatoria })
     .eq("id", id);
   if (error) return { erro: "Erro ao atualizar empresa." };
   revalidatePath("/admin");

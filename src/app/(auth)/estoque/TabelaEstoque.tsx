@@ -9,9 +9,10 @@ import Toast from "@/components/shared/Toast";
 type Props = {
   movimentacoes: Movimentacao[];
   produtos: Produto[];
+  notaObrigatoria: boolean;
 };
 
-export default function TabelaEstoque({ movimentacoes, produtos }: Props) {
+export default function TabelaEstoque({ movimentacoes, produtos, notaObrigatoria }: Props) {
   const [abrirForm, setAbrirForm] = useState(false);
   const [tipoInicial, setTipoInicial] = useState<"entrada" | "saida">("entrada");
 
@@ -59,6 +60,7 @@ export default function TabelaEstoque({ movimentacoes, produtos }: Props) {
           produtos={produtos}
           saldoPorProduto={saldoPorProduto}
           tipoInicial={tipoInicial}
+          notaObrigatoria={notaObrigatoria}
           onFechar={handleFechar}
           onSucesso={() => setToast("Movimentacao registrada.")}
         />

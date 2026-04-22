@@ -14,6 +14,7 @@ type Props = {
   produtos: Produto[];
   saldoPorProduto: Record<string, number>;
   tipoInicial: "entrada" | "saida";
+  notaObrigatoria: boolean;
   onFechar: () => void;
   onSucesso?: () => void;
 };
@@ -22,7 +23,7 @@ function novoItem(): ItemForm {
   return { produto_id: "", quantidade: "1", unidade: "cx" };
 }
 
-export default function FormularioMovimentacao({ produtos, saldoPorProduto, tipoInicial, onFechar, onSucesso }: Props) {
+export default function FormularioMovimentacao({ produtos, saldoPorProduto, tipoInicial, notaObrigatoria, onFechar, onSucesso }: Props) {
   const [tipo, setTipo] = useState<"entrada" | "saida">(tipoInicial);
   const [notaFiscal, setNotaFiscal] = useState("");
   const [itens, setItens] = useState<ItemForm[]>([novoItem()]);
@@ -50,7 +51,7 @@ export default function FormularioMovimentacao({ produtos, saldoPorProduto, tipo
     e.preventDefault();
     setErro("");
 
-    if (!notaFiscal.trim()) {
+    if (notaObrigatoria && !notaFiscal.trim()) {
       setErro("Numero da nota e obrigatorio.");
       return;
     }
@@ -121,7 +122,9 @@ export default function FormularioMovimentacao({ produtos, saldoPorProduto, tipo
         </div>
 
         <div className="flex flex-col gap-1">
-          <label className="text-xs font-semibold uppercase tracking-wider text-zinc-300">Numero da nota</label>
+          <label className="text-xs font-semibold uppercase tracking-wider text-zinc-300">
+            Numero da nota {!notaObrigatoria && <span className="text-zinc-500 normal-case font-normal">(opcional)</span>}
+          </label>
           <input
             type="text"
             value={notaFiscal}
