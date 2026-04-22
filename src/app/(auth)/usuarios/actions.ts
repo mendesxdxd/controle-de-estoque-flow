@@ -33,27 +33,3 @@ export async function listarUsuarios() {
   return { usuarios };
 }
 
-export async function criarUsuario(email: string, senha: string) {
-  await verificarAdmin();
-  const admin = createAdminClient();
-
-  const { error } = await admin.auth.admin.createUser({
-    email,
-    password: senha,
-    email_confirm: true,
-  });
-
-  if (error) return { erro: error.message };
-
-  revalidatePath("/usuarios");
-}
-
-export async function excluirUsuario(id: string) {
-  await verificarAdmin();
-  const admin = createAdminClient();
-
-  const { error } = await admin.auth.admin.deleteUser(id);
-  if (error) return { erro: "Erro ao excluir usuario." };
-
-  revalidatePath("/usuarios");
-}

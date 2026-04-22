@@ -207,13 +207,3 @@ export async function excluirUsuarioTenantComSenha(
   revalidatePath(`/admin/clientes/${tenantId}`);
 }
 
-export async function excluirUsuarioTenant(userId: string, tenantId: string) {
-  await verificarAdmin();
-  const admin = createAdminClient();
-
-  await admin.from("perfis").delete().eq("user_id", userId).eq("tenant_id", tenantId);
-  const { error } = await admin.auth.admin.deleteUser(userId);
-  if (error) return { erro: "Erro ao excluir usuario." };
-
-  revalidatePath(`/admin/clientes/${tenantId}`);
-}

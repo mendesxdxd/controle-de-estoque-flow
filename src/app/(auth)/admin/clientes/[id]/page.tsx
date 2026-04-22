@@ -2,7 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { listarUsuariosTenant, listarUsuariosSemTenant, excluirUsuarioTenantComSenha, atualizarPermissao, desvincularUsuario, excluirTenant } from "../../actions";
+import { listarUsuariosTenant, listarUsuariosSemTenant, excluirUsuarioTenantComSenha, atualizarPermissao, desvincularUsuario } from "../../actions";
 import BotoesUsuario from "./BotoesUsuario";
 import FormularioEditarTenant from "./FormularioEditarTenant";
 import VincularUsuario from "./VincularUsuario";
