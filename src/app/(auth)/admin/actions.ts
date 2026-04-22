@@ -173,6 +173,34 @@ export async function desvincularUsuario(userId: string, tenantId: string) {
   revalidatePath(`/admin/clientes/${tenantId}`);
 }
 
+export async function excluirUsuarioTenantComSenha(
+  userId: string,
+  emailUsuario: string,
+  tenantId: string,
+  senhaAdmin: string
+) {
+  await verificarAdmin();
+  const supabase = await (await import("@/lib/supabase/server")).createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  const { error: authError } = await supabase.auth.signInWithPassword({
+    email: user!.email!,
+    password: senhaAdmin,
+  });
+
+  if (authError) return { erro: "Senha incorreta." };
+
+  const admin = createAdminClient();
+  const { data: usuarioAlvo } = await admin.auth.admin.getUserById(userId);
+  if (usuarioAlvo?.user?.email !== emailUsuario) return { erro: "Email do usuario incorreto." };
+
+  await admin.from("perfis").delete().eq("user_id", userId).eq("tenant_id", tenantId);
+  const { error } = await admin.auth.admin.deleteUser(userId);
+  if (error) return { erro: "Erro ao excluir usuario." };
+
+  revalidatePath(`/admin/clientes/${tenantId}`);
+}
+
 export async function excluirUsuarioTenant(userId: string, tenantId: string) {
   await verificarAdmin();
   const admin = createAdminClient();

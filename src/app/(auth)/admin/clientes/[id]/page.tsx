@@ -2,7 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { listarUsuariosTenant, listarUsuariosSemTenant, excluirUsuarioTenant, atualizarPermissao, desvincularUsuario, excluirTenant } from "../../actions";
+import { listarUsuariosTenant, listarUsuariosSemTenant, excluirUsuarioTenantComSenha, atualizarPermissao, desvincularUsuario, excluirTenant } from "../../actions";
 import BotoesUsuario from "./BotoesUsuario";
 import FormularioEditarTenant from "./FormularioEditarTenant";
 import VincularUsuario from "./VincularUsuario";
@@ -91,10 +91,11 @@ export default async function DetalheClientePage({ params }: { params: Promise<{
                       <BotoesUsuario
                         userId={u.id}
                         tenantId={id}
+                        emailUsuario={u.email ?? ""}
                         podeFechamento={u.pode_fechamento}
                         atualizarPermissao={atualizarPermissao}
                         desvincularUsuario={desvincularUsuario}
-                        excluirUsuario={excluirUsuarioTenant}
+                        excluirUsuario={excluirUsuarioTenantComSenha}
                       />
                     </td>
                   </tr>
