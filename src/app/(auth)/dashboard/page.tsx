@@ -120,7 +120,7 @@ export default async function DashboardPage() {
       {/* Graficos exclusivos por tenant */}
       {podeGraficos && (
         <div className="flex flex-col gap-6">
-          <GraficoEstoque movimentacoes={(todasMovimentacoes as Movimentacao[]) ?? []} />
+          <GraficoEstoque movimentacoes={(todasMovimentacoes as unknown as Movimentacao[]) ?? []} />
           <GraficoCapacidade estoqueAtual={rows} capacidadeArmazem={capacidadeArmazem} />
         </div>
       )}
