@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { EstoqueAtualRow } from "@/types";
 
@@ -23,12 +23,12 @@ export default function TabelaEstoqueBaixo({ rows }: Props) {
           {rows.map((row, i) => (
             <tr
               key={row.id}
-              className={`border-b border-white/[0.04] ${i % 2 === 0 ? "table-row-even" : "table-row-odd"}`}
+              className={`border-b border-brand-border/40 ${i % 2 === 0 ? "table-row-even" : "table-row-odd"}`}
             >
               <td className="py-3 px-4 font-medium text-white">{row.nome}</td>
-              <td className="py-3 px-4 text-zinc-500">{row.categoria ?? "—"}</td>
+              <td className="py-3 px-4 text-brand-medium">{row.categoria ?? "—"}</td>
               <td className="py-3 px-4 text-right font-semibold text-red-400">{row.estoque_atual}</td>
-              <td className="py-3 px-4 text-right text-zinc-500">{row.estoque_minimo}</td>
+              <td className="py-3 px-4 text-right text-brand-medium">{row.estoque_minimo}</td>
               <td className="py-3 px-4 text-right font-semibold text-red-400">
                 {row.estoque_atual - row.estoque_minimo}
               </td>

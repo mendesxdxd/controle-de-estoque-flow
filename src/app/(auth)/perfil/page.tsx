@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
@@ -55,7 +55,7 @@ export default function PerfilPage() {
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <div className="flex flex-col gap-1">
-            <label className="text-xs font-semibold uppercase tracking-wider text-zinc-300">
+            <label className="text-xs font-semibold uppercase tracking-wider text-brand-light">
               Nova senha
             </label>
             <input
@@ -68,7 +68,7 @@ export default function PerfilPage() {
           </div>
 
           <div className="flex flex-col gap-1">
-            <label className="text-xs font-semibold uppercase tracking-wider text-zinc-300">
+            <label className="text-xs font-semibold uppercase tracking-wider text-brand-light">
               Confirmar nova senha
             </label>
             <input
@@ -85,7 +85,7 @@ export default function PerfilPage() {
           )}
 
           {sucesso && (
-            <p className="text-xs text-white bg-indigo-500/10 border border-indigo-500/20 rounded-xl px-4 py-2.5 font-semibold">
+            <p className="text-xs text-white bg-brand-primary/10 border border-brand-primary/20 rounded-xl px-4 py-2.5 font-semibold">
               Senha alterada com sucesso.
             </p>
           )}

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import Link from "next/link";
@@ -15,8 +15,8 @@ const estoqueIcon = (
 const estoqueSubItems = [
   { href: "/estoque", label: "Movimentacoes" },
   { href: "/estoque/resumo", label: "Resumo do dia" },
-  { href: "/estoque/produto", label: "Por produto" },
-  { href: "/estoque/nota", label: "Por nota" },
+  { href: "/estoque/produto", label: "Produto no estoque" },
+  { href: "/estoque/nota", label: "Nota Fiscal" },
 ];
 
 const links = [
@@ -130,11 +130,11 @@ export default function Sidebar({ isAdmin, userEmail }: { isAdmin: boolean; user
         onClick={onClick}
         className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150 ${
           ativo
-            ? "bg-white/10 text-white"
-            : "text-zinc-500 hover:text-zinc-200 hover:bg-white/5"
+            ? "bg-brand-hover text-white"
+            : "text-brand-medium hover:text-white hover:bg-brand-hover"
         }`}
       >
-        <span className={ativo ? "text-white" : "text-zinc-500"}>{icon}</span>
+        <span className={ativo ? "text-white" : "text-brand-medium"}>{icon}</span>
         {label}
       </Link>
     );
@@ -145,11 +145,11 @@ export default function Sidebar({ isAdmin, userEmail }: { isAdmin: boolean; user
   return (
     <>
       {/* Header mobile */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 z-40 bg-black/80 backdrop-blur-xl h-14 flex items-center justify-between px-4 border-b border-white/[0.06]">
+      <div className="lg:hidden fixed top-0 left-0 right-0 z-40 bg-black/80 backdrop-blur-xl h-14 flex items-center justify-between px-4 border-b border-brand-border">
         <img src="/logo-header.svg" alt="FlowStock" className="h-7" />
         <button
           onClick={() => setAberto(!aberto)}
-          className="text-zinc-400 hover:text-white p-1 transition-colors"
+          className="text-brand-light hover:text-white p-1 transition-colors"
           aria-label="Menu"
         >
           {aberto ? (
@@ -178,13 +178,13 @@ export default function Sidebar({ isAdmin, userEmail }: { isAdmin: boolean; user
       {/* Sidebar */}
       <aside className={`
         fixed lg:static inset-y-0 left-0 z-40
-        w-60 min-h-screen bg-zinc-950/80 backdrop-blur-xl border-r border-white/[0.06] flex flex-col
+        w-60 min-h-screen bg-brand-bg backdrop-blur-xl border-r border-brand-border flex flex-col
         transform transition-transform duration-200 ease-in-out
         lg:translate-x-0
         ${aberto ? "translate-x-0" : "-translate-x-full"}
       `}>
         {/* Logo */}
-        <div className="px-5 py-5 border-b border-white/[0.06] hidden lg:flex items-center">
+        <div className="px-5 py-5 border-b border-brand-border hidden lg:flex items-center">
           <img src="/logo-header.svg" alt="FlowStock" className="h-9" />
         </div>
 
@@ -198,20 +198,20 @@ export default function Sidebar({ isAdmin, userEmail }: { isAdmin: boolean; user
 
           {/* Estoque expansivel */}
           <div>
-            <div className={`flex items-center rounded-xl transition-all duration-150 ${estoqueAtivo ? "bg-white/10" : "hover:bg-white/5"}`}>
+            <div className={`flex items-center rounded-xl transition-all duration-150 ${estoqueAtivo ? "bg-brand-hover" : "hover:bg-brand-hover"}`}>
               <Link
                 href="/estoque"
                 onClick={handleNavegar}
                 className={`flex-1 flex items-center gap-3 px-3 py-2.5 text-sm font-medium transition-colors ${
-                  estoqueAtivo ? "text-white" : "text-zinc-500 hover:text-zinc-200"
+                  estoqueAtivo ? "text-white" : "text-brand-medium hover:text-white"
                 }`}
               >
-                <span className={estoqueAtivo ? "text-white" : "text-zinc-500"}>{estoqueIcon}</span>
+                <span className={estoqueAtivo ? "text-white" : "text-brand-medium"}>{estoqueIcon}</span>
                 Estoque
               </Link>
               <button
                 onClick={() => setEstoqueExpandido((v) => !v)}
-                className={`pr-3 py-2.5 transition-colors ${estoqueAtivo ? "text-white/60 hover:text-white" : "text-zinc-600 hover:text-zinc-400"}`}
+                className={`pr-3 py-2.5 transition-colors ${estoqueAtivo ? "text-white/60 hover:text-white" : "text-brand-muted hover:text-brand-light"}`}
                 aria-label="Expandir estoque"
               >
                 <svg
@@ -225,16 +225,26 @@ export default function Sidebar({ isAdmin, userEmail }: { isAdmin: boolean; user
 
             {estoqueExpandido && (
               <div className="ml-7 mt-1 flex flex-col gap-0.5">
-                {estoqueSubItems.map((item) => (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    onClick={handleNavegar}
-                    className="px-3 py-1.5 text-xs font-medium rounded-lg transition-all duration-150 text-zinc-500 hover:text-zinc-200 hover:bg-white/5"
-                  >
-                    {item.label}
-                  </Link>
-                ))}
+                {estoqueSubItems.map((item) => {
+                  const subAtivo = pathname === item.href;
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      onClick={handleNavegar}
+                      className={`relative flex items-center gap-2 px-3 py-1.5 text-xs font-medium rounded-lg transition-all duration-150 overflow-hidden ${
+                        subAtivo
+                          ? "text-white bg-brand-hover"
+                          : "text-brand-medium hover:text-white hover:bg-brand-hover"
+                      }`}
+                    >
+                      {subAtivo && (
+                        <span className="absolute left-0 inset-y-0 w-0.5 bg-brand-primary rounded-r-full" />
+                      )}
+                      {item.label}
+                    </Link>
+                  );
+                })}
               </div>
             )}
           </div>
@@ -242,7 +252,7 @@ export default function Sidebar({ isAdmin, userEmail }: { isAdmin: boolean; user
           <NavLink href="/categorias" label="Categorias" icon={links[2].icon} onClick={handleNavegar} />
           <NavLink href="/relatorios" label="Relatorios" icon={links[3].icon} onClick={handleNavegar} />
 
-          <div className="mt-4 pt-4 border-t border-white/[0.06] flex flex-col gap-1">
+          <div className="mt-4 pt-4 border-t border-brand-border flex flex-col gap-1">
             {secondaryLinks.map((link) => {
               if (link.adminOnly && !isAdmin) return null;
               return (
@@ -253,11 +263,11 @@ export default function Sidebar({ isAdmin, userEmail }: { isAdmin: boolean; user
         </nav>
 
         {/* Footer */}
-        <div className="px-3 py-5 border-t border-white/[0.06] flex flex-col gap-3">
-          <p className="text-xs text-zinc-600 px-3 truncate">{userEmail}</p>
+        <div className="px-3 py-5 border-t border-brand-border flex flex-col gap-3">
+          <p className="text-xs text-brand-muted px-3 truncate">{userEmail}</p>
           <button
             onClick={handleLogout}
-            className="w-full px-3 py-2.5 rounded-xl text-sm font-medium text-zinc-400 hover:text-white hover:bg-white/5 transition-all duration-150 text-left flex items-center gap-3"
+            className="w-full px-3 py-2.5 rounded-xl text-sm font-medium text-brand-light hover:text-white hover:bg-brand-hover transition-all duration-150 text-left flex items-center gap-3"
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
               <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { Categoria } from "@/types";
@@ -81,11 +81,11 @@ export default function TabelaCategorias({ categorias }: Props) {
               {categorias.map((cat, i) => (
                 <tr
                   key={cat.id}
-                  className={`border-b border-white/[0.04] ${i % 2 === 0 ? "table-row-even" : "table-row-odd"}`}
+                  className={`border-b border-brand-border/40 ${i % 2 === 0 ? "table-row-even" : "table-row-odd"}`}
                 >
                   <td className="py-3 px-4 font-medium text-white">{cat.nome}</td>
-                  <td className="py-3 px-4 text-zinc-500">{cat.descricao ?? "—"}</td>
-                  <td className="py-3 px-4 text-zinc-500">
+                  <td className="py-3 px-4 text-brand-medium">{cat.descricao ?? "—"}</td>
+                  <td className="py-3 px-4 text-brand-medium">
                     {new Date(cat.created_at).toLocaleDateString("pt-BR")}
                   </td>
                   <td className="py-3 px-4">

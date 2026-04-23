@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 
@@ -77,12 +77,12 @@ export default function BotoesUsuario({ userId, tenantId, emailUsuario, podeFech
     <>
       <div className="flex gap-4 justify-end items-center">
         <div className="flex items-center gap-2">
-          <span className="text-xs text-zinc-500">Nota</span>
+          <span className="text-xs text-brand-medium">Nota</span>
           <button
             onClick={handleToggleNota}
             disabled={atualizandoNota}
             className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors duration-200 focus:outline-none ${
-              nota ? "bg-indigo-500" : "bg-zinc-700"
+              nota ? "bg-brand-primary" : "bg-brand-hover"
             } ${atualizandoNota ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
           >
             <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white shadow transition-transform duration-200 ${
@@ -91,12 +91,12 @@ export default function BotoesUsuario({ userId, tenantId, emailUsuario, podeFech
           </button>
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-xs text-zinc-500">Fechamento</span>
+          <span className="text-xs text-brand-medium">Fechamento</span>
           <button
             onClick={handleToggleFechamento}
             disabled={atualizandoFechamento}
             className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors duration-200 focus:outline-none ${
-              fechamento ? "bg-indigo-500" : "bg-zinc-700"
+              fechamento ? "bg-brand-primary" : "bg-brand-hover"
             } ${atualizandoFechamento ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
           >
             <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white shadow transition-transform duration-200 ${
@@ -117,11 +117,11 @@ export default function BotoesUsuario({ userId, tenantId, emailUsuario, podeFech
           <div className="glass-panel p-6 flex flex-col gap-4 w-full max-w-sm mx-4">
             <div>
               <h3 className="text-sm font-bold uppercase tracking-wider text-white">Excluir usuario</h3>
-              <p className="text-xs text-zinc-400 mt-1">Esta acao e permanente e nao pode ser desfeita.</p>
+              <p className="text-xs text-brand-light mt-1">Esta acao e permanente e nao pode ser desfeita.</p>
             </div>
 
             <div className="flex flex-col gap-1">
-              <label className="text-xs font-semibold uppercase tracking-wider text-zinc-300">Email do usuario</label>
+              <label className="text-xs font-semibold uppercase tracking-wider text-brand-light">Email do usuario</label>
               <input
                 type="email"
                 value={emailConfirm}
@@ -133,7 +133,7 @@ export default function BotoesUsuario({ userId, tenantId, emailUsuario, podeFech
             </div>
 
             <div className="flex flex-col gap-1">
-              <label className="text-xs font-semibold uppercase tracking-wider text-zinc-300">Sua senha de admin</label>
+              <label className="text-xs font-semibold uppercase tracking-wider text-brand-light">Sua senha de admin</label>
               <input
                 type="password"
                 value={senhaAdmin}

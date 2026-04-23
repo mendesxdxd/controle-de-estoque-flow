@@ -6,7 +6,7 @@ import { createPortal } from "react-dom";
 const MESES = ["Janeiro","Fevereiro","Marco","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
 
 const PANEL_HEIGHT = 280;
-const PANEL_WIDTH = 280;
+const PANEL_WIDTH  = 280;
 
 type Props = {
   value: string;
@@ -48,17 +48,17 @@ export default function DatePicker({ value, onChange }: Props) {
     setAberto(!aberto);
   }
 
-  const firstDay = new Date(viewYear, viewMonth, 1).getDay();
+  const firstDay    = new Date(viewYear, viewMonth, 1).getDay();
   const daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate();
-  const daysInPrev = new Date(viewYear, viewMonth, 0).getDate();
-  const total = firstDay + daysInMonth;
-  const remaining = total % 7 === 0 ? 0 : 7 - (total % 7);
+  const daysInPrev  = new Date(viewYear, viewMonth, 0).getDate();
+  const total       = firstDay + daysInMonth;
+  const remaining   = total % 7 === 0 ? 0 : 7 - (total % 7);
 
   function changeMonth(dir: number) {
     let m = viewMonth + dir;
     let y = viewYear;
     if (m > 11) { m = 0; y++; }
-    if (m < 0) { m = 11; y--; }
+    if (m < 0)  { m = 11; y--; }
     setViewMonth(m);
     setViewYear(y);
   }
@@ -105,18 +105,18 @@ export default function DatePicker({ value, onChange }: Props) {
         onClick={abrirPanel}
         style={{
           background: "#13131f",
-          border: `1px solid ${aberto ? "#7F77DD" : "#3a3470"}`,
+          border: `1px solid ${aberto ? "#6C63FF" : "#252540"}`,
           borderRadius: "8px",
-          boxShadow: aberto ? "0 0 0 2px rgba(127,119,221,0.15)" : "none",
+          boxShadow: aberto ? "0 0 0 2px rgba(108,99,255,0.15)" : "none",
           width: "210px",
         }}
         className="px-3 py-2 flex items-center justify-between cursor-pointer transition-all duration-200 select-none"
       >
         <span className="text-white text-xs font-semibold">{formatarLabel()}</span>
         <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
-          <rect x="1" y="2" width="14" height="13" rx="3" stroke="#AFA9EC" strokeWidth="1.5"/>
-          <path d="M1 6h14" stroke="#AFA9EC" strokeWidth="1.5"/>
-          <path d="M5 1v2M11 1v2" stroke="#AFA9EC" strokeWidth="1.5" strokeLinecap="round"/>
+          <rect x="1" y="2" width="14" height="13" rx="3" stroke="#8B83FF" strokeWidth="1.5"/>
+          <path d="M1 6h14" stroke="#8B83FF" strokeWidth="1.5"/>
+          <path d="M5 1v2M11 1v2" stroke="#8B83FF" strokeWidth="1.5" strokeLinecap="round"/>
         </svg>
       </div>
 
@@ -128,9 +128,9 @@ export default function DatePicker({ value, onChange }: Props) {
             top: pos.top,
             left: pos.left,
             background: "#13131f",
-            border: "1px solid #2a2550",
+            border: "1px solid #252540",
             borderRadius: "12px",
-            boxShadow: "0 16px 48px rgba(0,0,0,0.6), 0 0 0 1px rgba(127,119,221,0.08)",
+            boxShadow: "0 16px 48px rgba(0,0,0,0.6), 0 0 0 1px rgba(108,99,255,0.08)",
             width: `${PANEL_WIDTH}px`,
             zIndex: 9999,
           }}
@@ -139,7 +139,7 @@ export default function DatePicker({ value, onChange }: Props) {
           <div className="flex items-center justify-between mb-2">
             <button
               onClick={() => changeMonth(-1)}
-              style={{ background: "#1a1830", border: "1px solid #2a2550", borderRadius: "6px", color: "#AFA9EC" }}
+              style={{ background: "#1a1a2e", border: "1px solid #252540", borderRadius: "6px", color: "#8B83FF" }}
               className="w-6 h-6 flex items-center justify-center text-base leading-none transition-all hover:text-white"
             >
               ‹
@@ -149,7 +149,7 @@ export default function DatePicker({ value, onChange }: Props) {
             </span>
             <button
               onClick={() => changeMonth(1)}
-              style={{ background: "#1a1830", border: "1px solid #2a2550", borderRadius: "6px", color: "#AFA9EC" }}
+              style={{ background: "#1a1a2e", border: "1px solid #252540", borderRadius: "6px", color: "#8B83FF" }}
               className="w-6 h-6 flex items-center justify-center text-base leading-none transition-all hover:text-white"
             >
               ›
@@ -158,7 +158,7 @@ export default function DatePicker({ value, onChange }: Props) {
 
           <div className="grid grid-cols-7 mb-1">
             {["D","S","T","Q","Q","S","S"].map((d, i) => (
-              <div key={i} className="text-center text-[9px] font-bold py-0.5" style={{ color: "#534AB7" }}>
+              <div key={i} className="text-center text-[9px] font-bold py-0.5" style={{ color: "#3d3a6e" }}>
                 {d}
               </div>
             ))}
@@ -166,15 +166,15 @@ export default function DatePicker({ value, onChange }: Props) {
 
           <div className="grid grid-cols-7 gap-px">
             {Array.from({ length: firstDay }, (_, i) => (
-              <div key={`prev-${i}`} className="h-8 flex items-center justify-center text-[10px]" style={{ color: "#2a2550" }}>
+              <div key={`prev-${i}`} className="h-8 flex items-center justify-center text-[10px]" style={{ color: "#252540" }}>
                 {daysInPrev - firstDay + i + 1}
               </div>
             ))}
 
             {Array.from({ length: daysInMonth }, (_, i) => {
-              const d = i + 1;
+              const d        = i + 1;
               const selected = isPending(d);
-              const today = isToday(d);
+              const today    = isToday(d);
               return (
                 <div
                   key={d}
@@ -182,10 +182,10 @@ export default function DatePicker({ value, onChange }: Props) {
                   className="h-8 flex items-center justify-center text-[10px] font-semibold cursor-pointer transition-all"
                   style={{
                     borderRadius: "5px",
-                    background: selected ? "linear-gradient(135deg, #7F77DD, #4B3FC7)" : today ? "rgba(83,74,183,0.1)" : "transparent",
-                    color: selected ? "#fff" : today ? "#AFA9EC" : "#bbb",
-                    border: today && !selected ? "1px solid #534AB7" : "1px solid transparent",
-                    boxShadow: selected ? "0 2px 6px rgba(127,119,221,0.35)" : "none",
+                    background: selected ? "linear-gradient(135deg, #8B83FF, #6C63FF)" : today ? "rgba(108,99,255,0.1)" : "transparent",
+                    color: selected ? "#fff" : today ? "#8B83FF" : "#B3AEFF",
+                    border: today && !selected ? "1px solid #6C63FF" : "1px solid transparent",
+                    boxShadow: selected ? "0 2px 6px rgba(108,99,255,0.35)" : "none",
                   }}
                 >
                   {d}
@@ -194,25 +194,25 @@ export default function DatePicker({ value, onChange }: Props) {
             })}
 
             {Array.from({ length: remaining }, (_, i) => (
-              <div key={`next-${i}`} className="h-8 flex items-center justify-center text-[10px]" style={{ color: "#2a2550" }}>
+              <div key={`next-${i}`} className="h-8 flex items-center justify-center text-[10px]" style={{ color: "#252540" }}>
                 {i + 1}
               </div>
             ))}
           </div>
 
-          <div style={{ height: "1px", background: "#1e1c3a" }} className="my-2" />
+          <div style={{ height: "1px", background: "#252540" }} className="my-2" />
 
           <div className="flex gap-2">
             <button
               onClick={limpar}
-              style={{ background: "transparent", border: "1px solid #2a2550", color: "#AFA9EC", borderRadius: "6px" }}
-              className="flex-1 py-1.5 text-[10px] font-bold transition-all hover:border-[#534AB7]"
+              style={{ background: "transparent", border: "1px solid #252540", color: "#8B83FF", borderRadius: "6px" }}
+              className="flex-1 py-1.5 text-[10px] font-bold transition-all hover:border-brand-primary"
             >
               Hoje
             </button>
             <button
               onClick={confirmar}
-              style={{ background: "linear-gradient(135deg, #7F77DD, #4B3FC7)", color: "#fff", borderRadius: "6px", boxShadow: "0 2px 8px rgba(127,119,221,0.3)" }}
+              style={{ background: "linear-gradient(135deg, #8B83FF, #6C63FF)", color: "#fff", borderRadius: "6px", boxShadow: "0 2px 8px rgba(108,99,255,0.3)" }}
               className="flex-1 py-1.5 text-[10px] font-bold"
             >
               Ok

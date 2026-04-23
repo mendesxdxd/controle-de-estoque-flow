@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -39,7 +39,7 @@ export default function NovoClientePage() {
   return (
     <div className="flex flex-col gap-8 max-w-lg">
       <div className="flex items-center gap-3">
-        <Link href="/admin" className="text-zinc-500 hover:text-white transition-colors text-sm">
+        <Link href="/admin" className="text-brand-medium hover:text-white transition-colors text-sm">
           Admin
         </Link>
         <span className="text-zinc-700">/</span>
@@ -54,7 +54,7 @@ export default function NovoClientePage() {
       <div className="glass-panel p-6">
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <div className="flex flex-col gap-1">
-            <label className="text-xs font-semibold uppercase tracking-wider text-zinc-300">Nome da empresa</label>
+            <label className="text-xs font-semibold uppercase tracking-wider text-brand-light">Nome da empresa</label>
             <input
               type="text"
               value={nome}
@@ -65,7 +65,7 @@ export default function NovoClientePage() {
           </div>
 
           <div className="flex flex-col gap-1">
-            <label className="text-xs font-semibold uppercase tracking-wider text-zinc-300">Capacidade</label>
+            <label className="text-xs font-semibold uppercase tracking-wider text-brand-light">Capacidade</label>
             <input
               type="number"
               value={capacidade}

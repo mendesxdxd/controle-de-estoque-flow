@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { Produto } from "@/types";
@@ -103,20 +103,20 @@ export default function FormularioMovimentacao({ produtos, saldoPorProduto, tipo
         <h2 className="text-sm font-bold uppercase tracking-wider text-white">
           Registrar movimentacao
         </h2>
-        <button onClick={onFechar} className="text-xs text-zinc-500 hover:text-white transition-colors">
+        <button onClick={onFechar} className="text-xs text-brand-medium hover:text-white transition-colors">
           Fechar
         </button>
       </div>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-4 max-w-md">
-        <div className="flex bg-white/5 border border-white/[0.08] rounded-xl p-1 w-fit gap-1">
+        <div className="flex bg-brand-hover border border-brand-border rounded-xl p-1 w-fit gap-1">
           {(["entrada", "saida"] as const).map((t) => (
             <button
               key={t}
               type="button"
               onClick={() => setTipo(t)}
               className={`px-5 py-2 text-sm font-semibold capitalize rounded-lg transition-all duration-150 ${
-                tipo === t ? "bg-white/10 text-white" : "text-zinc-500 hover:text-white hover:bg-white/5"
+                tipo === t ? "bg-brand-hover text-white" : "text-brand-medium hover:text-white hover:bg-brand-hover"
               }`}
             >
               {t}
@@ -125,8 +125,8 @@ export default function FormularioMovimentacao({ produtos, saldoPorProduto, tipo
         </div>
 
         <div className="flex flex-col gap-1">
-          <label className="text-xs font-semibold uppercase tracking-wider text-zinc-300">
-            Numero da nota {!notaObrigatoria && <span className="text-zinc-500 normal-case font-normal">(opcional)</span>}
+          <label className="text-xs font-semibold uppercase tracking-wider text-brand-light">
+            Numero da nota {!notaObrigatoria && <span className="text-brand-medium normal-case font-normal">(opcional)</span>}
           </label>
           <input
             type="text"
@@ -145,14 +145,14 @@ export default function FormularioMovimentacao({ produtos, saldoPorProduto, tipo
           const saldoAtual = item.produto_id ? (saldoPorProduto[item.produto_id] ?? 0) : null;
 
           return (
-            <div key={index} className="flex flex-col gap-3 border-t border-white/[0.06] pt-4">
+            <div key={index} className="flex flex-col gap-3 border-t border-brand-border pt-4">
               {itens.length > 1 && (
                 <div className="flex items-center justify-between">
-                  <span className="text-xs text-zinc-500">Produto {index + 1}</span>
+                  <span className="text-xs text-brand-medium">Produto {index + 1}</span>
                   <button
                     type="button"
                     onClick={() => setItens((prev) => prev.filter((_, i) => i !== index))}
-                    className="text-xs text-zinc-600 hover:text-red-400 transition-colors"
+                    className="text-xs text-brand-muted hover:text-red-400 transition-colors"
                   >
                     Remover
                   </button>
@@ -160,7 +160,7 @@ export default function FormularioMovimentacao({ produtos, saldoPorProduto, tipo
               )}
 
               <div className="flex flex-col gap-1">
-                <label className="text-xs font-semibold uppercase tracking-wider text-zinc-300">Produto</label>
+                <label className="text-xs font-semibold uppercase tracking-wider text-brand-light">Produto</label>
                 <select
                   value={item.produto_id}
                   onChange={(e) => atualizarItem(index, "produto_id", e.target.value)}
@@ -175,15 +175,15 @@ export default function FormularioMovimentacao({ produtos, saldoPorProduto, tipo
 
               {caixasPorPalete && (
                 <div className="flex flex-col gap-1">
-                  <label className="text-xs font-semibold uppercase tracking-wider text-zinc-300">Registrar por</label>
-                  <div className="flex bg-white/5 border border-white/[0.08] rounded-xl p-1 w-fit gap-1">
+                  <label className="text-xs font-semibold uppercase tracking-wider text-brand-light">Registrar por</label>
+                  <div className="flex bg-brand-hover border border-brand-border rounded-xl p-1 w-fit gap-1">
                     {(["cx", "palete"] as const).map((u) => (
                       <button
                         key={u}
                         type="button"
                         onClick={() => atualizarItem(index, "unidade", u)}
                         className={`px-4 py-1.5 text-sm font-semibold rounded-lg transition-all duration-150 ${
-                          item.unidade === u ? "bg-white/10 text-white" : "text-zinc-500 hover:text-white hover:bg-white/5"
+                          item.unidade === u ? "bg-brand-hover text-white" : "text-brand-medium hover:text-white hover:bg-brand-hover"
                         }`}
                       >
                         {u === "cx" ? "Caixa" : "Palete"}
@@ -195,12 +195,12 @@ export default function FormularioMovimentacao({ produtos, saldoPorProduto, tipo
 
               <div className="flex flex-col gap-1">
                 <div className="flex items-center justify-between">
-                  <label className="text-xs font-semibold uppercase tracking-wider text-zinc-300">
+                  <label className="text-xs font-semibold uppercase tracking-wider text-brand-light">
                     Quantidade {item.unidade === "palete" ? "(paletes)" : "(caixas)"}
                   </label>
                   {tipo === "saida" && saldoAtual !== null && (
-                    <span className="text-xs text-zinc-500">
-                      Disponivel: <span className={saldoAtual === 0 ? "text-red-400" : "text-zinc-300"}>{saldoAtual} cx</span>
+                    <span className="text-xs text-brand-medium">
+                      Disponivel: <span className={saldoAtual === 0 ? "text-red-400" : "text-brand-light"}>{saldoAtual} cx</span>
                     </span>
                   )}
                 </div>
@@ -212,7 +212,7 @@ export default function FormularioMovimentacao({ produtos, saldoPorProduto, tipo
                   className="input-field"
                 />
                 {item.unidade === "palete" && caixasPorPalete && qtdNum > 0 && (
-                  <p className="text-xs text-indigo-400 mt-1">
+                  <p className="text-xs text-brand-primary mt-1">
                     {qtdNum} palete{qtdNum > 1 ? "s" : ""} × {caixasPorPalete} cx = <span className="font-semibold">{qtdEmCaixas} cx</span>
                   </p>
                 )}
@@ -224,7 +224,7 @@ export default function FormularioMovimentacao({ produtos, saldoPorProduto, tipo
         <button
           type="button"
           onClick={() => setItens((prev) => [...prev, novoItem()])}
-          className="text-xs text-zinc-400 hover:text-white transition-colors text-left pt-1"
+          className="text-xs text-brand-light hover:text-white transition-colors text-left pt-1"
         >
           + Adicionar produto
         </button>

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -44,9 +44,9 @@ export default function LoginPage() {
       <div className="relative w-full max-w-sm mx-4">
 
         {/* Borda brilhante no topo do card */}
-        <div className="absolute inset-x-0 -top-px h-px bg-gradient-to-r from-transparent via-indigo-500/50 to-transparent rounded-t-2xl" />
+        <div className="absolute inset-x-0 -top-px h-px bg-gradient-to-r from-transparent via-brand-primary/50 to-transparent rounded-t-2xl" />
 
-        <div className="bg-zinc-900/70 backdrop-blur-2xl border border-white/[0.08] rounded-2xl p-10 shadow-2xl shadow-black/60">
+        <div className="bg-brand-card backdrop-blur-2xl border border-brand-border rounded-2xl p-10 shadow-2xl shadow-black/60">
 
           {/* Logo */}
           <div className="mb-10">
@@ -54,24 +54,24 @@ export default function LoginPage() {
               <img src="/favicon.svg" alt="FlowStock" className="w-8 h-8" />
               <h1 className="text-xl font-bold text-white tracking-tight">FlowStock</h1>
             </div>
-            <p className="text-sm text-zinc-500">Acesse sua conta para continuar</p>
+            <p className="text-sm text-brand-medium">Acesse sua conta para continuar</p>
           </div>
 
           <form onSubmit={handleLogin} className="flex flex-col gap-5">
 
             {/* Email */}
             <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-medium text-zinc-400 tracking-wide">Email</label>
+              <label className="text-xs font-medium text-brand-light tracking-wide">Email</label>
               <div className="relative">
                 <input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="w-full bg-zinc-800/50 border border-white/[0.08] rounded-xl px-4 py-3 pr-10 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-indigo-500/50 focus:bg-zinc-800/80 focus:ring-1 focus:ring-indigo-500/20 transition-all duration-200"
+                  className="w-full bg-brand-card border border-brand-border rounded-xl px-4 py-3 pr-10 text-sm text-white placeholder-brand-muted focus:outline-none focus:border-brand-primary/50 focus:bg-brand-card focus:ring-1 focus:ring-brand-primary/20 transition-all duration-200"
                   placeholder="seu@email.com"
                 />
-                <svg className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-600" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <svg className="absolute right-3 top-1/2 -translate-y-1/2 text-brand-muted" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                   <rect width="20" height="16" x="2" y="4" rx="2" />
                   <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
                 </svg>
@@ -80,20 +80,20 @@ export default function LoginPage() {
 
             {/* Senha */}
             <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-medium text-zinc-400 tracking-wide">Senha</label>
+              <label className="text-xs font-medium text-brand-light tracking-wide">Senha</label>
               <div className="relative">
                 <input
                   type={mostrarSenha ? "text" : "password"}
                   value={senha}
                   onChange={(e) => setSenha(e.target.value)}
                   required
-                  className="w-full bg-zinc-800/50 border border-white/[0.08] rounded-xl px-4 py-3 pr-10 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-indigo-500/50 focus:bg-zinc-800/80 focus:ring-1 focus:ring-indigo-500/20 transition-all duration-200"
+                  className="w-full bg-brand-card border border-brand-border rounded-xl px-4 py-3 pr-10 text-sm text-white placeholder-brand-muted focus:outline-none focus:border-brand-primary/50 focus:bg-brand-card focus:ring-1 focus:ring-brand-primary/20 transition-all duration-200"
                   placeholder="••••••••"
                 />
                 <button
                   type="button"
                   onClick={() => setMostrarSenha(!mostrarSenha)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-600 hover:text-zinc-400 transition-colors"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-brand-muted hover:text-brand-light transition-colors"
                 >
                   {mostrarSenha ? (
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
@@ -120,7 +120,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={carregando}
-              className="mt-1 w-full py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white text-sm font-semibold disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg shadow-indigo-500/20 active:scale-[0.98]"
+              className="mt-1 w-full py-3 rounded-xl bg-gradient-to-r from-brand-primary to-brand-primary hover:from-brand-primary hover:to-brand-primary text-white text-sm font-semibold disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg shadow-brand-primary/20 active:scale-[0.98]"
             >
               {carregando ? "Entrando..." : "Entrar"}
             </button>

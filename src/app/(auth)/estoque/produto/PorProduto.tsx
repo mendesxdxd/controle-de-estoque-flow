@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useMemo, useState } from "react";
 import { Movimentacao, Produto } from "@/types";
@@ -46,7 +46,7 @@ export default function PorProduto({ movimentacoes, produtos }: Props) {
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <label className="text-xs font-semibold uppercase tracking-wider text-zinc-400 block mb-2">Produto</label>
+        <label className="text-xs font-semibold uppercase tracking-wider text-brand-light block mb-2">Produto</label>
         <select
           value={produtoId}
           onChange={(e) => setProdutoId(e.target.value)}
@@ -61,7 +61,7 @@ export default function PorProduto({ movimentacoes, produtos }: Props) {
 
       {produtoId && movsProduto.length === 0 && (
         <div className="glass-panel py-16 text-center">
-          <p className="text-sm text-zinc-400">Nenhuma movimentacao encontrada.</p>
+          <p className="text-sm text-brand-light">Nenhuma movimentacao encontrada.</p>
         </div>
       )}
 
@@ -70,18 +70,18 @@ export default function PorProduto({ movimentacoes, produtos }: Props) {
           {/* Cards */}
           <div className="grid grid-cols-3 gap-4">
             <div className="glass-panel p-4">
-              <p className="text-xs text-zinc-500 mb-1">Saldo atual</p>
+              <p className="text-xs text-brand-medium mb-1">Saldo atual</p>
               <p className={`text-2xl font-bold ${stats.saldoAtual >= 0 ? "text-white" : "text-red-400"}`}>
                 {stats.saldoAtual} {stats.unidade}
               </p>
             </div>
             <div className="glass-panel p-4">
-              <p className="text-xs text-zinc-500 mb-1">Total entradas</p>
-              <p className="text-2xl font-bold text-indigo-400">{stats.totalEntradas} {stats.unidade}</p>
+              <p className="text-xs text-brand-medium mb-1">Total entradas</p>
+              <p className="text-2xl font-bold text-brand-primary">{stats.totalEntradas} {stats.unidade}</p>
             </div>
             <div className="glass-panel p-4">
-              <p className="text-xs text-zinc-500 mb-1">Total saidas</p>
-              <p className="text-2xl font-bold text-zinc-300">{stats.totalSaidas} {stats.unidade}</p>
+              <p className="text-xs text-brand-medium mb-1">Total saidas</p>
+              <p className="text-2xl font-bold text-brand-light">{stats.totalSaidas} {stats.unidade}</p>
             </div>
           </div>
 
@@ -91,7 +91,7 @@ export default function PorProduto({ movimentacoes, produtos }: Props) {
           {/* Filtro de periodo da tabela */}
           <div className="flex gap-4 items-end">
             <div className="flex flex-col gap-1">
-              <label className="text-xs font-semibold uppercase tracking-wider text-zinc-400">De</label>
+              <label className="text-xs font-semibold uppercase tracking-wider text-brand-light">De</label>
               <input
                 type="date"
                 value={dataInicio}
@@ -100,7 +100,7 @@ export default function PorProduto({ movimentacoes, produtos }: Props) {
               />
             </div>
             <div className="flex flex-col gap-1">
-              <label className="text-xs font-semibold uppercase tracking-wider text-zinc-400">Ate</label>
+              <label className="text-xs font-semibold uppercase tracking-wider text-brand-light">Ate</label>
               <input
                 type="date"
                 value={dataFim}
@@ -111,7 +111,7 @@ export default function PorProduto({ movimentacoes, produtos }: Props) {
             {(dataInicio || dataFim) && (
               <button
                 onClick={() => { setDataInicio(""); setDataFim(""); }}
-                className="text-xs text-zinc-500 hover:text-white transition-colors pb-2"
+                className="text-xs text-brand-medium hover:text-white transition-colors pb-2"
               >
                 Limpar filtro
               </button>
@@ -121,12 +121,12 @@ export default function PorProduto({ movimentacoes, produtos }: Props) {
           {/* Tabela */}
           {movsFiltradas.length === 0 ? (
             <div className="glass-panel py-12 text-center">
-              <p className="text-sm text-zinc-400">Nenhuma movimentacao no periodo selecionado.</p>
+              <p className="text-sm text-brand-light">Nenhuma movimentacao no periodo selecionado.</p>
             </div>
           ) : (
             <>
               <div className="flex gap-6 py-1 px-1">
-                <span className="text-xs text-zinc-500">
+                <span className="text-xs text-brand-medium">
                   <span className="font-bold text-white">{movsFiltradas.length}</span> registros
                 </span>
               </div>
@@ -142,14 +142,14 @@ export default function PorProduto({ movimentacoes, produtos }: Props) {
                   </thead>
                   <tbody>
                     {movsFiltradas.map((mov, i) => (
-                      <tr key={mov.id} className={`border-b border-white/[0.04] ${i % 2 === 0 ? "table-row-even" : "table-row-odd"}`}>
-                        <td className="py-3 px-4 text-zinc-400 whitespace-nowrap">
+                      <tr key={mov.id} className={`border-b border-brand-border/40 ${i % 2 === 0 ? "table-row-even" : "table-row-odd"}`}>
+                        <td className="py-3 px-4 text-brand-light whitespace-nowrap">
                           <div>{new Date(mov.created_at).toLocaleDateString("pt-BR")}</div>
-                          <div className="text-xs text-zinc-600">{new Date(mov.created_at).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}</div>
+                          <div className="text-xs text-brand-muted">{new Date(mov.created_at).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}</div>
                         </td>
                         <td className="py-3 px-4">
                           <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${
-                            mov.tipo === "entrada" ? "bg-indigo-500/15 text-indigo-400" : "bg-zinc-700/50 text-zinc-400"
+                            mov.tipo === "entrada" ? "bg-brand-primary/15 text-brand-primary" : "bg-brand-hover text-brand-light"
                           }`}>
                             {mov.tipo}
                           </span>
@@ -157,7 +157,7 @@ export default function PorProduto({ movimentacoes, produtos }: Props) {
                         <td className="py-3 px-4 text-right text-white font-medium">
                           {mov.quantidade} {mov.produtos?.unidade ?? ""}
                         </td>
-                        <td className="py-3 px-4 text-zinc-500">{mov.observacao ?? "—"}</td>
+                        <td className="py-3 px-4 text-brand-medium">{mov.observacao ?? "—"}</td>
                       </tr>
                     ))}
                   </tbody>

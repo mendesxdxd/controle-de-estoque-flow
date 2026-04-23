@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useMemo, useState } from "react";
 import { Movimentacao } from "@/types";
@@ -49,7 +49,7 @@ export default function PorNota({ movimentacoes }: Props) {
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <label className="text-xs font-semibold uppercase tracking-wider text-zinc-400 block mb-2">Numero da nota</label>
+        <label className="text-xs font-semibold uppercase tracking-wider text-brand-light block mb-2">Numero da nota</label>
         <input
           type="text"
           value={busca}
@@ -61,7 +61,7 @@ export default function PorNota({ movimentacoes }: Props) {
 
       {busca.trim() && resultado.length === 0 && (
         <div className="glass-panel py-16 text-center">
-          <p className="text-sm text-zinc-400">Nenhuma movimentacao encontrada para essa nota.</p>
+          <p className="text-sm text-brand-light">Nenhuma movimentacao encontrada para essa nota.</p>
         </div>
       )}
 
@@ -70,25 +70,25 @@ export default function PorNota({ movimentacoes }: Props) {
           {/* Cards resumo */}
           <div className="grid grid-cols-4 gap-4">
             <div className="glass-panel p-4">
-              <p className="text-xs text-zinc-500 mb-1">Movimentacoes</p>
+              <p className="text-xs text-brand-medium mb-1">Movimentacoes</p>
               <p className="text-2xl font-bold text-white">{resumo.totalMovs}</p>
             </div>
             <div className="glass-panel p-4">
-              <p className="text-xs text-zinc-500 mb-1">Produtos</p>
+              <p className="text-xs text-brand-medium mb-1">Produtos</p>
               <p className="text-2xl font-bold text-white">{resumo.totalProdutos}</p>
             </div>
             <div className="glass-panel p-4">
-              <p className="text-xs text-zinc-500 mb-1">Total caixas</p>
-              <p className="text-2xl font-bold text-indigo-400">{resumo.totalCaixas} cx</p>
+              <p className="text-xs text-brand-medium mb-1">Total caixas</p>
+              <p className="text-2xl font-bold text-brand-primary">{resumo.totalCaixas} cx</p>
             </div>
             <div className="glass-panel p-4">
-              <p className="text-xs text-zinc-500 mb-1">Tipo</p>
+              <p className="text-xs text-brand-medium mb-1">Tipo</p>
               <p className="text-2xl font-bold capitalize text-white">{resumo.tipo}</p>
             </div>
           </div>
 
           {/* Data */}
-          <p className="text-xs text-zinc-500 px-1">
+          <p className="text-xs text-brand-medium px-1">
             {resumo.dataMin.toLocaleDateString("pt-BR") === resumo.dataMax.toLocaleDateString("pt-BR")
               ? `Data: ${resumo.dataMin.toLocaleDateString("pt-BR")}`
               : `Periodo: ${resumo.dataMin.toLocaleDateString("pt-BR")} — ${resumo.dataMax.toLocaleDateString("pt-BR")}`
@@ -110,12 +110,12 @@ export default function PorNota({ movimentacoes }: Props) {
                 {resultado.map((r, i) => {
                   const saldo = r.entradas - r.saidas;
                   return (
-                    <tr key={i} className={`border-b border-white/[0.04] ${i % 2 === 0 ? "table-row-even" : "table-row-odd"}`}>
+                    <tr key={i} className={`border-b border-brand-border/40 ${i % 2 === 0 ? "table-row-even" : "table-row-odd"}`}>
                       <td className="py-3 px-4 font-medium text-white">{r.nome}</td>
-                      <td className="py-3 px-4 text-right text-indigo-400 font-medium">
+                      <td className="py-3 px-4 text-right text-brand-primary font-medium">
                         {r.entradas > 0 ? `${r.entradas} ${r.unidade}` : "—"}
                       </td>
-                      <td className="py-3 px-4 text-right text-zinc-400 font-medium">
+                      <td className="py-3 px-4 text-right text-brand-light font-medium">
                         {r.saidas > 0 ? `${r.saidas} ${r.unidade}` : "—"}
                       </td>
                       <td className={`py-3 px-4 text-right font-bold ${saldo >= 0 ? "text-white" : "text-red-400"}`}>

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import {
   BarChart,
@@ -29,7 +29,7 @@ export default function GraficoMovimentacoes({ movimentacoes }: Props) {
 
   if (dados.length === 0) {
     return (
-      <p className="text-sm text-zinc-500 p-5">Nenhuma movimentacao hoje.</p>
+      <p className="text-sm text-brand-medium p-5">Nenhuma movimentacao hoje.</p>
     );
   }
 

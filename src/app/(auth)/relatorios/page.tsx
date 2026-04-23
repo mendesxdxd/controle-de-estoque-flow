@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+﻿import { createClient } from "@/lib/supabase/server";
 import { getTenant } from "@/lib/tenant";
 import { EstoqueAtualRow, Movimentacao } from "@/types";
 import TabelaEstoqueAtual from "./TabelaEstoqueAtual";
@@ -34,7 +34,7 @@ export default async function RelatoriosPage() {
       <section className="flex flex-col gap-4">
         <div className="flex items-center justify-between border-b border-zinc-700 pb-3">
           <h2 className="text-sm font-bold uppercase tracking-wider text-white">Estoque atual</h2>
-          <span className="text-xs text-zinc-500">{estoqueAtual?.length ?? 0} produtos</span>
+          <span className="text-xs text-brand-medium">{estoqueAtual?.length ?? 0} produtos</span>
         </div>
         <TabelaEstoqueAtual
           rows={(estoqueAtual as EstoqueAtualRow[]) ?? []}
@@ -58,7 +58,7 @@ export default async function RelatoriosPage() {
       <section className="flex flex-col gap-4">
         <div className="flex items-center justify-between border-b border-zinc-700 pb-3">
           <h2 className="text-sm font-bold uppercase tracking-wider text-white">Movimentacoes</h2>
-          <span className="text-xs text-zinc-500">{movimentacoes?.length ?? 0} registros</span>
+          <span className="text-xs text-brand-medium">{movimentacoes?.length ?? 0} registros</span>
         </div>
         <FiltroMovimentacoes movimentacoes={(movimentacoes as Movimentacao[]) ?? []} />
       </section>

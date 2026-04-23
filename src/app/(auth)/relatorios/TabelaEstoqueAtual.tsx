@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { EstoqueAtualRow, Movimentacao } from "@/types";
@@ -274,7 +274,7 @@ export default function TabelaEstoqueAtual({ rows, movimentacoes, podeFechamento
   if (rows.length === 0) {
     return (
       <div className="glass-panel py-16 text-center">
-        <p className="text-sm text-zinc-400">Nenhum produto cadastrado.</p>
+        <p className="text-sm text-brand-light">Nenhum produto cadastrado.</p>
       </div>
     );
   }
@@ -382,21 +382,21 @@ export default function TabelaEstoqueAtual({ rows, movimentacoes, podeFechamento
               return (
                 <tr
                   key={row.id}
-                  className={`border-b border-white/[0.04] ${i % 2 === 0 ? "table-row-even" : "table-row-odd"}`}
+                  className={`border-b border-brand-border/40 ${i % 2 === 0 ? "table-row-even" : "table-row-odd"}`}
                 >
                   <td className="py-3 px-4 font-medium text-white">{row.nome}</td>
-                  <td className="py-3 px-4 text-zinc-500">{row.categoria ?? "—"}</td>
-                  <td className="py-3 px-4 text-zinc-500">{row.unidade}</td>
+                  <td className="py-3 px-4 text-brand-medium">{row.categoria ?? "—"}</td>
+                  <td className="py-3 px-4 text-brand-medium">{row.unidade}</td>
                   <td className={`py-3 px-4 text-right font-semibold td-num ${baixo ? "text-red-400" : "text-white"}`}>
                     {row.estoque_atual.toLocaleString("pt-BR")}
                     {row.caixas_por_palete && row.estoque_atual > 0 && (
-                      <span className="block text-xs font-normal text-zinc-500">
+                      <span className="block text-xs font-normal text-brand-medium">
                         {Number((row.estoque_atual / row.caixas_por_palete).toFixed(1)).toLocaleString("pt-BR")} pal.
                       </span>
                     )}
                   </td>
-                  <td className="py-3 px-4 text-right text-zinc-400 td-num">{row.estoque_minimo.toLocaleString("pt-BR")}</td>
-                  <td className="py-3 px-4 text-right text-zinc-400 td-num">{formatarMoeda(row.preco_custo)}</td>
+                  <td className="py-3 px-4 text-right text-brand-light td-num">{row.estoque_minimo.toLocaleString("pt-BR")}</td>
+                  <td className="py-3 px-4 text-right text-brand-light td-num">{formatarMoeda(row.preco_custo)}</td>
                   <td className="py-3 px-4 text-right font-medium text-white td-num">
                     {formatarMoeda(row.estoque_atual * row.preco_custo)}
                   </td>
@@ -411,7 +411,7 @@ export default function TabelaEstoqueAtual({ rows, movimentacoes, podeFechamento
           </tbody>
           <tfoot>
             {totalPaletes > 0 && (
-              <tr className="border-t border-white/[0.06] bg-white/[0.02]">
+              <tr className="border-t border-brand-border bg-brand-hover/20">
                 <td colSpan={6} className="py-3 px-4 text-xs font-bold uppercase tracking-wider text-white text-right">
                   Total em paletes
                 </td>
@@ -421,7 +421,7 @@ export default function TabelaEstoqueAtual({ rows, movimentacoes, podeFechamento
                 <td />
               </tr>
             )}
-            <tr className="border-t border-white/[0.06] bg-white/[0.02]">
+            <tr className="border-t border-brand-border bg-brand-hover/20">
               <td colSpan={6} className="py-3 px-4 text-xs font-bold uppercase tracking-wider text-white text-right">
                 Valor total em estoque
               </td>

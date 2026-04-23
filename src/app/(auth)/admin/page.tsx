@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+﻿import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { listarTenants } from "./actions";
@@ -26,7 +26,7 @@ export default async function AdminPage() {
 
       {tenants.length === 0 ? (
         <div className="glass-panel py-16 text-center">
-          <p className="text-sm text-zinc-400">Nenhuma empresa cadastrada.</p>
+          <p className="text-sm text-brand-light">Nenhuma empresa cadastrada.</p>
         </div>
       ) : (
         <div className="glass-table overflow-x-auto">
@@ -41,12 +41,12 @@ export default async function AdminPage() {
             </thead>
             <tbody>
               {tenants.map((t: any, i: number) => (
-                <tr key={t.id} className={`border-b border-white/[0.04] ${i % 2 === 0 ? "table-row-even" : "table-row-odd"}`}>
+                <tr key={t.id} className={`border-b border-brand-border/40 ${i % 2 === 0 ? "table-row-even" : "table-row-odd"}`}>
                   <td className="py-3 px-4 font-medium text-white">{t.nome}</td>
-                  <td className="py-3 px-4 text-right text-zinc-400 td-num">
+                  <td className="py-3 px-4 text-right text-brand-light td-num">
                     {t.capacidade_armazem?.toLocaleString("pt-BR") ?? "—"}
                   </td>
-                  <td className="py-3 px-4 text-zinc-500">
+                  <td className="py-3 px-4 text-brand-medium">
                     {new Date(t.created_at).toLocaleDateString("pt-BR")}
                   </td>
                   <td className="py-3 px-4 text-right flex gap-2 justify-end">

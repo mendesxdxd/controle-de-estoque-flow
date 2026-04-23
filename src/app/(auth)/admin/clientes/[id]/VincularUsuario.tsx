@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { vincularUsuarioExistente } from "../../actions";
@@ -56,7 +56,7 @@ export default function VincularUsuario({ tenantId, usuariosSemTenant }: Props) 
   return (
     <div className="glass-panel p-4 flex flex-col gap-3 w-full max-w-sm">
       <div className="flex flex-col gap-1">
-        <label className="text-xs font-semibold uppercase tracking-wider text-zinc-300">Usuario</label>
+        <label className="text-xs font-semibold uppercase tracking-wider text-brand-light">Usuario</label>
         <select
           value={userId}
           onChange={(e) => setUserId(e.target.value)}
@@ -70,7 +70,7 @@ export default function VincularUsuario({ tenantId, usuariosSemTenant }: Props) 
       </div>
 
       <div className="flex flex-col gap-1">
-        <label className="text-xs font-semibold uppercase tracking-wider text-zinc-300">Nome</label>
+        <label className="text-xs font-semibold uppercase tracking-wider text-brand-light">Nome</label>
         <input
           type="text"
           value={nome}

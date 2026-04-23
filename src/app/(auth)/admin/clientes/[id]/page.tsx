@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+﻿import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { redirect } from "next/navigation";
 import Link from "next/link";
@@ -24,7 +24,7 @@ export default async function DetalheClientePage({ params }: { params: Promise<{
   return (
     <div className="flex flex-col gap-8">
       <div className="flex items-center gap-3">
-        <Link href="/admin" className="text-zinc-500 hover:text-white transition-colors text-sm">Admin</Link>
+        <Link href="/admin" className="text-brand-medium hover:text-white transition-colors text-sm">Admin</Link>
         <span className="text-zinc-700">/</span>
         <span className="text-sm text-white">{tenant.nome}</span>
       </div>
@@ -52,12 +52,12 @@ export default async function DetalheClientePage({ params }: { params: Promise<{
       <section className="flex flex-col gap-4">
         <div className="flex items-center justify-between border-b border-zinc-700 pb-3">
           <h2 className="text-sm font-bold uppercase tracking-wider text-white">Usuarios</h2>
-          <span className="text-xs text-zinc-500">{usuarios.length} usuario{usuarios.length !== 1 ? "s" : ""}</span>
+          <span className="text-xs text-brand-medium">{usuarios.length} usuario{usuarios.length !== 1 ? "s" : ""}</span>
         </div>
 
         {usuarios.length === 0 ? (
           <div className="glass-panel py-16 text-center">
-            <p className="text-sm text-zinc-400">Nenhum usuario vinculado.</p>
+            <p className="text-sm text-brand-light">Nenhum usuario vinculado.</p>
           </div>
         ) : (
           <div className="glass-table overflow-x-auto">
@@ -72,10 +72,10 @@ export default async function DetalheClientePage({ params }: { params: Promise<{
               </thead>
               <tbody>
                 {usuarios.map((u: any, i: number) => (
-                  <tr key={u.id} className={`border-b border-white/[0.04] ${i % 2 === 0 ? "table-row-even" : "table-row-odd"}`}>
+                  <tr key={u.id} className={`border-b border-brand-border/40 ${i % 2 === 0 ? "table-row-even" : "table-row-odd"}`}>
                     <td className="py-3 px-4 font-medium text-white">{u.nome ?? "—"}</td>
-                    <td className="py-3 px-4 text-zinc-400">{u.email ?? "—"}</td>
-                    <td className="py-3 px-4 text-zinc-500">
+                    <td className="py-3 px-4 text-brand-light">{u.email ?? "—"}</td>
+                    <td className="py-3 px-4 text-brand-medium">
                       {u.last_sign_in_at ? new Date(u.last_sign_in_at).toLocaleDateString("pt-BR") : "Nunca"}
                     </td>
                     <td className="py-3 px-4 text-right">

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useMemo } from "react";
 import { Movimentacao } from "@/types";
@@ -31,14 +31,14 @@ export default function FiltroMovimentacoes({ movimentacoes }: Props) {
     <div className="flex flex-col gap-4">
       <div className="glass-panel p-5 flex flex-col sm:flex-row flex-wrap gap-4 items-start sm:items-end">
         <div className="flex flex-col gap-1">
-          <label className="text-xs font-semibold uppercase tracking-wider text-zinc-300">Tipo</label>
-          <div className="flex bg-white/5 border border-white/[0.08] rounded-xl p-1 gap-1">
+          <label className="text-xs font-semibold uppercase tracking-wider text-brand-light">Tipo</label>
+          <div className="flex bg-brand-hover border border-brand-border rounded-xl p-1 gap-1">
             {(["todos", "entrada", "saida"] as const).map((t) => (
               <button
                 key={t}
                 onClick={() => setTipo(t)}
                 className={`px-4 py-2 text-sm font-semibold capitalize rounded-lg transition-all duration-150 ${
-                  tipo === t ? "bg-white/10 text-white" : "text-zinc-500 hover:text-white hover:bg-white/5"
+                  tipo === t ? "bg-brand-hover text-white" : "text-brand-medium hover:text-white hover:bg-brand-hover"
                 }`}
               >
                 {t}
@@ -48,26 +48,26 @@ export default function FiltroMovimentacoes({ movimentacoes }: Props) {
         </div>
 
         <div className="flex flex-col gap-1">
-          <label className="text-xs font-semibold uppercase tracking-wider text-zinc-300">Data</label>
+          <label className="text-xs font-semibold uppercase tracking-wider text-brand-light">Data</label>
           <DatePicker value={data} onChange={setData} />
         </div>
       </div>
 
       <div className="flex gap-6 py-3 px-1">
-        <span className="text-xs text-zinc-500">
+        <span className="text-xs text-brand-medium">
           <span className="font-bold text-white">{filtradas.length}</span> registros
         </span>
-        <span className="text-xs text-zinc-500">
-          Entradas: <span className="font-bold text-indigo-400">{totalEntradas}</span>
+        <span className="text-xs text-brand-medium">
+          Entradas: <span className="font-bold text-brand-primary">{totalEntradas}</span>
         </span>
-        <span className="text-xs text-zinc-500">
-          Saidas: <span className="font-bold text-zinc-300">{totalSaidas}</span>
+        <span className="text-xs text-brand-medium">
+          Saidas: <span className="font-bold text-brand-light">{totalSaidas}</span>
         </span>
       </div>
 
       {filtradas.length === 0 ? (
         <div className="glass-panel py-16 text-center">
-          <p className="text-sm text-zinc-400">Nenhuma movimentacao nesta data.</p>
+          <p className="text-sm text-brand-light">Nenhuma movimentacao nesta data.</p>
         </div>
       ) : (
         <div className="glass-table overflow-x-auto">
@@ -85,16 +85,16 @@ export default function FiltroMovimentacoes({ movimentacoes }: Props) {
               {filtradas.map((mov, i) => (
                 <tr
                   key={mov.id}
-                  className={`border-b border-white/[0.04] ${i % 2 === 0 ? "table-row-even" : "table-row-odd"}`}
+                  className={`border-b border-brand-border/40 ${i % 2 === 0 ? "table-row-even" : "table-row-odd"}`}
                 >
-                  <td className="py-3 px-4 text-zinc-400 whitespace-nowrap">
+                  <td className="py-3 px-4 text-brand-light whitespace-nowrap">
                     <div>{new Date(mov.created_at).toLocaleDateString("pt-BR")}</div>
-                    <div className="text-xs text-zinc-600">{new Date(mov.created_at).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}</div>
+                    <div className="text-xs text-brand-muted">{new Date(mov.created_at).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}</div>
                   </td>
                   <td className="py-3 px-4 font-medium text-white">{mov.produtos?.nome ?? "—"}</td>
                   <td className="py-3 px-4">
                     <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${
-                      mov.tipo === "entrada" ? "bg-indigo-500/15 text-indigo-400" : "bg-zinc-700/50 text-zinc-400"
+                      mov.tipo === "entrada" ? "bg-brand-primary/15 text-brand-primary" : "bg-brand-hover text-brand-light"
                     }`}>
                       {mov.tipo}
                     </span>
@@ -102,7 +102,7 @@ export default function FiltroMovimentacoes({ movimentacoes }: Props) {
                   <td className="py-3 px-4 text-right font-medium text-white">
                     {mov.quantidade} {mov.produtos?.unidade ?? ""}
                   </td>
-                  <td className="py-3 px-4 text-zinc-500">{mov.observacao ?? "—"}</td>
+                  <td className="py-3 px-4 text-brand-medium">{mov.observacao ?? "—"}</td>
                 </tr>
               ))}
             </tbody>

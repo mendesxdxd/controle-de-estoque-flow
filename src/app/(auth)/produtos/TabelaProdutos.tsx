@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { Produto, Categoria } from "@/types";
@@ -88,15 +88,15 @@ export default function TabelaProdutos({ produtos, categorias }: Props) {
               {produtos.map((prod, i) => (
                 <tr
                   key={prod.id}
-                  className={`border-b border-white/[0.04] ${i % 2 === 0 ? "table-row-even" : "table-row-odd"}`}
+                  className={`border-b border-brand-border/40 ${i % 2 === 0 ? "table-row-even" : "table-row-odd"}`}
                 >
-                  <td className="py-3 px-4 text-zinc-500">{prod.codigo ?? "—"}</td>
+                  <td className="py-3 px-4 text-brand-medium">{prod.codigo ?? "—"}</td>
                   <td className="py-3 px-4 font-medium text-white">{prod.nome}</td>
-                  <td className="py-3 px-4 text-zinc-500">{prod.categorias?.nome ?? "—"}</td>
-                  <td className="py-3 px-4 text-zinc-500">{prod.unidade}</td>
-                  <td className="py-3 px-4 text-right text-zinc-400 td-num">{formatarMoeda(prod.preco_custo)}</td>
-                  <td className="py-3 px-4 text-right text-zinc-400 td-num">{formatarMoeda(prod.preco_venda)}</td>
-                  <td className="py-3 px-4 text-right text-zinc-400 td-num">{prod.estoque_minimo}</td>
+                  <td className="py-3 px-4 text-brand-medium">{prod.categorias?.nome ?? "—"}</td>
+                  <td className="py-3 px-4 text-brand-medium">{prod.unidade}</td>
+                  <td className="py-3 px-4 text-right text-brand-light td-num">{formatarMoeda(prod.preco_custo)}</td>
+                  <td className="py-3 px-4 text-right text-brand-light td-num">{formatarMoeda(prod.preco_venda)}</td>
+                  <td className="py-3 px-4 text-right text-brand-light td-num">{prod.estoque_minimo}</td>
                   <td className="py-3 px-4">
                     <div className="flex gap-4 justify-end">
                       <button onClick={() => handleEditar(prod)} className="btn-action">

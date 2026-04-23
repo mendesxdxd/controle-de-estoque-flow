@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useMemo, useState } from "react";
 import { Movimentacao } from "@/types";
@@ -38,29 +38,29 @@ export default function ResumoEstoque({ movimentacoes }: Props) {
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <label className="text-xs font-semibold uppercase tracking-wider text-zinc-400 block mb-2">Data</label>
+        <label className="text-xs font-semibold uppercase tracking-wider text-brand-light block mb-2">Data</label>
         <DatePicker value={data} onChange={setData} />
       </div>
 
       {/* Cards */}
       <div className="grid grid-cols-3 gap-4">
         <div className="glass-panel p-4">
-          <p className="text-xs text-zinc-500 mb-1">Movimentacoes</p>
+          <p className="text-xs text-brand-medium mb-1">Movimentacoes</p>
           <p className="text-2xl font-bold text-white">{totalMovs}</p>
         </div>
         <div className="glass-panel p-4">
-          <p className="text-xs text-zinc-500 mb-1">Total entradas</p>
-          <p className="text-2xl font-bold text-indigo-400">{totalEntradas} cx</p>
+          <p className="text-xs text-brand-medium mb-1">Total entradas</p>
+          <p className="text-2xl font-bold text-brand-primary">{totalEntradas} cx</p>
         </div>
         <div className="glass-panel p-4">
-          <p className="text-xs text-zinc-500 mb-1">Total saidas</p>
-          <p className="text-2xl font-bold text-zinc-300">{totalSaidas} cx</p>
+          <p className="text-xs text-brand-medium mb-1">Total saidas</p>
+          <p className="text-2xl font-bold text-brand-light">{totalSaidas} cx</p>
         </div>
       </div>
 
       {resumo.length === 0 ? (
         <div className="glass-panel py-16 text-center">
-          <p className="text-sm text-zinc-400">Nenhuma movimentacao nesta data.</p>
+          <p className="text-sm text-brand-light">Nenhuma movimentacao nesta data.</p>
         </div>
       ) : (
         <div className="glass-table overflow-x-auto">
@@ -77,10 +77,10 @@ export default function ResumoEstoque({ movimentacoes }: Props) {
               {resumo.map((r, i) => {
                 const saldo = r.entradas - r.saidas;
                 return (
-                  <tr key={i} className={`border-b border-white/[0.04] ${i % 2 === 0 ? "table-row-even" : "table-row-odd"}`}>
+                  <tr key={i} className={`border-b border-brand-border/40 ${i % 2 === 0 ? "table-row-even" : "table-row-odd"}`}>
                     <td className="py-3 px-4 font-medium text-white">{r.nome}</td>
-                    <td className="py-3 px-4 text-right text-indigo-400 font-medium">{r.entradas} {r.unidade}</td>
-                    <td className="py-3 px-4 text-right text-zinc-400 font-medium">{r.saidas} {r.unidade}</td>
+                    <td className="py-3 px-4 text-right text-brand-primary font-medium">{r.entradas} {r.unidade}</td>
+                    <td className="py-3 px-4 text-right text-brand-light font-medium">{r.saidas} {r.unidade}</td>
                     <td className={`py-3 px-4 text-right font-bold ${saldo >= 0 ? "text-white" : "text-red-400"}`}>
                       {saldo >= 0 ? "+" : ""}{saldo} {r.unidade}
                     </td>
@@ -90,9 +90,9 @@ export default function ResumoEstoque({ movimentacoes }: Props) {
             </tbody>
             <tfoot>
               <tr className="border-t border-white/[0.1]">
-                <td className="py-3 px-4 text-xs font-bold uppercase tracking-wider text-zinc-500">Total</td>
-                <td className="py-3 px-4 text-right font-bold text-indigo-400">{totalEntradas} cx</td>
-                <td className="py-3 px-4 text-right font-bold text-zinc-300">{totalSaidas} cx</td>
+                <td className="py-3 px-4 text-xs font-bold uppercase tracking-wider text-brand-medium">Total</td>
+                <td className="py-3 px-4 text-right font-bold text-brand-primary">{totalEntradas} cx</td>
+                <td className="py-3 px-4 text-right font-bold text-brand-light">{totalSaidas} cx</td>
                 <td className={`py-3 px-4 text-right font-bold ${totalEntradas - totalSaidas >= 0 ? "text-white" : "text-red-400"}`}>
                   {totalEntradas - totalSaidas >= 0 ? "+" : ""}{totalEntradas - totalSaidas} cx
                 </td>

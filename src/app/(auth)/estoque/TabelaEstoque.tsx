@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useMemo } from "react";
 import { Movimentacao, Produto } from "@/types";
@@ -107,21 +107,21 @@ export default function TabelaEstoque({ movimentacoes, produtos, notaObrigatoria
               {movimentacoesFiltradas.map((mov, i) => (
                 <tr
                   key={mov.id}
-                  className={`border-b border-white/[0.04] ${i % 2 === 0 ? "table-row-even" : "table-row-odd"}`}
+                  className={`border-b border-brand-border/40 ${i % 2 === 0 ? "table-row-even" : "table-row-odd"}`}
                 >
-                  <td className="py-3 px-4 text-zinc-400 whitespace-nowrap">
+                  <td className="py-3 px-4 text-brand-light whitespace-nowrap">
                     <div>{new Date(mov.created_at).toLocaleDateString("pt-BR")}</div>
-                    <div className="text-xs text-zinc-600">{new Date(mov.created_at).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}</div>
+                    <div className="text-xs text-brand-muted">{new Date(mov.created_at).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}</div>
                   </td>
                   {notaObrigatoria && (
-                    <td className="py-3 px-4 text-zinc-400 font-mono text-xs">{mov.nota_fiscal ?? "—"}</td>
+                    <td className="py-3 px-4 text-brand-light font-mono text-xs">{mov.nota_fiscal ?? "—"}</td>
                   )}
                   <td className="py-3 px-4 font-medium text-white">{mov.produtos?.nome ?? "—"}</td>
                   <td className="py-3 px-4">
                     <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${
                       mov.tipo === "entrada"
-                        ? "bg-indigo-500/15 text-indigo-400"
-                        : "bg-zinc-700/50 text-zinc-400"
+                        ? "bg-brand-primary/15 text-brand-primary"
+                        : "bg-brand-hover text-brand-light"
                     }`}>
                       {mov.tipo}
                     </span>
@@ -129,7 +129,7 @@ export default function TabelaEstoque({ movimentacoes, produtos, notaObrigatoria
                   <td className="py-3 px-4 text-right text-white font-medium td-num">
                     {mov.quantidade} {mov.produtos?.unidade ?? ""}
                   </td>
-                  <td className="py-3 px-4 text-zinc-500">{mov.observacao ?? "—"}</td>
+                  <td className="py-3 px-4 text-brand-medium">{mov.observacao ?? "—"}</td>
                   <td className="py-3 px-4 text-right">
                     <button
                       onClick={() => handleExcluir(mov.id)}

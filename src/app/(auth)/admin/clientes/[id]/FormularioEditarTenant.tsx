@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { atualizarTenant } from "../../actions";
@@ -51,7 +51,7 @@ export default function FormularioEditarTenant({ id, nomeInicial, capacidadeInic
   return (
     <div className="glass-panel p-4 flex flex-col gap-3 w-full max-w-sm">
       <div className="flex flex-col gap-1">
-        <label className="text-xs font-semibold uppercase tracking-wider text-zinc-300">Nome</label>
+        <label className="text-xs font-semibold uppercase tracking-wider text-brand-light">Nome</label>
         <input
           type="text"
           value={nome}
@@ -61,7 +61,7 @@ export default function FormularioEditarTenant({ id, nomeInicial, capacidadeInic
         />
       </div>
       <div className="flex flex-col gap-1">
-        <label className="text-xs font-semibold uppercase tracking-wider text-zinc-300">Capacidade</label>
+        <label className="text-xs font-semibold uppercase tracking-wider text-brand-light">Capacidade</label>
         <input
           type="number"
           value={capacidade}

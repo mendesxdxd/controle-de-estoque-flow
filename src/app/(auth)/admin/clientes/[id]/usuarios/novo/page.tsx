@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { useRouter, useParams } from "next/navigation";
@@ -51,9 +51,9 @@ export default function NovoUsuarioPage() {
   return (
     <div className="flex flex-col gap-8 max-w-lg">
       <div className="flex items-center gap-3 flex-wrap">
-        <Link href="/admin" className="text-zinc-500 hover:text-white transition-colors text-sm">Admin</Link>
+        <Link href="/admin" className="text-brand-medium hover:text-white transition-colors text-sm">Admin</Link>
         <span className="text-zinc-700">/</span>
-        <Link href={`/admin/clientes/${tenantId}`} className="text-zinc-500 hover:text-white transition-colors text-sm">Empresa</Link>
+        <Link href={`/admin/clientes/${tenantId}`} className="text-brand-medium hover:text-white transition-colors text-sm">Empresa</Link>
         <span className="text-zinc-700">/</span>
         <span className="text-sm text-white">Novo usuario</span>
       </div>
@@ -66,7 +66,7 @@ export default function NovoUsuarioPage() {
       <div className="glass-panel p-6">
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <div className="flex flex-col gap-1">
-            <label className="text-xs font-semibold uppercase tracking-wider text-zinc-300">Nome</label>
+            <label className="text-xs font-semibold uppercase tracking-wider text-brand-light">Nome</label>
             <input
               type="text"
               value={nome}
@@ -77,7 +77,7 @@ export default function NovoUsuarioPage() {
           </div>
 
           <div className="flex flex-col gap-1">
-            <label className="text-xs font-semibold uppercase tracking-wider text-zinc-300">Email</label>
+            <label className="text-xs font-semibold uppercase tracking-wider text-brand-light">Email</label>
             <input
               type="email"
               value={email}
@@ -88,7 +88,7 @@ export default function NovoUsuarioPage() {
           </div>
 
           <div className="flex flex-col gap-1">
-            <label className="text-xs font-semibold uppercase tracking-wider text-zinc-300">Senha</label>
+            <label className="text-xs font-semibold uppercase tracking-wider text-brand-light">Senha</label>
             <input
               type="password"
               value={senha}
@@ -104,9 +104,9 @@ export default function NovoUsuarioPage() {
               id="podeFechamento"
               checked={podeFechamento}
               onChange={(e) => setPodeFechamento(e.target.checked)}
-              className="w-4 h-4 accent-indigo-500"
+              className="w-4 h-4 accent-brand-primary"
             />
-            <label htmlFor="podeFechamento" className="text-sm text-zinc-300">
+            <label htmlFor="podeFechamento" className="text-sm text-brand-light">
               Liberar fechamento do dia e graficos
             </label>
           </div>

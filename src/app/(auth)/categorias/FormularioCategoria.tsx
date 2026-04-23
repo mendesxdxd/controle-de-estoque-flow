@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { Categoria } from "@/types";
@@ -50,7 +50,7 @@ export default function FormularioCategoria({ categoria, onFechar, onSucesso }: 
         </h2>
         <button
           onClick={onFechar}
-          className="text-xs text-zinc-500 hover:text-white transition-colors"
+          className="text-xs text-brand-medium hover:text-white transition-colors"
         >
           Fechar
         </button>
@@ -58,7 +58,7 @@ export default function FormularioCategoria({ categoria, onFechar, onSucesso }: 
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-4 max-w-md">
         <div className="flex flex-col gap-1">
-          <label className="text-xs font-semibold uppercase tracking-wider text-zinc-300">Nome</label>
+          <label className="text-xs font-semibold uppercase tracking-wider text-brand-light">Nome</label>
           <input
             type="text"
             value={nome}
@@ -69,8 +69,8 @@ export default function FormularioCategoria({ categoria, onFechar, onSucesso }: 
         </div>
 
         <div className="flex flex-col gap-1">
-          <label className="text-xs font-semibold uppercase tracking-wider text-zinc-300">
-            Descricao <span className="text-zinc-400 normal-case font-normal">(opcional)</span>
+          <label className="text-xs font-semibold uppercase tracking-wider text-brand-light">
+            Descricao <span className="text-brand-light normal-case font-normal">(opcional)</span>
           </label>
           <input
             type="text"
