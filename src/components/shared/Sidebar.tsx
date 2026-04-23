@@ -5,6 +5,20 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
+const estoqueIcon = (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M12 2H2v10l9.29 9.29c.94.94 2.48.94 3.42 0l6.58-6.58c.94-.94.94-2.48 0-3.42L12 2Z" />
+    <path d="M7 7h.01" />
+  </svg>
+);
+
+const estoqueSubItems = [
+  { href: "/estoque", label: "Movimentacoes" },
+  { href: "/estoque/resumo", label: "Resumo do dia" },
+  { href: "/estoque/produto", label: "Por produto" },
+  { href: "/estoque/nota", label: "Por nota" },
+];
+
 const links = [
   {
     href: "/dashboard",
@@ -26,16 +40,6 @@ const links = [
         <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
         <polyline points="3.29 7 12 12 20.71 7" />
         <line x1="12" x2="12" y1="22" y2="12" />
-      </svg>
-    ),
-  },
-  {
-    href: "/estoque",
-    label: "Estoque",
-    icon: (
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M12 2H2v10l9.29 9.29c.94.94 2.48.94 3.42 0l6.58-6.58c.94-.94.94-2.48 0-3.42L12 2Z" />
-        <path d="M7 7h.01" />
       </svg>
     ),
   },
@@ -105,6 +109,7 @@ export default function Sidebar({ isAdmin, userEmail }: { isAdmin: boolean; user
   const pathname = usePathname();
   const router = useRouter();
   const [aberto, setAberto] = useState(false);
+  const [estoqueExpandido, setEstoqueExpandido] = useState(pathname.startsWith("/estoque"));
 
   async function handleLogout() {
     const supabase = createClient();
@@ -134,6 +139,8 @@ export default function Sidebar({ isAdmin, userEmail }: { isAdmin: boolean; user
       </Link>
     );
   }
+
+  const estoqueAtivo = pathname.startsWith("/estoque");
 
   return (
     <>
@@ -186,9 +193,54 @@ export default function Sidebar({ isAdmin, userEmail }: { isAdmin: boolean; user
 
         {/* Nav */}
         <nav className="flex-1 px-3 py-5 flex flex-col gap-1">
-          {links.map((link) => (
-            <NavLink key={link.href} href={link.href} label={link.label} icon={link.icon} onClick={handleNavegar} />
-          ))}
+          <NavLink href="/dashboard" label="Dashboard" icon={links[0].icon} onClick={handleNavegar} />
+          <NavLink href="/produtos" label="Produtos" icon={links[1].icon} onClick={handleNavegar} />
+
+          {/* Estoque expansivel */}
+          <div>
+            <div className={`flex items-center rounded-xl transition-all duration-150 ${estoqueAtivo ? "bg-white/10" : "hover:bg-white/5"}`}>
+              <Link
+                href="/estoque"
+                onClick={handleNavegar}
+                className={`flex-1 flex items-center gap-3 px-3 py-2.5 text-sm font-medium transition-colors ${
+                  estoqueAtivo ? "text-white" : "text-zinc-500 hover:text-zinc-200"
+                }`}
+              >
+                <span className={estoqueAtivo ? "text-white" : "text-zinc-500"}>{estoqueIcon}</span>
+                Estoque
+              </Link>
+              <button
+                onClick={() => setEstoqueExpandido((v) => !v)}
+                className={`pr-3 py-2.5 transition-colors ${estoqueAtivo ? "text-white/60 hover:text-white" : "text-zinc-600 hover:text-zinc-400"}`}
+                aria-label="Expandir estoque"
+              >
+                <svg
+                  width="12" height="12" viewBox="0 0 12 12" fill="none"
+                  className={`transition-transform duration-200 ${estoqueExpandido ? "rotate-180" : ""}`}
+                >
+                  <path d="M2 4l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </button>
+            </div>
+
+            {estoqueExpandido && (
+              <div className="ml-7 mt-1 flex flex-col gap-0.5">
+                {estoqueSubItems.map((item) => (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={handleNavegar}
+                    className="px-3 py-1.5 text-xs font-medium rounded-lg transition-all duration-150 text-zinc-500 hover:text-zinc-200 hover:bg-white/5"
+                  >
+                    {item.label}
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <NavLink href="/categorias" label="Categorias" icon={links[2].icon} onClick={handleNavegar} />
+          <NavLink href="/relatorios" label="Relatorios" icon={links[3].icon} onClick={handleNavegar} />
 
           <div className="mt-4 pt-4 border-t border-white/[0.06] flex flex-col gap-1">
             {secondaryLinks.map((link) => {

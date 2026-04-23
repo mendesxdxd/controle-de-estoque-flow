@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Movimentacao, Produto } from "@/types";
 import FormularioMovimentacao from "./FormularioMovimentacao";
 import { excluirMovimentacao } from "./actions";
@@ -18,29 +18,34 @@ function hojeStr() {
   return `${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, "0")}-${String(t.getDate()).padStart(2, "0")}`;
 }
 
+function toLocalDateStr(dateStr: string) {
+  const d = new Date(dateStr);
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+}
+
 export default function TabelaEstoque({ movimentacoes, produtos, notaObrigatoria }: Props) {
   const [abrirForm, setAbrirForm] = useState(false);
   const [tipoInicial, setTipoInicial] = useState<"entrada" | "saida">("entrada");
   const [dataSelecionada, setDataSelecionada] = useState(hojeStr());
-
-  const movimentacoesFiltradas = movimentacoes.filter((mov) =>
-    new Date(mov.created_at).toISOString().slice(0, 10) === dataSelecionada
-  );
-
-  const saldoPorProduto = movimentacoes.reduce<Record<string, number>>((acc, mov) => {
-    acc[mov.produto_id] = (acc[mov.produto_id] ?? 0) + (mov.tipo === "entrada" ? mov.quantidade : -mov.quantidade);
-    return acc;
-  }, {});
   const [excluindo, setExcluindo] = useState<string | null>(null);
   const [toast, setToast] = useState<string | null>(null);
+
+  const movimentacoesFiltradas = useMemo(() =>
+    movimentacoes.filter((mov) => toLocalDateStr(mov.created_at) === dataSelecionada),
+    [movimentacoes, dataSelecionada]
+  );
+
+  const saldoPorProduto = useMemo(() =>
+    movimentacoes.reduce<Record<string, number>>((acc, mov) => {
+      acc[mov.produto_id] = (acc[mov.produto_id] ?? 0) + (mov.tipo === "entrada" ? mov.quantidade : -mov.quantidade);
+      return acc;
+    }, {}),
+    [movimentacoes]
+  );
 
   function handleNova(tipo: "entrada" | "saida") {
     setTipoInicial(tipo);
     setAbrirForm(true);
-  }
-
-  function handleFechar() {
-    setAbrirForm(false);
   }
 
   async function handleExcluir(id: string) {
@@ -48,11 +53,8 @@ export default function TabelaEstoque({ movimentacoes, produtos, notaObrigatoria
     setExcluindo(id);
     const resultado = await excluirMovimentacao(id);
     setExcluindo(null);
-    if (resultado?.erro) {
-      setToast(resultado.erro);
-    } else {
-      setToast("Movimentacao excluida.");
-    }
+    if (resultado?.erro) setToast(resultado.erro);
+    else setToast("Movimentacao excluida.");
   }
 
   return (
@@ -75,7 +77,7 @@ export default function TabelaEstoque({ movimentacoes, produtos, notaObrigatoria
           saldoPorProduto={saldoPorProduto}
           tipoInicial={tipoInicial}
           notaObrigatoria={notaObrigatoria}
-          onFechar={handleFechar}
+          onFechar={() => setAbrirForm(false)}
           onSucesso={() => setToast("Movimentacao registrada.")}
         />
       )}
@@ -143,6 +145,7 @@ export default function TabelaEstoque({ movimentacoes, produtos, notaObrigatoria
           </table>
         </div>
       )}
+
       {toast && <Toast mensagem={toast} onClose={() => setToast(null)} />}
     </div>
   );

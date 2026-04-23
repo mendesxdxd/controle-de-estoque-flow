@@ -4,15 +4,20 @@ import { EstoqueAtualRow, Movimentacao } from "@/types";
 import { formatarMoeda } from "@/lib/utils";
 import GraficoMovimentacoes from "./GraficoMovimentacoes";
 import GraficoCapacidade from "./GraficoCapacidade";
+import GraficoEstoque from "@/components/shared/GraficoEstoque";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
   const tenant = await getTenant();
 
+  const doisAnosAtras = new Date();
+  doisAnosAtras.setFullYear(doisAnosAtras.getFullYear() - 2);
+
   const [
     { data: estoqueAtual },
     { count: totalCategorias },
     { data: ultimasMovimentacoes },
+    { data: todasMovimentacoes },
   ] = await Promise.all([
     supabase.from("estoque_atual").select("*"),
     supabase.from("categorias").select("*", { count: "exact", head: true }),
@@ -20,6 +25,11 @@ export default async function DashboardPage() {
       .from("movimentacoes")
       .select("*, produtos(id, nome, unidade)")
       .gte("created_at", new Date(new Date().setHours(0, 0, 0, 0)).toISOString())
+      .order("created_at", { ascending: false }),
+    supabase
+      .from("movimentacoes")
+      .select("produto_id, tipo, quantidade, created_at")
+      .gte("created_at", doisAnosAtras.toISOString())
       .order("created_at", { ascending: false }),
   ]);
 
@@ -40,8 +50,6 @@ export default async function DashboardPage() {
 
       {/* Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:grid-cols-4">
-
-        {/* Produtos */}
         <div className="bg-zinc-900/60 backdrop-blur-sm border border-white/[0.08] rounded-2xl p-5 flex flex-col gap-4 hover:border-white/15 transition-all duration-200">
           <div className="flex items-center justify-between">
             <span className="text-xs font-medium text-zinc-500 uppercase tracking-wider">Produtos</span>
@@ -55,7 +63,6 @@ export default async function DashboardPage() {
           <span className="text-xs text-zinc-600 border-t border-white/[0.06] pt-3">cadastrados</span>
         </div>
 
-        {/* Categorias */}
         <div className="bg-zinc-900/60 backdrop-blur-sm border border-white/[0.08] rounded-2xl p-5 flex flex-col gap-4 hover:border-white/15 transition-all duration-200">
           <div className="flex items-center justify-between">
             <span className="text-xs font-medium text-zinc-500 uppercase tracking-wider">Categorias</span>
@@ -71,7 +78,6 @@ export default async function DashboardPage() {
           <span className="text-xs text-zinc-600 border-t border-white/[0.06] pt-3">cadastradas</span>
         </div>
 
-        {/* Valor em estoque */}
         <div className="bg-zinc-900/60 backdrop-blur-sm border border-white/[0.08] rounded-2xl p-5 flex flex-col gap-4 hover:border-white/15 transition-all duration-200">
           <div className="flex items-center justify-between">
             <span className="text-xs font-medium text-zinc-500 uppercase tracking-wider">Valor em estoque</span>
@@ -86,7 +92,6 @@ export default async function DashboardPage() {
           <span className="text-xs text-zinc-600 border-t border-white/[0.06] pt-3">preco de custo</span>
         </div>
 
-        {/* Estoque baixo */}
         <div className={`backdrop-blur-sm border rounded-2xl p-5 flex flex-col gap-4 transition-all duration-200 ${
           estoqueBaixo.length > 0
             ? "bg-red-950/30 border-red-800/40 hover:border-red-700/60"
@@ -113,7 +118,10 @@ export default async function DashboardPage() {
         </div>
       </div>
 
-      {/* Graficos */}
+      {/* Grafico principal de movimentacoes */}
+      <GraficoEstoque movimentacoes={(todasMovimentacoes as Movimentacao[]) ?? []} />
+
+      {/* Graficos de capacidade e movimentacao do dia */}
       {podeGraficos && (
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
           <section className="bg-zinc-900/60 backdrop-blur-sm border border-white/[0.08] rounded-2xl overflow-hidden">
