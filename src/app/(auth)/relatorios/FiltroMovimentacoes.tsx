@@ -2,32 +2,30 @@
 
 import { useState, useMemo } from "react";
 import { Movimentacao } from "@/types";
+import DatePicker from "@/components/shared/DatePicker";
 
 type Props = {
   movimentacoes: Movimentacao[];
 };
 
+function hojeStr() {
+  const t = new Date();
+  return `${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, "0")}-${String(t.getDate()).padStart(2, "0")}`;
+}
+
 export default function FiltroMovimentacoes({ movimentacoes }: Props) {
   const [tipo, setTipo] = useState<"todos" | "entrada" | "saida">("todos");
-  const [dataInicio, setDataInicio] = useState("");
-  const [dataFim, setDataFim] = useState("");
+  const [data, setData] = useState(hojeStr());
 
   const { filtradas, totalEntradas, totalSaidas } = useMemo(() => {
     const filtradas = movimentacoes.filter((mov) => {
       if (tipo !== "todos" && mov.tipo !== tipo) return false;
-      const data = new Date(mov.created_at);
-      if (dataInicio && data < new Date(dataInicio)) return false;
-      if (dataFim) {
-        const fim = new Date(dataFim);
-        fim.setHours(23, 59, 59);
-        if (data > fim) return false;
-      }
-      return true;
+      return new Date(mov.created_at).toISOString().slice(0, 10) === data;
     });
     const totalEntradas = filtradas.filter((m) => m.tipo === "entrada").reduce((acc, m) => acc + m.quantidade, 0);
     const totalSaidas = filtradas.filter((m) => m.tipo === "saida").reduce((acc, m) => acc + m.quantidade, 0);
     return { filtradas, totalEntradas, totalSaidas };
-  }, [movimentacoes, tipo, dataInicio, dataFim]);
+  }, [movimentacoes, tipo, data]);
 
   return (
     <div className="flex flex-col gap-4">
@@ -50,33 +48,9 @@ export default function FiltroMovimentacoes({ movimentacoes }: Props) {
         </div>
 
         <div className="flex flex-col gap-1">
-          <label className="text-xs font-semibold uppercase tracking-wider text-zinc-300">Data inicio</label>
-          <input
-            type="date"
-            value={dataInicio}
-            onChange={(e) => setDataInicio(e.target.value)}
-            className="input-field"
-          />
+          <label className="text-xs font-semibold uppercase tracking-wider text-zinc-300">Data</label>
+          <DatePicker value={data} onChange={setData} />
         </div>
-
-        <div className="flex flex-col gap-1">
-          <label className="text-xs font-semibold uppercase tracking-wider text-zinc-300">Data fim</label>
-          <input
-            type="date"
-            value={dataFim}
-            onChange={(e) => setDataFim(e.target.value)}
-            className="input-field"
-          />
-        </div>
-
-        {(dataInicio || dataFim || tipo !== "todos") && (
-          <button
-            onClick={() => { setTipo("todos"); setDataInicio(""); setDataFim(""); }}
-            className="text-xs font-semibold text-zinc-500 hover:text-white underline pb-2 transition-colors"
-          >
-            Limpar filtros
-          </button>
-        )}
       </div>
 
       <div className="flex gap-6 py-3 px-1">
@@ -84,16 +58,16 @@ export default function FiltroMovimentacoes({ movimentacoes }: Props) {
           <span className="font-bold text-white">{filtradas.length}</span> registros
         </span>
         <span className="text-xs text-zinc-500">
-          Entradas: <span className="font-bold text-white">{totalEntradas}</span>
+          Entradas: <span className="font-bold text-indigo-400">{totalEntradas}</span>
         </span>
         <span className="text-xs text-zinc-500">
-          Saidas: <span className="font-bold text-white">{totalSaidas}</span>
+          Saidas: <span className="font-bold text-zinc-300">{totalSaidas}</span>
         </span>
       </div>
 
       {filtradas.length === 0 ? (
         <div className="glass-panel py-16 text-center">
-          <p className="text-sm text-zinc-400">Nenhuma movimentacao encontrada.</p>
+          <p className="text-sm text-zinc-400">Nenhuma movimentacao nesta data.</p>
         </div>
       ) : (
         <div className="glass-table overflow-x-auto">
@@ -114,7 +88,8 @@ export default function FiltroMovimentacoes({ movimentacoes }: Props) {
                   className={`border-b border-white/[0.04] ${i % 2 === 0 ? "table-row-even" : "table-row-odd"}`}
                 >
                   <td className="py-3 px-4 text-zinc-400 whitespace-nowrap">
-                    {new Date(mov.created_at).toLocaleDateString("pt-BR")}
+                    <div>{new Date(mov.created_at).toLocaleDateString("pt-BR")}</div>
+                    <div className="text-xs text-zinc-600">{new Date(mov.created_at).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}</div>
                   </td>
                   <td className="py-3 px-4 font-medium text-white">{mov.produtos?.nome ?? "—"}</td>
                   <td className="py-3 px-4">

@@ -5,6 +5,7 @@ import { Movimentacao, Produto } from "@/types";
 import FormularioMovimentacao from "./FormularioMovimentacao";
 import { excluirMovimentacao } from "./actions";
 import Toast from "@/components/shared/Toast";
+import DatePicker from "@/components/shared/DatePicker";
 
 type Props = {
   movimentacoes: Movimentacao[];
@@ -12,9 +13,19 @@ type Props = {
   notaObrigatoria: boolean;
 };
 
+function hojeStr() {
+  const t = new Date();
+  return `${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, "0")}-${String(t.getDate()).padStart(2, "0")}`;
+}
+
 export default function TabelaEstoque({ movimentacoes, produtos, notaObrigatoria }: Props) {
   const [abrirForm, setAbrirForm] = useState(false);
   const [tipoInicial, setTipoInicial] = useState<"entrada" | "saida">("entrada");
+  const [dataSelecionada, setDataSelecionada] = useState(hojeStr());
+
+  const movimentacoesFiltradas = movimentacoes.filter((mov) =>
+    new Date(mov.created_at).toISOString().slice(0, 10) === dataSelecionada
+  );
 
   const saldoPorProduto = movimentacoes.reduce<Record<string, number>>((acc, mov) => {
     acc[mov.produto_id] = (acc[mov.produto_id] ?? 0) + (mov.tipo === "entrada" ? mov.quantidade : -mov.quantidade);
@@ -46,13 +57,16 @@ export default function TabelaEstoque({ movimentacoes, produtos, notaObrigatoria
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex justify-end gap-3">
-        <button onClick={() => handleNova("saida")} className="btn-secondary">
-          Registrar saida
-        </button>
-        <button onClick={() => handleNova("entrada")} className="btn-primary">
-          Registrar entrada
-        </button>
+      <div className="flex justify-between items-center gap-3">
+        <DatePicker value={dataSelecionada} onChange={setDataSelecionada} />
+        <div className="flex gap-3">
+          <button onClick={() => handleNova("saida")} className="btn-secondary">
+            Registrar saida
+          </button>
+          <button onClick={() => handleNova("entrada")} className="btn-primary">
+            Registrar entrada
+          </button>
+        </div>
       </div>
 
       {abrirForm && (
@@ -66,11 +80,11 @@ export default function TabelaEstoque({ movimentacoes, produtos, notaObrigatoria
         />
       )}
 
-      {movimentacoes.length === 0 ? (
+      {movimentacoesFiltradas.length === 0 ? (
         <div className="empty-state">
-          <p className="empty-state-text">Nenhuma movimentacao registrada.</p>
+          <p className="empty-state-text">Nenhuma movimentacao nesta data.</p>
           <button onClick={() => handleNova("entrada")} className="btn-primary">
-            Registrar primeira entrada
+            Registrar entrada
           </button>
         </div>
       ) : (
@@ -79,6 +93,7 @@ export default function TabelaEstoque({ movimentacoes, produtos, notaObrigatoria
             <thead>
               <tr className="table-header">
                 <th className="table-th">Data</th>
+                {notaObrigatoria && <th className="table-th">NF</th>}
                 <th className="table-th">Produto</th>
                 <th className="table-th">Tipo</th>
                 <th className="table-th-right">Quantidade</th>
@@ -87,7 +102,7 @@ export default function TabelaEstoque({ movimentacoes, produtos, notaObrigatoria
               </tr>
             </thead>
             <tbody>
-              {movimentacoes.map((mov, i) => (
+              {movimentacoesFiltradas.map((mov, i) => (
                 <tr
                   key={mov.id}
                   className={`border-b border-white/[0.04] ${i % 2 === 0 ? "table-row-even" : "table-row-odd"}`}
@@ -96,6 +111,9 @@ export default function TabelaEstoque({ movimentacoes, produtos, notaObrigatoria
                     <div>{new Date(mov.created_at).toLocaleDateString("pt-BR")}</div>
                     <div className="text-xs text-zinc-600">{new Date(mov.created_at).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}</div>
                   </td>
+                  {notaObrigatoria && (
+                    <td className="py-3 px-4 text-zinc-400 font-mono text-xs">{mov.nota_fiscal ?? "—"}</td>
+                  )}
                   <td className="py-3 px-4 font-medium text-white">{mov.produtos?.nome ?? "—"}</td>
                   <td className="py-3 px-4">
                     <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${

@@ -47,7 +47,7 @@ export default function FormularioMovimentacao({ produtos, saldoPorProduto, tipo
     return qtd;
   }
 
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: React.SyntheticEvent) {
     e.preventDefault();
     setErro("");
 
@@ -72,7 +72,7 @@ export default function FormularioMovimentacao({ produtos, saldoPorProduto, tipo
       const qtdCaixas = calcularQtdCaixas(item);
       const qtd = parseInt(item.quantidade);
       const obs = item.unidade === "palete" && produto?.caixas_por_palete
-        ? `${qtd} palete${qtd > 1 ? "s" : ""} (${qtdCaixas} cx)`
+        ? `${qtd} palete${qtd > 1 ? "s" : ""}`
         : null;
       return { produto_id: item.produto_id, quantidade: qtdCaixas, observacao: obs };
     });
