@@ -9,6 +9,7 @@ export default async function PorProdutoPage() {
     supabase
       .from("movimentacoes")
       .select("*, produtos(id, nome, unidade)")
+      .neq("observacao", "AJUSTE_INICIAL")
       .order("created_at", { ascending: false }),
     supabase
       .from("produtos")
@@ -18,10 +19,6 @@ export default async function PorProdutoPage() {
 
   return (
     <div className="flex flex-col gap-8">
-      <div>
-        <h1 className="page-title">Por produto</h1>
-        <p className="page-subtitle">Historico completo de movimentacoes por produto</p>
-      </div>
       <PorProduto
         movimentacoes={(movimentacoes as Movimentacao[]) ?? []}
         produtos={(produtos as Produto[]) ?? []}

@@ -23,11 +23,13 @@ export default async function DashboardPage() {
     supabase
       .from("movimentacoes")
       .select("*, produtos(id, nome, unidade)")
+      .neq("observacao", "AJUSTE_INICIAL")
       .gte("created_at", new Date(new Date().setHours(0, 0, 0, 0)).toISOString())
       .order("created_at", { ascending: false }),
     supabase
       .from("movimentacoes")
       .select("produto_id, tipo, quantidade, created_at, produtos(nome, unidade, caixas_por_palete)")
+      .neq("observacao", "AJUSTE_INICIAL")
       .gte("created_at", doisAnosAtras.toISOString())
       .order("created_at", { ascending: false }),
   ]);
@@ -42,11 +44,6 @@ export default async function DashboardPage() {
 
   return (
     <div className="flex flex-col gap-10">
-      <div>
-        <h1 className="page-title">Dashboard</h1>
-        <p className="page-subtitle">Visao geral do estoque</p>
-      </div>
-
       {/* Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:grid-cols-4">
         <div className="bg-brand-card backdrop-blur-sm border border-brand-border rounded-2xl p-5 flex flex-col gap-4 hover:border-brand-border-hl transition-all duration-200">

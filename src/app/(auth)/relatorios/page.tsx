@@ -14,6 +14,7 @@ export default async function RelatoriosPage() {
     supabase
       .from("movimentacoes")
       .select("*, produtos(id, nome, unidade, caixas_por_palete)")
+      .neq("observacao", "AJUSTE_INICIAL")
       .order("created_at", { ascending: false }),
   ]);
 
@@ -26,11 +27,6 @@ export default async function RelatoriosPage() {
 
   return (
     <div className="flex flex-col gap-12">
-      <div>
-        <h1 className="page-title">Relatorios</h1>
-        <p className="page-subtitle">Visao detalhada do estoque e movimentacoes</p>
-      </div>
-
       <section className="flex flex-col gap-4">
         <div className="flex items-center justify-between border-b border-zinc-700 pb-3">
           <h2 className="text-sm font-bold uppercase tracking-wider text-white">Estoque atual</h2>

@@ -11,15 +11,6 @@ export default async function CategoriasPage() {
 
   return (
     <div className="flex flex-col gap-8">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="page-title">Categorias</h1>
-          <p className="page-subtitle">
-            {categorias?.length ?? 0} categoria{(categorias?.length ?? 0) !== 1 ? "s" : ""} cadastrada{(categorias?.length ?? 0) !== 1 ? "s" : ""}
-          </p>
-        </div>
-      </div>
-
       <TabelaCategorias categorias={(categorias as Categoria[]) ?? []} />
     </div>
   );

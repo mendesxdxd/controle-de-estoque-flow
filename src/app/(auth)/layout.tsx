@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import Sidebar from "@/components/shared/Sidebar";
+import TopBar from "@/components/shared/TopBar";
 
 export default async function AuthLayout({
   children,
@@ -24,8 +25,11 @@ export default async function AuthLayout({
       <div className="fixed bottom-0 right-0 w-[500px] h-[500px] bg-violet-700/8 rounded-full blur-[120px] pointer-events-none translate-x-1/3 translate-y-1/3" />
 
       <Sidebar isAdmin={isAdmin} userEmail={userEmail} />
-      <main className="flex-1 p-4 lg:p-8 overflow-auto mt-14 lg:mt-0 relative z-10">
-        {children}
+      <main className="flex-1 flex flex-col overflow-auto mt-14 lg:mt-0 relative z-10">
+        <TopBar />
+        <div className="flex-1 p-4 lg:p-8">
+          {children}
+        </div>
       </main>
     </div>
   );

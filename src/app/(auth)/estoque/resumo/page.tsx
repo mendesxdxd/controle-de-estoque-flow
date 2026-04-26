@@ -8,14 +8,11 @@ export default async function ResumoPage() {
   const { data: movimentacoes } = await supabase
     .from("movimentacoes")
     .select("*, produtos(id, nome, unidade)")
+    .neq("observacao", "AJUSTE_INICIAL")
     .order("created_at", { ascending: false });
 
   return (
     <div className="flex flex-col gap-8">
-      <div>
-        <h1 className="page-title">Resumo do dia</h1>
-        <p className="page-subtitle">Entradas e saidas agrupadas por produto</p>
-      </div>
       <ResumoEstoque movimentacoes={(movimentacoes as Movimentacao[]) ?? []} />
     </div>
   );

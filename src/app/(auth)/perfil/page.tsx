@@ -43,11 +43,6 @@ export default function PerfilPage() {
 
   return (
     <div className="flex flex-col gap-8">
-      <div>
-        <h1 className="page-title">Perfil</h1>
-        <p className="page-subtitle">Gerencie suas informacoes de acesso</p>
-      </div>
-
       <div className="glass-panel p-6 max-w-md">
         <h2 className="text-sm font-bold uppercase tracking-wider text-white mb-6">
           Alterar senha

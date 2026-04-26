@@ -11,6 +11,7 @@ export default async function EstoquePage() {
     supabase
       .from("movimentacoes")
       .select("*, produtos(id, nome, unidade)")
+      .neq("observacao", "AJUSTE_INICIAL")
       .order("created_at", { ascending: false }),
     supabase
       .from("produtos")
@@ -20,13 +21,6 @@ export default async function EstoquePage() {
 
   return (
     <div className="flex flex-col gap-8">
-      <div>
-        <h1 className="page-title">Estoque</h1>
-        <p className="page-subtitle">
-          {movimentacoes?.length ?? 0} movimentacao{(movimentacoes?.length ?? 0) !== 1 ? "s" : ""} registrada{(movimentacoes?.length ?? 0) !== 1 ? "s" : ""}
-        </p>
-      </div>
-
       <TabelaEstoque
         movimentacoes={(movimentacoes as Movimentacao[]) ?? []}
         produtos={(produtos as Produto[]) ?? []}

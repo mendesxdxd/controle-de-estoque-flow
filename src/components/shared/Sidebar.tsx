@@ -128,13 +128,16 @@ export default function Sidebar({ isAdmin, userEmail }: { isAdmin: boolean; user
       <Link
         href={href}
         onClick={onClick}
-        className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150 ${
-          ativo
-            ? "bg-brand-hover text-white"
-            : "text-brand-medium hover:text-white hover:bg-brand-hover"
-        }`}
+        className="relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all duration-150 overflow-hidden"
+        style={{
+          background: ativo ? "rgba(108,99,255,0.12)" : "transparent",
+          color: ativo ? "#fff" : "#6b7280",
+        }}
+        onMouseEnter={e => { if (!ativo) (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.04)"; (e.currentTarget as HTMLElement).style.color = "#fff"; }}
+        onMouseLeave={e => { if (!ativo) { (e.currentTarget as HTMLElement).style.background = "transparent"; (e.currentTarget as HTMLElement).style.color = "#6b7280"; }}}
       >
-        <span className={ativo ? "text-white" : "text-brand-medium"}>{icon}</span>
+        {ativo && <span className="absolute left-0 inset-y-0 w-0.5 bg-brand-primary rounded-r-full" />}
+        <span style={{ color: ativo ? "#8B83FF" : "#4b5563" }}>{icon}</span>
         {label}
       </Link>
     );
@@ -201,18 +204,21 @@ export default function Sidebar({ isAdmin, userEmail }: { isAdmin: boolean; user
             onMouseEnter={() => setEstoqueExpandido(true)}
             onMouseLeave={() => setEstoqueExpandido(false)}
           >
-            <div className={`flex items-center rounded-xl transition-all duration-150 ${estoqueAtivo ? "bg-brand-hover" : "hover:bg-brand-hover"}`}>
+            <div
+              className="relative flex items-center rounded-xl overflow-hidden transition-all duration-150"
+              style={{ background: estoqueAtivo ? "rgba(108,99,255,0.12)" : "transparent" }}
+            >
+              {estoqueAtivo && <span className="absolute left-0 inset-y-0 w-0.5 bg-brand-primary rounded-r-full" />}
               <Link
                 href="/estoque"
                 onClick={handleNavegar}
-                className={`flex-1 flex items-center gap-3 px-3 py-2.5 text-sm font-medium transition-colors ${
-                  estoqueAtivo ? "text-white" : "text-brand-medium hover:text-white"
-                }`}
+                className="flex-1 flex items-center gap-3 px-3 py-2.5 text-sm font-semibold transition-colors"
+                style={{ color: estoqueAtivo ? "#fff" : "#6b7280" }}
               >
-                <span className={estoqueAtivo ? "text-white" : "text-brand-medium"}>{estoqueIcon}</span>
+                <span style={{ color: estoqueAtivo ? "#8B83FF" : "#4b5563" }}>{estoqueIcon}</span>
                 Estoque
               </Link>
-              <span className={`pr-3 py-2.5 ${estoqueAtivo ? "text-white/60" : "text-brand-muted"}`}>
+              <span className="pr-3 py-2.5" style={{ color: estoqueAtivo ? "rgba(255,255,255,0.4)" : "#374151" }}>
                 <svg
                   width="12" height="12" viewBox="0 0 12 12" fill="none"
                   className={`transition-transform duration-200 ${estoqueExpandido ? "rotate-180" : ""}`}
@@ -233,11 +239,11 @@ export default function Sidebar({ isAdmin, userEmail }: { isAdmin: boolean; user
                     key={item.href}
                     href={item.href}
                     onClick={handleNavegar}
-                    className={`relative flex items-center gap-2 px-3 py-1.5 text-xs font-medium rounded-lg transition-all duration-150 overflow-hidden ${
-                      subAtivo
-                        ? "text-white bg-brand-hover"
-                        : "text-brand-medium hover:text-white hover:bg-brand-hover"
-                    }`}
+                    className="relative flex items-center gap-2 px-3 py-1.5 text-xs font-semibold rounded-lg transition-all duration-150 overflow-hidden"
+                    style={{
+                      color: subAtivo ? "#fff" : "#6b7280",
+                      background: subAtivo ? "rgba(108,99,255,0.1)" : "transparent",
+                    }}
                   >
                     {subAtivo && (
                       <span className="absolute left-0 inset-y-0 w-0.5 bg-brand-primary rounded-r-full" />
@@ -264,10 +270,13 @@ export default function Sidebar({ isAdmin, userEmail }: { isAdmin: boolean; user
 
         {/* Footer */}
         <div className="px-3 py-5 border-t border-brand-border flex flex-col gap-3">
-          <p className="text-xs text-brand-muted px-3 truncate">{userEmail}</p>
+          <p className="text-xs px-3 truncate" style={{ color: "#4b5563" }}>{userEmail}</p>
           <button
             onClick={handleLogout}
-            className="w-full px-3 py-2.5 rounded-xl text-sm font-medium text-brand-light hover:text-white hover:bg-brand-hover transition-all duration-150 text-left flex items-center gap-3"
+            className="w-full px-3 py-2.5 rounded-xl text-sm font-semibold transition-all duration-150 text-left flex items-center gap-3"
+            style={{ color: "#6b7280" }}
+            onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.04)"; (e.currentTarget as HTMLElement).style.color = "#fff"; }}
+            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = "transparent"; (e.currentTarget as HTMLElement).style.color = "#6b7280"; }}
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
               <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />

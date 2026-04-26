@@ -18,13 +18,6 @@ export default async function ProdutosPage() {
 
   return (
     <div className="flex flex-col gap-8">
-      <div>
-        <h1 className="page-title">Produtos</h1>
-        <p className="page-subtitle">
-          {produtos?.length ?? 0} produto{(produtos?.length ?? 0) !== 1 ? "s" : ""} cadastrado{(produtos?.length ?? 0) !== 1 ? "s" : ""}
-        </p>
-      </div>
-
       <TabelaProdutos
         produtos={(produtos as Produto[]) ?? []}
         categorias={(categorias as Categoria[]) ?? []}

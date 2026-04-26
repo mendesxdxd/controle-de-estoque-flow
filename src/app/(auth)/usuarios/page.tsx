@@ -15,13 +15,6 @@ export default async function UsuariosPage() {
 
   return (
     <div className="flex flex-col gap-8">
-      <div>
-        <h1 className="page-title">Usuarios</h1>
-        <p className="page-subtitle">
-          {usuarios.length} usuario{usuarios.length !== 1 ? "s" : ""} cadastrado{usuarios.length !== 1 ? "s" : ""} — visao geral somente leitura
-        </p>
-      </div>
-
       <TabelaUsuarios usuarios={usuarios} />
     </div>
   );

@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { Movimentacao, Produto } from "@/types";
 import GraficoEstoque from "@/components/shared/GraficoEstoque";
+import DatePicker from "@/components/shared/DatePicker";
 
 type Props = {
   movimentacoes: Movimentacao[];
@@ -89,24 +90,14 @@ export default function PorProduto({ movimentacoes, produtos }: Props) {
           <GraficoEstoque movimentacoes={movsProduto} />
 
           {/* Filtro de periodo da tabela */}
-          <div className="flex gap-4 items-end">
+          <div className="flex gap-4 items-end flex-wrap">
             <div className="flex flex-col gap-1">
               <label className="text-xs font-semibold uppercase tracking-wider text-brand-light">De</label>
-              <input
-                type="date"
-                value={dataInicio}
-                onChange={(e) => setDataInicio(e.target.value)}
-                className="input-field text-xs"
-              />
+              <DatePicker value={dataInicio} onChange={setDataInicio} />
             </div>
             <div className="flex flex-col gap-1">
               <label className="text-xs font-semibold uppercase tracking-wider text-brand-light">Ate</label>
-              <input
-                type="date"
-                value={dataFim}
-                onChange={(e) => setDataFim(e.target.value)}
-                className="input-field text-xs"
-              />
+              <DatePicker value={dataFim} onChange={setDataFim} />
             </div>
             {(dataInicio || dataFim) && (
               <button

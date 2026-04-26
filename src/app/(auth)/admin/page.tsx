@@ -15,10 +15,6 @@ export default async function AdminPage() {
   return (
     <div className="flex flex-col gap-8">
       <div className="flex items-center justify-between">
-        <div>
-          <h1 className="page-title">Admin</h1>
-          <p className="page-subtitle">Gerenciamento de empresas</p>
-        </div>
         <Link href="/admin/clientes/novo" className="btn-primary">
           Nova empresa
         </Link>
