@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+﻿import { createClient } from "@/lib/supabase/server";
 import { getTenant } from "@/lib/tenant";
 import { Movimentacao, Produto } from "@/types";
 import TabelaEstoque from "./TabelaEstoque";
@@ -11,7 +11,7 @@ export default async function EstoquePage() {
     supabase
       .from("movimentacoes")
       .select("*, produtos(id, nome, unidade)")
-      .neq("observacao", "AJUSTE_INICIAL")
+      .or("observacao.neq.AJUSTE_INICIAL,observacao.is.null")
       .order("created_at", { ascending: false }),
     supabase
       .from("produtos")

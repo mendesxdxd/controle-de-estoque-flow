@@ -14,7 +14,7 @@ export default async function RelatoriosPage() {
     supabase
       .from("movimentacoes")
       .select("*, produtos(id, nome, unidade, caixas_por_palete)")
-      .neq("observacao", "AJUSTE_INICIAL")
+      .or("observacao.neq.AJUSTE_INICIAL,observacao.is.null")
       .order("created_at", { ascending: false }),
   ]);
 

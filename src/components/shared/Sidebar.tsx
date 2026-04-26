@@ -149,7 +149,13 @@ export default function Sidebar({ isAdmin, userEmail }: { isAdmin: boolean; user
     <>
       {/* Header mobile */}
       <div className="lg:hidden fixed top-0 left-0 right-0 z-40 bg-black/80 backdrop-blur-xl h-14 flex items-center justify-between px-4 border-b border-brand-border">
-        <img src="/logo-header.svg" alt="FlowStock" className="h-7" />
+        <div className="flex items-center gap-2.5">
+          <img src="/logo-header.svg" alt="" className="h-7 w-7 object-left" style={{ objectFit: "none", objectPosition: "left center" }} />
+          <div className="flex flex-col leading-none">
+            <span className="text-base font-black text-white tracking-tight">Flow</span>
+            <span className="text-[9px] font-bold tracking-[3px] uppercase" style={{ color: "#8B83FF" }}>Stock</span>
+          </div>
+        </div>
         <button
           onClick={() => setAberto(!aberto)}
           className="text-brand-light hover:text-white p-1 transition-colors"
@@ -187,8 +193,28 @@ export default function Sidebar({ isAdmin, userEmail }: { isAdmin: boolean; user
         ${aberto ? "translate-x-0" : "-translate-x-full"}
       `}>
         {/* Logo */}
-        <div className="px-5 py-5 border-b border-brand-border hidden lg:flex items-center">
-          <img src="/logo-header.svg" alt="FlowStock" className="h-9" />
+        <div className="px-5 py-5 border-b border-brand-border hidden lg:flex items-center gap-2.5">
+          <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ background: "#1a1a2e" }}>
+            <svg width="28" height="28" viewBox="0 0 36 36" fill="none">
+              <rect x="4" y="22" width="4" height="9" rx="1" fill="#7F77DD" opacity="0.5"/>
+              <rect x="9" y="18" width="4" height="13" rx="1" fill="#7F77DD" opacity="0.7"/>
+              <rect x="14" y="13" width="4" height="18" rx="1" fill="url(#g)"/>
+              <rect x="19" y="18" width="4" height="13" rx="1" fill="#7F77DD" opacity="0.7"/>
+              <rect x="24" y="22" width="4" height="9" rx="1" fill="#7F77DD" opacity="0.5"/>
+              <polyline points="6,21 11,16 16,12 21,16 26,21" fill="none" stroke="#EEEDFE" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              <circle cx="16" cy="12" r="2" fill="#EEEDFE"/>
+              <defs>
+                <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stopColor="#AFA9EC"/>
+                  <stop offset="100%" stopColor="#534AB7"/>
+                </linearGradient>
+              </defs>
+            </svg>
+          </div>
+          <div className="flex flex-col leading-none">
+            <span className="text-lg font-black text-white tracking-tight">Flow</span>
+            <span className="text-[9px] font-bold tracking-[3px] uppercase" style={{ color: "#8B83FF" }}>Stock</span>
+          </div>
         </div>
 
         {/* Espacamento no mobile para o header fixo */}

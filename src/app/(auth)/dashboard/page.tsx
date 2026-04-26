@@ -23,13 +23,13 @@ export default async function DashboardPage() {
     supabase
       .from("movimentacoes")
       .select("*, produtos(id, nome, unidade)")
-      .neq("observacao", "AJUSTE_INICIAL")
+      .or("observacao.neq.AJUSTE_INICIAL,observacao.is.null")
       .gte("created_at", new Date(new Date().setHours(0, 0, 0, 0)).toISOString())
       .order("created_at", { ascending: false }),
     supabase
       .from("movimentacoes")
       .select("produto_id, tipo, quantidade, created_at, produtos(nome, unidade, caixas_por_palete)")
-      .neq("observacao", "AJUSTE_INICIAL")
+      .or("observacao.neq.AJUSTE_INICIAL,observacao.is.null")
       .gte("created_at", doisAnosAtras.toISOString())
       .order("created_at", { ascending: false }),
   ]);

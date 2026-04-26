@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+﻿import { createClient } from "@/lib/supabase/server";
 import { Movimentacao, Produto } from "@/types";
 import PorProduto from "./PorProduto";
 
@@ -9,7 +9,7 @@ export default async function PorProdutoPage() {
     supabase
       .from("movimentacoes")
       .select("*, produtos(id, nome, unidade)")
-      .neq("observacao", "AJUSTE_INICIAL")
+      .or("observacao.neq.AJUSTE_INICIAL,observacao.is.null")
       .order("created_at", { ascending: false }),
     supabase
       .from("produtos")
