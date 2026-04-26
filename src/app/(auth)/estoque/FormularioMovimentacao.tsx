@@ -126,7 +126,7 @@ export default function FormularioMovimentacao({ produtos, saldoPorProduto, tipo
 
         <div className="flex flex-col gap-1">
           <label className="text-xs font-semibold uppercase tracking-wider text-brand-light">
-            Numero da nota {!notaObrigatoria && <span className="text-brand-medium normal-case font-normal">(opcional)</span>}
+            Numero da OF {!notaObrigatoria && <span className="text-brand-medium normal-case font-normal">(opcional)</span>}
           </label>
           <input
             type="text"

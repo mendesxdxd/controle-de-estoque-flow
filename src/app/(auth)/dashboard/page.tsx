@@ -27,7 +27,7 @@ export default async function DashboardPage() {
       .order("created_at", { ascending: false }),
     supabase
       .from("movimentacoes")
-      .select("produto_id, tipo, quantidade, created_at, produtos(nome, unidade)")
+      .select("produto_id, tipo, quantidade, created_at, produtos(nome, unidade, caixas_por_palete)")
       .gte("created_at", doisAnosAtras.toISOString())
       .order("created_at", { ascending: false }),
   ]);

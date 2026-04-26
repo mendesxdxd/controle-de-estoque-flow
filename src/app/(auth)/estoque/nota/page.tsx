@@ -13,8 +13,8 @@ export default async function PorNotaPage() {
   return (
     <div className="flex flex-col gap-8">
       <div>
-        <h1 className="page-title">Por nota fiscal</h1>
-        <p className="page-subtitle">Busque todas as movimentacoes de uma nota</p>
+        <h1 className="page-title">Ordem de Frete</h1>
+        <p className="page-subtitle">Busque todas as movimentacoes de uma OF</p>
       </div>
       <PorNota movimentacoes={(movimentacoes as Movimentacao[]) ?? []} />
     </div>

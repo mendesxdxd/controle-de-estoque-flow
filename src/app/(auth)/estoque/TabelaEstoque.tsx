@@ -95,7 +95,7 @@ export default function TabelaEstoque({ movimentacoes, produtos, notaObrigatoria
             <thead>
               <tr className="table-header">
                 <th className="table-th">Data</th>
-                {notaObrigatoria && <th className="table-th">NF</th>}
+                {notaObrigatoria && <th className="table-th">OF</th>}
                 <th className="table-th">Produto</th>
                 <th className="table-th">Tipo</th>
                 <th className="table-th-right">Quantidade</th>

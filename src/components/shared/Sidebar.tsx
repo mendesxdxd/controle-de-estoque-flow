@@ -16,7 +16,7 @@ const estoqueSubItems = [
   { href: "/estoque", label: "Movimentacoes" },
   { href: "/estoque/resumo", label: "Resumo do dia" },
   { href: "/estoque/produto", label: "Produto no estoque" },
-  { href: "/estoque/nota", label: "Nota Fiscal" },
+  { href: "/estoque/nota", label: "Ordem de Frete" },
 ];
 
 const links = [
@@ -197,7 +197,10 @@ export default function Sidebar({ isAdmin, userEmail }: { isAdmin: boolean; user
           <NavLink href="/produtos" label="Produtos" icon={links[1].icon} onClick={handleNavegar} />
 
           {/* Estoque expansivel */}
-          <div>
+          <div
+            onMouseEnter={() => setEstoqueExpandido(true)}
+            onMouseLeave={() => setEstoqueExpandido(false)}
+          >
             <div className={`flex items-center rounded-xl transition-all duration-150 ${estoqueAtivo ? "bg-brand-hover" : "hover:bg-brand-hover"}`}>
               <Link
                 href="/estoque"
@@ -209,44 +212,41 @@ export default function Sidebar({ isAdmin, userEmail }: { isAdmin: boolean; user
                 <span className={estoqueAtivo ? "text-white" : "text-brand-medium"}>{estoqueIcon}</span>
                 Estoque
               </Link>
-              <button
-                onClick={() => setEstoqueExpandido((v) => !v)}
-                className={`pr-3 py-2.5 transition-colors ${estoqueAtivo ? "text-white/60 hover:text-white" : "text-brand-muted hover:text-brand-light"}`}
-                aria-label="Expandir estoque"
-              >
+              <span className={`pr-3 py-2.5 ${estoqueAtivo ? "text-white/60" : "text-brand-muted"}`}>
                 <svg
                   width="12" height="12" viewBox="0 0 12 12" fill="none"
                   className={`transition-transform duration-200 ${estoqueExpandido ? "rotate-180" : ""}`}
                 >
                   <path d="M2 4l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
-              </button>
+              </span>
             </div>
 
-            {estoqueExpandido && (
-              <div className="ml-7 mt-1 flex flex-col gap-0.5">
-                {estoqueSubItems.map((item) => {
-                  const subAtivo = pathname === item.href;
-                  return (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      onClick={handleNavegar}
-                      className={`relative flex items-center gap-2 px-3 py-1.5 text-xs font-medium rounded-lg transition-all duration-150 overflow-hidden ${
-                        subAtivo
-                          ? "text-white bg-brand-hover"
-                          : "text-brand-medium hover:text-white hover:bg-brand-hover"
-                      }`}
-                    >
-                      {subAtivo && (
-                        <span className="absolute left-0 inset-y-0 w-0.5 bg-brand-primary rounded-r-full" />
-                      )}
-                      {item.label}
-                    </Link>
-                  );
-                })}
-              </div>
-            )}
+            <div
+              className="ml-7 mt-1 flex flex-col gap-0.5 overflow-hidden transition-all duration-200"
+              style={{ maxHeight: estoqueExpandido ? `${estoqueSubItems.length * 40}px` : "0px", opacity: estoqueExpandido ? 1 : 0 }}
+            >
+              {estoqueSubItems.map((item) => {
+                const subAtivo = pathname === item.href;
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={handleNavegar}
+                    className={`relative flex items-center gap-2 px-3 py-1.5 text-xs font-medium rounded-lg transition-all duration-150 overflow-hidden ${
+                      subAtivo
+                        ? "text-white bg-brand-hover"
+                        : "text-brand-medium hover:text-white hover:bg-brand-hover"
+                    }`}
+                  >
+                    {subAtivo && (
+                      <span className="absolute left-0 inset-y-0 w-0.5 bg-brand-primary rounded-r-full" />
+                    )}
+                    {item.label}
+                  </Link>
+                );
+              })}
+            </div>
           </div>
 
           <NavLink href="/categorias" label="Categorias" icon={links[2].icon} onClick={handleNavegar} />

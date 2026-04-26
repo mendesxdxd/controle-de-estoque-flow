@@ -32,8 +32,13 @@ export default function DatePicker({ value, onChange }: Props) {
         ref.current && !ref.current.contains(e.target as Node)
       ) setAberto(false);
     }
+    function handleScroll() { setAberto(false); }
     document.addEventListener("mousedown", handleClick);
-    return () => document.removeEventListener("mousedown", handleClick);
+    window.addEventListener("scroll", handleScroll, true);
+    return () => {
+      document.removeEventListener("mousedown", handleClick);
+      window.removeEventListener("scroll", handleScroll, true);
+    };
   }, []);
 
   function abrirPanel() {

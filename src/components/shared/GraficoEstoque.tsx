@@ -1,9 +1,10 @@
-﻿"use client";
+"use client";
 
 import { useMemo, useState } from "react";
 import { Movimentacao } from "@/types";
 
 type Filtro = "hoje" | "7d" | "6m" | "1a";
+type Modo   = "qtd" | "paletes";
 
 const DIAS  = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sab"];
 const MESES = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
@@ -21,7 +22,14 @@ function labelCurto(nome: string) {
   return p[0].length > 8 ? p[0].slice(0, 8) : p[0];
 }
 
-const CHART_H   = 192;
+function toUnidade(qtd: number, mov: Movimentacao, modo: Modo): number {
+  if (modo === "qtd") return qtd;
+  const cpp = mov.produtos?.caixas_por_palete;
+  if (!cpp) return 0;
+  return qtd / cpp;
+}
+
+const CHART_H    = 192;
 const GRID_STEPS = 4;
 
 const FILTROS: { key: Filtro; label: string }[] = [
@@ -31,9 +39,15 @@ const FILTROS: { key: Filtro; label: string }[] = [
   { key: "1a",   label: "1A"   },
 ];
 
+const btnStyle = (ativo: boolean): React.CSSProperties => ativo
+  ? { background: "linear-gradient(135deg, #8B83FF, #6C63FF)", color: "#fff", border: "1px solid transparent", boxShadow: "0 4px 12px rgba(108,99,255,0.25)" }
+  : { background: "transparent", color: "#3d3a6e", border: "1px solid #252540" };
+
 export default function GraficoEstoque({ movimentacoes }: { movimentacoes: Movimentacao[] }) {
   const [filtro, setFiltro] = useState<Filtro>("6m");
-  const [hover,  setHover ] = useState<number | null>(null);
+  const [modo,        setModo       ] = useState<Modo>("qtd");
+  const [modoAberto,  setModoAberto ] = useState(false);
+  const [hover,       setHover      ] = useState<number | null>(null);
 
   const { dados, stats } = useMemo(() => {
     const hoje    = new Date();
@@ -57,16 +71,17 @@ export default function GraficoEstoque({ movimentacoes }: { movimentacoes: Movim
         const dKey = localStr(d);
         const nomeCompleto = mov.produtos?.nome ?? "—";
         const pid  = mov.produto_id;
+        const val  = toUnidade(mov.quantidade, mov, modo);
 
         if (dKey === hojeKey) {
           if (!mapaHoje[pid]) mapaHoje[pid] = { label: labelCurto(nomeCompleto), tooltip: nomeCompleto, key: pid, entradas: 0, saidas: 0 };
-          if (mov.tipo === "entrada") mapaHoje[pid].entradas += mov.quantidade;
-          else                        mapaHoje[pid].saidas   += mov.quantidade;
+          if (mov.tipo === "entrada") mapaHoje[pid].entradas += val;
+          else                        mapaHoje[pid].saidas   += val;
         }
         if (dKey === ontemKey) {
           if (!mapaOntem[pid]) mapaOntem[pid] = { key: pid, entradas: 0, saidas: 0 };
-          if (mov.tipo === "entrada") mapaOntem[pid].entradas += mov.quantidade;
-          else                        mapaOntem[pid].saidas   += mov.quantidade;
+          if (mov.tipo === "entrada") mapaOntem[pid].entradas += toUnidade(mov.quantidade, mov, modo);
+          else                        mapaOntem[pid].saidas   += toUnidade(mov.quantidade, mov, modo);
         }
       }
 
@@ -107,10 +122,11 @@ export default function GraficoEstoque({ movimentacoes }: { movimentacoes: Movim
     for (const mov of movimentacoes) {
       const d   = new Date(mov.created_at);
       const key = filtro === "7d" ? localStr(d) : mesKey(d);
+      const val = toUnidade(mov.quantidade, mov, modo);
       const p   = pontoMap.get(key);
-      if (p) { if (mov.tipo === "entrada") p.entradas += mov.quantidade; else p.saidas += mov.quantidade; }
+      if (p) { if (mov.tipo === "entrada") p.entradas += val; else p.saidas += val; }
       const pp  = prevMap.get(key);
-      if (pp) { if (mov.tipo === "entrada") pp.entradas += mov.quantidade; else pp.saidas += mov.quantidade; }
+      if (pp) { if (mov.tipo === "entrada") pp.entradas += val; else pp.saidas += val; }
     }
 
     const totalE = pontos.reduce((a, p) => a + p.entradas, 0);
@@ -120,9 +136,13 @@ export default function GraficoEstoque({ movimentacoes }: { movimentacoes: Movim
     const pctE   = prevE > 0 ? Math.round(((totalE - prevE) / prevE) * 100) : null;
     const pctS   = prevS > 0 ? Math.round(((totalS - prevS) / prevS) * 100) : null;
     return { dados: pontos, stats: { totalE, totalS, saldo: totalE - totalS, pctE, pctS } };
-  }, [movimentacoes, filtro]);
+  }, [movimentacoes, filtro, modo]);
 
-  const maxVal    = Math.max(...dados.map((d) => Math.max(d.entradas, d.saidas)), 1);
+  const fmt = (n: number) => modo === "paletes"
+    ? n.toLocaleString("pt-BR", { maximumFractionDigits: 1 })
+    : Math.round(n).toLocaleString("pt-BR");
+
+  const maxVal     = Math.max(...dados.map((d) => Math.max(d.entradas, d.saidas)), 1);
   const gridValues = Array.from({ length: GRID_STEPS + 1 }, (_, i) =>
     Math.round((maxVal / GRID_STEPS) * (GRID_STEPS - i))
   );
@@ -141,20 +161,51 @@ export default function GraficoEstoque({ movimentacoes }: { movimentacoes: Movim
             {filtro === "hoje" ? "Entradas e saidas por produto" : "Entradas e saidas"}
           </p>
         </div>
-        <div className="flex gap-1.5">
-          {FILTROS.map((f) => (
+        <div className="flex items-center gap-3">
+          {/* Dropdown Qtd / Paletes */}
+          <div className="relative">
             <button
-              key={f.key}
-              onClick={() => { setFiltro(f.key); setHover(null); }}
-              className="text-xs font-bold px-3 py-1.5 rounded-lg transition-all duration-150"
-              style={filtro === f.key
-                ? { background: "linear-gradient(135deg, #8B83FF, #6C63FF)", color: "#fff", border: "1px solid transparent", boxShadow: "0 4px 12px rgba(108,99,255,0.25)" }
-                : { background: "transparent", color: "#3d3a6e", border: "1px solid #252540" }
-              }
+              onClick={() => setModoAberto((v) => !v)}
+              className="flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-lg transition-all duration-150"
+              style={{ background: "#1a1a2e", border: "1px solid #252540", color: "#8B83FF" }}
             >
-              {f.label}
+              {modo === "qtd" ? "Quantidade" : "Paletes"}
+              <svg width="10" height="10" viewBox="0 0 12 12" fill="none" className={`transition-transform duration-200 ${modoAberto ? "rotate-180" : ""}`}>
+                <path d="M2 4l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
             </button>
-          ))}
+            {modoAberto && (
+              <div
+                className="absolute right-0 mt-1 flex flex-col overflow-hidden z-20"
+                style={{ background: "#13131f", border: "1px solid #252540", borderRadius: 10, minWidth: 120, boxShadow: "0 8px 24px rgba(0,0,0,0.5)" }}
+              >
+                {(["qtd", "paletes"] as Modo[]).map((m) => (
+                  <button
+                    key={m}
+                    onClick={() => { setModo(m); setModoAberto(false); setHover(null); }}
+                    className="text-xs font-bold px-4 py-2.5 text-left transition-colors duration-150 hover:bg-brand-hover"
+                    style={{ color: modo === m ? "#8B83FF" : "#B3AEFF" }}
+                  >
+                    {m === "qtd" ? "Quantidade" : "Paletes"}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Filtros de periodo */}
+          <div className="flex gap-1.5">
+            {FILTROS.map((f) => (
+              <button
+                key={f.key}
+                onClick={() => { setFiltro(f.key); setHover(null); }}
+                className="text-xs font-bold px-3 py-1.5 rounded-lg transition-all duration-150"
+                style={btnStyle(filtro === f.key)}
+              >
+                {f.label}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -162,29 +213,33 @@ export default function GraficoEstoque({ movimentacoes }: { movimentacoes: Movim
       <div className="flex gap-6 mb-5 pb-4 border-b border-brand-border">
         <div>
           <div className="flex items-baseline gap-1.5">
-            <span className="text-xl font-bold text-white">{stats.totalE.toLocaleString("pt-BR")}</span>
+            <span className="text-xl font-bold text-white">{fmt(stats.totalE)}</span>
             {stats.pctE !== null && (
               <span className="text-xs font-bold" style={{ color: stats.pctE >= 0 ? "#8B83FF" : "#f87171" }}>
                 {stats.pctE >= 0 ? "▲" : "▼"} {Math.abs(stats.pctE)}%
               </span>
             )}
           </div>
-          <p className="text-[10px] font-bold uppercase tracking-wider text-brand-muted">Total de entradas</p>
+          <p className="text-[10px] font-bold uppercase tracking-wider text-brand-muted">
+            {modo === "paletes" ? "Paletes de entrada" : "Total de entradas"}
+          </p>
         </div>
         <div>
           <div className="flex items-baseline gap-1.5">
-            <span className="text-xl font-bold text-white">{stats.totalS.toLocaleString("pt-BR")}</span>
+            <span className="text-xl font-bold text-white">{fmt(stats.totalS)}</span>
             {stats.pctS !== null && (
               <span className="text-xs font-bold" style={{ color: stats.pctS > 0 ? "#f87171" : "#8B83FF" }}>
                 {stats.pctS >= 0 ? "▲" : "▼"} {Math.abs(stats.pctS)}%
               </span>
             )}
           </div>
-          <p className="text-[10px] font-bold uppercase tracking-wider text-brand-muted">Total de saidas</p>
+          <p className="text-[10px] font-bold uppercase tracking-wider text-brand-muted">
+            {modo === "paletes" ? "Paletes de saida" : "Total de saidas"}
+          </p>
         </div>
         <div>
           <div className="flex items-baseline gap-1.5">
-            <span className="text-xl font-bold text-white">{stats.saldo.toLocaleString("pt-BR")}</span>
+            <span className="text-xl font-bold text-white">{fmt(stats.saldo)}</span>
             <span className="text-xs font-bold text-brand-medium">saldo</span>
           </div>
           <p className="text-[10px] font-bold uppercase tracking-wider text-brand-muted">
@@ -243,8 +298,8 @@ export default function GraficoEstoque({ movimentacoes }: { movimentacoes: Movim
                       }}
                     >
                       <p className="font-bold mb-1.5 text-[11px] text-brand-light">{ponto.tooltip}</p>
-                      <p className="text-brand-light">Entradas: <span className="text-white font-bold">{ponto.entradas}</span></p>
-                      <p className="text-brand-light">Saidas: <span className="text-white font-bold">{ponto.saidas}</span></p>
+                      <p className="text-brand-light">Entradas: <span className="text-white font-bold">{fmt(ponto.entradas)}</span></p>
+                      <p className="text-brand-light">Saidas: <span className="text-white font-bold">{fmt(ponto.saidas)}</span></p>
                     </div>
                   )}
 
