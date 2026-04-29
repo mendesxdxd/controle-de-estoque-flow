@@ -292,28 +292,29 @@ export default function PorNota({ movimentacoes }: Props) {
         {/* Controles relatorio mensal */}
         <div className="flex items-center gap-2 flex-wrap">
           <MonthPicker value={mesSelecionado} onChange={setMesSelecionado} />
-          <button
-            onClick={handleCopiarRelatorio}
-            className="text-xs font-semibold px-4 py-2 rounded-lg transition-all duration-150"
-            style={{ background: "linear-gradient(135deg, #8B83FF, #6C63FF)", color: "#fff", boxShadow: "0 4px 14px rgba(108,99,255,0.3)" }}
-          >
+          <button onClick={handleCopiarRelatorio} className="btn-secondary flex items-center gap-2">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+            </svg>
             Copiar relatorio
           </button>
 
           {typeof document !== "undefined" && createPortal(
-            <div style={{ position: "fixed", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", pointerEvents: "none", zIndex: 9999 }}>
+            <div style={{ position: "fixed", top: 24, left: "50%", pointerEvents: "none", zIndex: 9999 }}>
               <div style={{
-                background: "rgba(108,99,255,0.15)",
-                border: "1px solid rgba(108,99,255,0.4)",
-                color: "#a89aff",
-                borderRadius: "12px",
-                padding: "12px 24px",
-                fontSize: "14px",
-                fontWeight: 600,
-                backdropFilter: "blur(8px)",
-                transition: "opacity 0.25s ease, transform 0.25s ease",
+                transform: copiado ? "translateX(-50%) translateY(0)" : "translateX(-50%) translateY(-10px)",
                 opacity: copiado ? 1 : 0,
-                transform: copiado ? "translateY(0px)" : "translateY(6px)",
+                transition: "opacity 0.25s ease, transform 0.25s ease",
+                background: "rgba(15,15,26,0.92)",
+                border: "1px solid rgba(108,99,255,0.35)",
+                color: "#c4beff",
+                borderRadius: "10px",
+                padding: "9px 20px",
+                fontSize: "13px",
+                fontWeight: 600,
+                backdropFilter: "blur(10px)",
+                whiteSpace: "nowrap",
+                boxShadow: "0 8px 24px rgba(0,0,0,0.4)",
               }}>
                 Relatorio copiado!
               </div>

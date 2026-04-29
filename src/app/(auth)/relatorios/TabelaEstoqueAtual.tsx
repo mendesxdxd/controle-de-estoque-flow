@@ -1,6 +1,7 @@
 ﻿"use client";
 
 import { useState } from "react";
+import { createPortal } from "react-dom";
 import { EstoqueAtualRow, Movimentacao } from "@/types";
 import { formatarMoeda } from "@/lib/utils";
 
@@ -290,8 +291,7 @@ function baixarCSV(rows: EstoqueAtualRow[]) {
 }
 
 export default function TabelaEstoqueAtual({ rows, movimentacoes, podeFechamento, capacidadeArmazem, tenantNome }: Props) {
-  const [copiado, setCopiado] = useState(false);
-  const [copiadoFechamento, setCopiadoFechamento] = useState(false);
+  const [toastMsg, setToastMsg] = useState<string | null>(null);
 
   const valorTotal = rows.reduce((acc, r) => acc + r.estoque_atual * r.preco_custo, 0);
   const totalPaletes = rows.reduce((acc, r) => {
@@ -307,73 +307,64 @@ export default function TabelaEstoqueAtual({ rows, movimentacoes, podeFechamento
     );
   }
 
+  function showToast(msg: string) {
+    setToastMsg(msg);
+    setTimeout(() => setToastMsg(null), 2500);
+  }
+
   async function handleCopiar() {
     try {
-      const mensagem = gerarMensagem(rows, valorTotal, totalPaletes);
-      await navigator.clipboard.writeText(mensagem);
-      setCopiado(true);
-      setTimeout(() => setCopiado(false), 2500);
-    } catch (err) {
-      console.error("Erro ao copiar relatorio:", err);
-    }
+      await navigator.clipboard.writeText(gerarMensagem(rows, valorTotal, totalPaletes));
+      showToast("Relatorio copiado!");
+    } catch {}
   }
 
   async function handleCopiarFechamento() {
     try {
-      const mensagem = gerarFechamento(rows, movimentacoes, capacidadeArmazem, tenantNome);
-      await navigator.clipboard.writeText(mensagem);
-      setCopiadoFechamento(true);
-      setTimeout(() => setCopiadoFechamento(false), 2500);
-    } catch (err) {
-      console.error("Erro ao copiar fechamento:", err);
-    }
+      await navigator.clipboard.writeText(gerarFechamento(rows, movimentacoes, capacidadeArmazem, tenantNome));
+      showToast("Fechamento copiado!");
+    } catch {}
   }
 
   return (
     <div className="flex flex-col gap-3">
+      {typeof document !== "undefined" && createPortal(
+        <div style={{ position: "fixed", top: 24, left: "50%", pointerEvents: "none", zIndex: 9999 }}>
+          <div style={{
+            transform: toastMsg ? "translateX(-50%) translateY(0)" : "translateX(-50%) translateY(-10px)",
+            opacity: toastMsg ? 1 : 0,
+            transition: "opacity 0.25s ease, transform 0.25s ease",
+            background: "rgba(15,15,26,0.92)",
+            border: "1px solid rgba(108,99,255,0.35)",
+            color: "#c4beff",
+            borderRadius: "10px",
+            padding: "9px 20px",
+            fontSize: "13px",
+            fontWeight: 600,
+            backdropFilter: "blur(10px)",
+            whiteSpace: "nowrap",
+            boxShadow: "0 8px 24px rgba(0,0,0,0.4)",
+          }}>
+            {toastMsg}
+          </div>
+        </div>,
+        document.body
+      )}
       <div className="flex justify-end gap-2 flex-wrap">
         {podeFechamento && (
-          <button
-            onClick={handleCopiarFechamento}
-            className="btn-secondary flex items-center gap-2"
-          >
-            {copiadoFechamento ? (
-              <>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <polyline points="20 6 9 17 4 12" />
-                </svg>
-                Copiado!
-              </>
-            ) : (
-              <>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-                </svg>
-                Fechamento do dia
-              </>
-            )}
+          <button onClick={handleCopiarFechamento} className="btn-secondary flex items-center gap-2">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+            </svg>
+            Fechamento do dia
           </button>
         )}
-        <button
-          onClick={handleCopiar}
-          className="btn-secondary flex items-center gap-2"
-        >
-          {copiado ? (
-            <>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <polyline points="20 6 9 17 4 12" />
-              </svg>
-              Copiado!
-            </>
-          ) : (
-            <>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
-                <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
-              </svg>
-              Copiar mensagem
-            </>
-          )}
+        <button onClick={handleCopiar} className="btn-secondary flex items-center gap-2">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+            <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
+            <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+          </svg>
+          Copiar mensagem
         </button>
         <button
           onClick={() => baixarCSV(rows)}
