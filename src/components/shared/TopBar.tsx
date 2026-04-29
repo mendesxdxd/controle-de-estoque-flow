@@ -15,15 +15,25 @@ const rotas: { match: (p: string) => boolean; label: string; sub?: string }[] = 
   { match: (p) => p === "/perfil",           label: "Perfil",               sub: "Sua conta"           },
   { match: (p) => p === "/usuarios",         label: "Usuarios",             sub: "Gerenciar usuarios"  },
   { match: (p) => p === "/admin",            label: "Admin",                sub: "Administracao"       },
+  { match: (p) => p === "/onboarding",      label: "Configuracao",         sub: "Primeiros passos"    },
 ];
 
-export default function TopBar() {
+type Props = { role: string };
+
+const roleBadge: Record<string, { label: string; color: string; bg: string }> = {
+  admin:        { label: "Admin",        color: "#8B83FF", bg: "rgba(108,99,255,0.12)" },
+  operador:     { label: "Operador",     color: "#34d399", bg: "rgba(52,211,153,0.12)" },
+  visualizador: { label: "Visualizador", color: "#9ca3af", bg: "rgba(156,163,175,0.10)" },
+};
+
+export default function TopBar({ role }: Props) {
   const pathname = usePathname();
   const rota = rotas.find((r) => r.match(pathname));
+  const badge = roleBadge[role] ?? roleBadge.visualizador;
 
   return (
     <div
-      className="sticky top-0 z-30 flex items-center gap-3 px-6 lg:px-8"
+      className="sticky top-0 z-30 flex items-center justify-between px-6 lg:px-8"
       style={{
         height: 52,
         background: "rgba(10,10,18,0.85)",
@@ -31,17 +41,26 @@ export default function TopBar() {
         borderBottom: "1px solid #1a1a2e",
       }}
     >
-      {rota ? (
-        <>
-          <span className="text-sm font-bold text-white">{rota.label}</span>
-          {rota.sub && (
-            <>
-              <span style={{ color: "#252540", fontSize: 16 }}>/</span>
-              <span className="text-sm font-medium" style={{ color: "#6b7280" }}>{rota.sub}</span>
-            </>
-          )}
-        </>
-      ) : null}
+      <div className="flex items-center gap-3">
+        {rota ? (
+          <>
+            <span className="text-sm font-bold text-white">{rota.label}</span>
+            {rota.sub && (
+              <>
+                <span style={{ color: "#252540", fontSize: 16 }}>/</span>
+                <span className="text-sm font-medium" style={{ color: "#6b7280" }}>{rota.sub}</span>
+              </>
+            )}
+          </>
+        ) : null}
+      </div>
+
+      <span
+        className="text-xs font-semibold px-2.5 py-1 rounded-full"
+        style={{ color: badge.color, background: badge.bg }}
+      >
+        {badge.label}
+      </span>
     </div>
   );
 }

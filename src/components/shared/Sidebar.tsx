@@ -1,6 +1,6 @@
 ﻿"use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
@@ -105,11 +105,15 @@ const secondaryLinks = [
   },
 ];
 
-export default function Sidebar({ isAdmin, userEmail }: { isAdmin: boolean; userEmail: string }) {
+export default function Sidebar({ isAdmin, userEmail, role }: { isAdmin: boolean; userEmail: string; role: string }) {
   const pathname = usePathname();
   const router = useRouter();
   const [aberto, setAberto] = useState(false);
   const [estoqueExpandido, setEstoqueExpandido] = useState(pathname.startsWith("/estoque"));
+
+  useEffect(() => {
+    setEstoqueExpandido(pathname.startsWith("/estoque"));
+  }, [pathname]);
 
   async function handleLogout() {
     const supabase = createClient();
@@ -244,14 +248,19 @@ export default function Sidebar({ isAdmin, userEmail }: { isAdmin: boolean; user
                 <span style={{ color: estoqueAtivo ? "#8B83FF" : "#4b5563" }}>{estoqueIcon}</span>
                 Estoque
               </Link>
-              <span className="pr-3 py-2.5" style={{ color: estoqueAtivo ? "rgba(255,255,255,0.4)" : "#374151" }}>
+              <button
+                type="button"
+                onClick={(e) => { e.preventDefault(); setEstoqueExpandido((v) => !v); }}
+                className="pr-3 py-2.5 pl-2"
+                style={{ color: estoqueAtivo ? "rgba(255,255,255,0.4)" : "#374151" }}
+              >
                 <svg
                   width="12" height="12" viewBox="0 0 12 12" fill="none"
                   className={`transition-transform duration-200 ${estoqueExpandido ? "rotate-180" : ""}`}
                 >
                   <path d="M2 4l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
-              </span>
+              </button>
             </div>
 
             <div

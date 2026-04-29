@@ -7,7 +7,7 @@ export async function getTenant() {
 
   const { data: perfil } = await supabase
     .from("perfis")
-    .select("tenant_id, pode_fechamento, nota_obrigatoria")
+    .select("tenant_id, pode_fechamento, nota_obrigatoria, role")
     .eq("user_id", user.id)
     .single();
 
@@ -23,5 +23,6 @@ export async function getTenant() {
     ...tenant,
     pode_fechamento: perfil.pode_fechamento ?? false,
     nota_obrigatoria: perfil.nota_obrigatoria ?? false,
+    role: (perfil.role ?? "admin") as "admin" | "operador" | "visualizador",
   } : null;
 }

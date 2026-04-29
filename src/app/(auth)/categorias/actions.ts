@@ -2,6 +2,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { getTenant } from "@/lib/tenant";
+import { exigirRole } from "@/lib/permissoes";
 import { revalidatePath } from "next/cache";
 
 type DadosCategoria = {
@@ -11,6 +12,7 @@ type DadosCategoria = {
 };
 
 export async function salvarCategoria(dados: DadosCategoria) {
+  try { await exigirRole("admin"); } catch { return { erro: "Sem permissao para gerenciar categorias." }; }
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { erro: "Nao autenticado." };
@@ -35,9 +37,11 @@ export async function salvarCategoria(dados: DadosCategoria) {
   }
 
   revalidatePath("/categorias");
+  return { sucesso: true };
 }
 
 export async function excluirCategoria(id: string) {
+  try { await exigirRole("admin"); } catch { return { erro: "Sem permissao para excluir categorias." }; }
   const supabase = await createClient();
   const tenant = await getTenant();
   if (!tenant) return { erro: "Tenant nao encontrado." };
@@ -51,4 +55,5 @@ export async function excluirCategoria(id: string) {
   if (error) return { erro: "Erro ao excluir categoria." };
 
   revalidatePath("/categorias");
+  return { sucesso: true };
 }

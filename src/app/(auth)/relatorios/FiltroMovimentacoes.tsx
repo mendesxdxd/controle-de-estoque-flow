@@ -4,6 +4,35 @@ import { useState, useMemo } from "react";
 import { Movimentacao } from "@/types";
 import DatePicker from "@/components/shared/DatePicker";
 
+function baixarCSVMovimentacoes(movs: Movimentacao[], data: string) {
+  const cabecalho = ["Data", "Hora", "Produto", "Unidade", "Tipo", "Quantidade", "OF", "Observacao"];
+  const linhas = movs.map((m) => {
+    const d = new Date(m.created_at);
+    return [
+      d.toLocaleDateString("pt-BR"),
+      d.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }),
+      m.produtos?.nome ?? "",
+      m.produtos?.unidade ?? "",
+      m.tipo,
+      m.quantidade,
+      m.nota_fiscal ?? "",
+      m.observacao ?? "",
+    ];
+  });
+
+  const csv = [cabecalho, ...linhas]
+    .map((row) => row.map((v) => `"${String(v).replace(/"/g, '""')}"`).join(";"))
+    .join("\n");
+
+  const blob = new Blob(["﻿" + csv], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `movimentacoes-${data}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
 type Props = {
   movimentacoes: Movimentacao[];
 };
@@ -53,16 +82,31 @@ export default function FiltroMovimentacoes({ movimentacoes }: Props) {
         </div>
       </div>
 
-      <div className="flex gap-6 py-3 px-1">
-        <span className="text-xs text-brand-medium">
-          <span className="font-bold text-white">{filtradas.length}</span> registros
-        </span>
-        <span className="text-xs text-brand-medium">
-          Entradas: <span className="font-bold text-brand-primary">{totalEntradas}</span>
-        </span>
-        <span className="text-xs text-brand-medium">
-          Saidas: <span className="font-bold text-brand-light">{totalSaidas}</span>
-        </span>
+      <div className="flex items-center justify-between flex-wrap gap-3 py-3 px-1">
+        <div className="flex gap-6">
+          <span className="text-xs text-brand-medium">
+            <span className="font-bold text-white">{filtradas.length}</span> registros
+          </span>
+          <span className="text-xs text-brand-medium">
+            Entradas: <span className="font-bold text-brand-primary">{totalEntradas}</span>
+          </span>
+          <span className="text-xs text-brand-medium">
+            Saidas: <span className="font-bold text-brand-light">{totalSaidas}</span>
+          </span>
+        </div>
+        {filtradas.length > 0 && (
+          <button
+            onClick={() => baixarCSVMovimentacoes(filtradas, data)}
+            className="btn-secondary flex items-center gap-2"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="7 10 12 15 17 10"/>
+              <line x1="12" y1="15" x2="12" y2="3"/>
+            </svg>
+            Exportar CSV
+          </button>
+        )}
       </div>
 
       {filtradas.length === 0 ? (

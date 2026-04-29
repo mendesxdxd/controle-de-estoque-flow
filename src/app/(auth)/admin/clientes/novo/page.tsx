@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -24,7 +24,7 @@ export default function NovoClientePage() {
     setSalvando(true);
     const resultado = await criarTenant(
       nome.trim(),
-      capacidade ? parseInt(capacidade) : null
+      capacidade ? parseInt(capacidade) : null,
     );
     setSalvando(false);
 

@@ -6,11 +6,13 @@ import GraficoCapacidade from "./GraficoCapacidade";
 import GraficoEstoque from "@/components/shared/GraficoEstoque";
 
 export default async function DashboardPage() {
-  const supabase = await createClient();
+const supabase = await createClient();
   const tenant = await getTenant();
 
   const doisAnosAtras = new Date();
   doisAnosAtras.setFullYear(doisAnosAtras.getFullYear() - 2);
+
+  if (!tenant) return null;
 
   const [
     { data: estoqueAtual },
@@ -18,17 +20,19 @@ export default async function DashboardPage() {
     { data: ultimasMovimentacoes },
     { data: todasMovimentacoes },
   ] = await Promise.all([
-    supabase.from("estoque_atual").select("*"),
-    supabase.from("categorias").select("*", { count: "exact", head: true }),
+    supabase.from("estoque_atual").select("*").eq("tenant_id", tenant.id),
+    supabase.from("categorias").select("*", { count: "exact", head: true }).eq("tenant_id", tenant.id),
     supabase
       .from("movimentacoes")
       .select("*, produtos(id, nome, unidade)")
+      .eq("tenant_id", tenant.id)
       .or("observacao.neq.AJUSTE_INICIAL,observacao.is.null")
       .gte("created_at", new Date(new Date().setHours(0, 0, 0, 0)).toISOString())
       .order("created_at", { ascending: false }),
     supabase
       .from("movimentacoes")
       .select("produto_id, tipo, quantidade, created_at, produtos(nome, unidade, caixas_por_palete)")
+      .eq("tenant_id", tenant.id)
       .or("observacao.neq.AJUSTE_INICIAL,observacao.is.null")
       .gte("created_at", doisAnosAtras.toISOString())
       .order("created_at", { ascending: false }),

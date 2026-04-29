@@ -261,6 +261,34 @@ function gerarMensagem(rows: EstoqueAtualRow[], valorTotal: number, totalPaletes
     .join("\n");
 }
 
+function baixarCSV(rows: EstoqueAtualRow[]) {
+  const cabecalho = ["Produto", "Categoria", "Unidade", "Estoque Atual", "Paletes", "Est. Minimo", "Preco Custo (R$)", "Valor em Estoque (R$)", "Status"];
+  const linhas = rows.map((r) => [
+    r.nome,
+    r.categoria ?? "",
+    r.unidade,
+    r.estoque_atual,
+    r.caixas_por_palete && r.estoque_atual > 0 ? Number((r.estoque_atual / r.caixas_por_palete).toFixed(1)) : "",
+    r.estoque_minimo,
+    r.preco_custo.toFixed(2).replace(".", ","),
+    (r.estoque_atual * r.preco_custo).toFixed(2).replace(".", ","),
+    r.estoque_atual <= r.estoque_minimo ? "Baixo" : "Ok",
+  ]);
+
+  const csv = [cabecalho, ...linhas]
+    .map((row) => row.map((v) => `"${String(v).replace(/"/g, '""')}"`).join(";"))
+    .join("\n");
+
+  const blob = new Blob(["﻿" + csv], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  const hoje = new Date().toLocaleDateString("pt-BR").replace(/\//g, "-");
+  a.href = url;
+  a.download = `estoque-${hoje}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
 export default function TabelaEstoqueAtual({ rows, movimentacoes, podeFechamento, capacidadeArmazem, tenantNome }: Props) {
   const [copiado, setCopiado] = useState(false);
   const [copiadoFechamento, setCopiadoFechamento] = useState(false);
@@ -348,13 +376,25 @@ export default function TabelaEstoqueAtual({ rows, movimentacoes, podeFechamento
           )}
         </button>
         <button
-          onClick={() => gerarPDF(rows, valorTotal, totalPaletes)}
+          onClick={() => baixarCSV(rows)}
           className="btn-secondary flex items-center gap-2"
         >
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
             <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
             <polyline points="14 2 14 8 20 8"/>
             <line x1="16" y1="13" x2="8" y2="13"/>
+            <line x1="16" y1="17" x2="8" y2="17"/>
+            <line x1="10" y1="9" x2="8" y2="9"/>
+          </svg>
+          Exportar CSV
+        </button>
+        <button
+          onClick={() => gerarPDF(rows, valorTotal, totalPaletes)}
+          className="btn-secondary flex items-center gap-2"
+        >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
+            <polyline points="14 2 14 8 20 8"/>
             <line x1="16" y1="17" x2="8" y2="17"/>
             <line x1="10" y1="9" x2="8" y2="9"/>
           </svg>

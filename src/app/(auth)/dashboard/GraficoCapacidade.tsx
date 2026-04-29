@@ -11,9 +11,11 @@ const CX = 90, CY = 90, RO = 72, RI = 52;
 const GAP  = 0.025;
 const FULL = 2 * Math.PI;
 
+const r4 = (n: number) => Math.round(n * 1e4) / 1e4;
+
 function arcPath(startA: number, endA: number): string {
   const large = endA - startA > Math.PI ? 1 : 0;
-  const pt = (a: number, rad: number) => ({ x: CX + rad * Math.cos(a), y: CY + rad * Math.sin(a) });
+  const pt = (a: number, rad: number) => ({ x: r4(CX + rad * Math.cos(a)), y: r4(CY + rad * Math.sin(a)) });
   const o1 = pt(startA, RO), o2 = pt(endA, RO);
   const i1 = pt(endA,   RI), i2 = pt(startA, RI);
   return `M${o1.x},${o1.y} A${RO},${RO} 0 ${large} 1 ${o2.x},${o2.y} L${i1.x},${i1.y} A${RI},${RI} 0 ${large} 0 ${i2.x},${i2.y} Z`;

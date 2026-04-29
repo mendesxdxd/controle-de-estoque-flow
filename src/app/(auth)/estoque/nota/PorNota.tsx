@@ -8,19 +8,26 @@ type Props = { movimentacoes: Movimentacao[] };
 export default function PorNota({ movimentacoes }: Props) {
   const [busca, setBusca] = useState("");
 
-  const todasOFs = useMemo(() => {
-    const mapa: Record<string, { of: string; data: Date; tipo: string; totalCaixas: number; totalProdutos: number }> = {};
+  const { todasOFs, totalOFs, totalPaletesGeral } = useMemo(() => {
+    const mapa: Record<string, { of: string; data: Date; tipo: string; totalCaixas: number; totalPaletes: number }> = {};
     for (const mov of movimentacoes) {
       const of = mov.nota_fiscal?.trim();
       if (!of) continue;
       if (!mapa[of]) {
-        mapa[of] = { of, data: new Date(mov.created_at), tipo: mov.tipo, totalCaixas: 0, totalProdutos: 0 };
+        mapa[of] = { of, data: new Date(mov.created_at), tipo: mov.tipo, totalCaixas: 0, totalPaletes: 0 };
       }
       mapa[of].totalCaixas += mov.quantidade;
+      const cxPalete = mov.produtos?.caixas_por_palete;
+      if (cxPalete && cxPalete > 0) mapa[of].totalPaletes += mov.quantidade / cxPalete;
       if (new Date(mov.created_at) > mapa[of].data) mapa[of].data = new Date(mov.created_at);
       if (mapa[of].tipo !== mov.tipo) mapa[of].tipo = "misto";
     }
-    return Object.values(mapa).sort((a, b) => b.data.getTime() - a.data.getTime()).slice(0, 8);
+    const todas = Object.values(mapa).sort((a, b) => b.data.getTime() - a.data.getTime());
+    return {
+      todasOFs: todas.slice(0, 8),
+      totalOFs: todas.length,
+      totalPaletesGeral: todas.reduce((acc, row) => acc + row.totalPaletes, 0),
+    };
   }, [movimentacoes]);
 
   const { resultado, resumo } = useMemo(() => {
@@ -76,39 +83,66 @@ export default function PorNota({ movimentacoes }: Props) {
 
       {/* Tabela geral de OFs */}
       {!busca.trim() && todasOFs.length > 0 && (
-        <div className="glass-table overflow-x-auto">
-          <table className="w-full text-sm border-collapse min-w-[500px]">
-            <thead>
-              <tr className="table-header">
-                <th className="table-th">Numero da OF</th>
-                <th className="table-th">Ultima movimentacao</th>
-                <th className="table-th">Tipo</th>
-                <th className="table-th-right">Total caixas</th>
-              </tr>
-            </thead>
-            <tbody>
-              {todasOFs.map((row, i) => (
-                <tr
-                  key={row.of}
-                  onClick={() => setBusca(row.of)}
-                  className={`border-b border-brand-border/40 cursor-pointer transition-colors ${i % 2 === 0 ? "table-row-even" : "table-row-odd"} hover:bg-brand-hover/40`}
-                >
-                  <td className="py-3 px-4 font-mono font-semibold text-white">{row.of}</td>
-                  <td className="py-3 px-4 text-brand-medium">{row.data.toLocaleDateString("pt-BR")}</td>
-                  <td className="py-3 px-4">
-                    <span className={`text-xs font-medium px-2.5 py-1 rounded-full capitalize ${
-                      row.tipo === "entrada" ? "bg-brand-primary/15 text-brand-primary"
-                      : row.tipo === "saida" ? "bg-brand-hover text-brand-light"
-                      : "bg-brand-hover text-brand-medium"
-                    }`}>
-                      {row.tipo}
-                    </span>
-                  </td>
-                  <td className="py-3 px-4 text-right font-bold text-white">{row.totalCaixas.toLocaleString("pt-BR")}</td>
+        <div className="flex flex-col gap-3">
+          <div className="flex items-center gap-4">
+            <div className="glass-panel px-4 py-2 flex items-center gap-2">
+              <span className="text-xs text-brand-medium">Total OFs</span>
+              <span className="text-sm font-bold text-white">{totalOFs}</span>
+            </div>
+            {totalPaletesGeral > 0 && (
+              <div className="glass-panel px-4 py-2 flex items-center gap-2">
+                <span className="text-xs text-brand-medium">Total paletes</span>
+                <span className="text-sm font-bold text-brand-primary">
+                  {totalPaletesGeral % 1 === 0
+                    ? totalPaletesGeral.toLocaleString("pt-BR")
+                    : totalPaletesGeral.toLocaleString("pt-BR", { minimumFractionDigits: 1, maximumFractionDigits: 2 })}
+                </span>
+              </div>
+            )}
+          </div>
+
+          <div className="glass-table overflow-x-auto">
+            <table className="w-full text-sm border-collapse min-w-[560px]">
+              <thead>
+                <tr className="table-header">
+                  <th className="table-th">Numero da OF</th>
+                  <th className="table-th">Ultima movimentacao</th>
+                  <th className="table-th">Tipo</th>
+                  <th className="table-th-right">Caixas</th>
+                  <th className="table-th-right">Paletes</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {todasOFs.map((row, i) => (
+                  <tr
+                    key={row.of}
+                    onClick={() => setBusca(row.of)}
+                    className={`border-b border-brand-border/40 cursor-pointer transition-colors ${i % 2 === 0 ? "table-row-even" : "table-row-odd"} hover:bg-brand-hover/40`}
+                  >
+                    <td className="py-3 px-4 font-mono font-semibold text-white">{row.of}</td>
+                    <td className="py-3 px-4 text-brand-medium">{row.data.toLocaleDateString("pt-BR")}</td>
+                    <td className="py-3 px-4">
+                      <span className={`text-xs font-medium px-2.5 py-1 rounded-full capitalize ${
+                        row.tipo === "entrada" ? "bg-brand-primary/15 text-brand-primary"
+                        : row.tipo === "saida" ? "bg-brand-hover text-brand-light"
+                        : "bg-brand-hover text-brand-medium"
+                      }`}>
+                        {row.tipo}
+                      </span>
+                    </td>
+                    <td className="py-3 px-4 text-right font-bold text-white">{row.totalCaixas.toLocaleString("pt-BR")}</td>
+                    <td className="py-3 px-4 text-right font-bold text-brand-primary">
+                      {row.totalPaletes > 0
+                        ? (row.totalPaletes % 1 === 0
+                          ? row.totalPaletes.toLocaleString("pt-BR")
+                          : row.totalPaletes.toLocaleString("pt-BR", { minimumFractionDigits: 1, maximumFractionDigits: 2 }))
+                        : "—"}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
 

@@ -17,46 +17,67 @@ export async function listarTenants() {
 
 export async function criarTenant(nome: string, capacidadeArmazem: number | null) {
   await verificarAdmin();
+  if (!nome.trim()) return { erro: "Nome e obrigatorio." };
+  if (capacidadeArmazem !== null && capacidadeArmazem < 0) return { erro: "Capacidade invalida." };
+
   const admin = createAdminClient();
   const { error } = await admin
     .from("tenants")
-    .insert({ nome, capacidade_armazem: capacidadeArmazem });
+    .insert({ nome: nome.trim(), capacidade_armazem: capacidadeArmazem });
   if (error) return { erro: "Erro ao criar empresa." };
   revalidatePath("/admin");
+  return { sucesso: true };
 }
 
-export async function excluirTenant(id: string) {
+export async function excluirTenant(id: string, senhaAdmin: string) {
   await verificarAdmin();
-  const admin = createAdminClient();
 
+  const supabase = await (await import("@/lib/supabase/server")).createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  const { error: authError } = await supabase.auth.signInWithPassword({
+    email: user!.email!,
+    password: senhaAdmin,
+  });
+  if (authError) return { erro: "Senha incorreta." };
+
+  const admin = createAdminClient();
   const { data: perfis } = await admin.from("perfis").select("user_id").eq("tenant_id", id);
 
-  await admin.from("movimentacoes").delete().eq("tenant_id", id);
-  await admin.from("estoque_atual").delete().eq("tenant_id", id);
-  await admin.from("produtos").delete().eq("tenant_id", id);
-  await admin.from("categorias").delete().eq("tenant_id", id);
-  await admin.from("perfis").delete().eq("tenant_id", id);
+  try {
+    await admin.from("movimentacoes").delete().eq("tenant_id", id);
+    await admin.from("estoque_atual").delete().eq("tenant_id", id);
+    await admin.from("produtos").delete().eq("tenant_id", id);
+    await admin.from("categorias").delete().eq("tenant_id", id);
+    await admin.from("perfis").delete().eq("tenant_id", id);
 
-  for (const perfil of perfis ?? []) {
-    await admin.auth.admin.deleteUser(perfil.user_id);
+    for (const perfil of perfis ?? []) {
+      await admin.auth.admin.deleteUser(perfil.user_id);
+    }
+
+    const { error } = await admin.from("tenants").delete().eq("id", id);
+    if (error) return { erro: "Erro ao excluir empresa." };
+  } catch {
+    return { erro: "Erro ao excluir dados da empresa." };
   }
 
-  const { error } = await admin.from("tenants").delete().eq("id", id);
-  if (error) return { erro: "Erro ao excluir empresa." };
-
   revalidatePath("/admin");
+  return { sucesso: true };
 }
 
 export async function atualizarTenant(id: string, nome: string, capacidadeArmazem: number | null, notaObrigatoria: boolean = false) {
   await verificarAdmin();
+  if (!nome.trim()) return { erro: "Nome e obrigatorio." };
+  if (capacidadeArmazem !== null && capacidadeArmazem < 0) return { erro: "Capacidade invalida." };
+
   const admin = createAdminClient();
   const { error } = await admin
     .from("tenants")
-    .update({ nome, capacidade_armazem: capacidadeArmazem, nota_obrigatoria: notaObrigatoria })
+    .update({ nome: nome.trim(), capacidade_armazem: capacidadeArmazem, nota_obrigatoria: notaObrigatoria })
     .eq("id", id);
   if (error) return { erro: "Erro ao atualizar empresa." };
   revalidatePath("/admin");
   revalidatePath(`/admin/clientes/${id}`);
+  return { sucesso: true };
 }
 
 export async function listarUsuariosTenant(tenantId: string) {
@@ -65,7 +86,7 @@ export async function listarUsuariosTenant(tenantId: string) {
 
   const { data: perfis } = await admin
     .from("perfis")
-    .select("user_id, pode_fechamento, nota_obrigatoria, nome")
+    .select("user_id, pode_fechamento, nota_obrigatoria, nome, role")
     .eq("tenant_id", tenantId);
 
   if (!perfis || perfis.length === 0) return { usuarios: [] };
@@ -84,6 +105,7 @@ export async function listarUsuariosTenant(tenantId: string) {
         pode_fechamento: perfil.pode_fechamento ?? false,
         nota_obrigatoria: perfil.nota_obrigatoria ?? false,
         nome: perfil.nome ?? null,
+        role: (perfil.role as "admin" | "operador" | "visualizador") ?? "admin",
       };
     });
 
@@ -98,15 +120,18 @@ export async function criarUsuarioTenant(
   nome: string
 ) {
   await verificarAdmin();
+  if (!email.trim()) return { erro: "Email e obrigatorio." };
+  if (!senha || senha.length < 6) return { erro: "Senha deve ter pelo menos 6 caracteres." };
+
   const admin = createAdminClient();
 
   const { data, error } = await admin.auth.admin.createUser({
-    email,
+    email: email.trim(),
     password: senha,
     email_confirm: true,
   });
 
-  if (error) return { erro: error.message };
+  if (error) return { erro: error.message ?? "Erro ao criar usuario." };
 
   const { error: perfilError } = await admin
     .from("perfis")
@@ -118,6 +143,7 @@ export async function criarUsuarioTenant(
   }
 
   revalidatePath(`/admin/clientes/${tenantId}`);
+  return { sucesso: true };
 }
 
 export async function listarUsuariosSemTenant() {
@@ -143,11 +169,13 @@ export async function vincularUsuarioExistente(
 ) {
   await verificarAdmin();
   const admin = createAdminClient();
+
   const { error } = await admin
     .from("perfis")
     .insert({ user_id: userId, tenant_id: tenantId, nome, pode_fechamento: podeFechamento });
   if (error) return { erro: "Erro ao vincular usuario." };
   revalidatePath(`/admin/clientes/${tenantId}`);
+  return { sucesso: true };
 }
 
 export async function atualizarPermissao(
@@ -165,6 +193,24 @@ export async function atualizarPermissao(
     .eq("tenant_id", tenantId);
   if (error) return { erro: "Erro ao atualizar permissao." };
   revalidatePath(`/admin/clientes/${tenantId}`);
+  return { sucesso: true };
+}
+
+export async function atualizarRole(
+  userId: string,
+  tenantId: string,
+  role: "admin" | "operador" | "visualizador"
+) {
+  await verificarAdmin();
+  const admin = createAdminClient();
+  const { error } = await admin
+    .from("perfis")
+    .update({ role })
+    .eq("user_id", userId)
+    .eq("tenant_id", tenantId);
+  if (error) return { erro: "Erro ao atualizar role." };
+  revalidatePath(`/admin/clientes/${tenantId}`);
+  return { sucesso: true };
 }
 
 export async function desvincularUsuario(userId: string, tenantId: string) {
@@ -177,6 +223,39 @@ export async function desvincularUsuario(userId: string, tenantId: string) {
     .eq("tenant_id", tenantId);
   if (error) return { erro: "Erro ao desvincular usuario." };
   revalidatePath(`/admin/clientes/${tenantId}`);
+  return { sucesso: true };
+}
+
+export async function gerarConvite() {
+  await verificarAdmin();
+  const admin = createAdminClient();
+  const { data, error } = await admin
+    .from("convites")
+    .insert({})
+    .select("token")
+    .single();
+  if (error) return { erro: "Erro ao gerar convite." };
+  revalidatePath("/admin");
+  return { token: data.token };
+}
+
+export async function listarConvites() {
+  await verificarAdmin();
+  const admin = createAdminClient();
+  const { data } = await admin
+    .from("convites")
+    .select("id, token, usado, criado_em")
+    .order("criado_em", { ascending: false });
+  return { convites: data ?? [] };
+}
+
+export async function excluirConvite(id: string) {
+  await verificarAdmin();
+  const admin = createAdminClient();
+  const { error } = await admin.from("convites").delete().eq("id", id);
+  if (error) return { erro: "Erro ao excluir convite." };
+  revalidatePath("/admin");
+  return { sucesso: true };
 }
 
 export async function excluirUsuarioTenantComSenha(
@@ -193,7 +272,6 @@ export async function excluirUsuarioTenantComSenha(
     email: user!.email!,
     password: senhaAdmin,
   });
-
   if (authError) return { erro: "Senha incorreta." };
 
   const admin = createAdminClient();
@@ -205,5 +283,5 @@ export async function excluirUsuarioTenantComSenha(
   if (error) return { erro: "Erro ao excluir usuario." };
 
   revalidatePath(`/admin/clientes/${tenantId}`);
+  return { sucesso: true };
 }
-

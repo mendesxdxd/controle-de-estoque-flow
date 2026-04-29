@@ -108,7 +108,7 @@ export default function FormularioMovimentacao({ produtos, saldoPorProduto, tipo
         </button>
       </div>
 
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4 max-w-md">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4 w-full max-w-lg">
         <div className="flex bg-brand-hover border border-brand-border rounded-xl p-1 w-fit gap-1">
           {(["entrada", "saida"] as const).map((t) => (
             <button
@@ -233,11 +233,11 @@ export default function FormularioMovimentacao({ produtos, saldoPorProduto, tipo
           <p className="text-xs text-red-400 bg-red-950/50 border border-red-800 px-3 py-2 rounded-lg">{erro}</p>
         )}
 
-        <div className="flex gap-3 mt-2">
-          <button type="submit" disabled={salvando} className="btn-primary">
+        <div className="flex flex-col sm:flex-row gap-3 mt-2">
+          <button type="submit" disabled={salvando} className="btn-primary w-full sm:w-auto">
             {salvando ? "Salvando..." : "Registrar"}
           </button>
-          <button type="button" onClick={onFechar} className="btn-secondary">
+          <button type="button" onClick={onFechar} className="btn-secondary w-full sm:w-auto">
             Cancelar
           </button>
         </div>

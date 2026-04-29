@@ -1,6 +1,7 @@
 ﻿"use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
@@ -80,7 +81,12 @@ export default function LoginPage() {
 
             {/* Senha */}
             <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-medium text-brand-light tracking-wide">Senha</label>
+              <div className="flex items-center justify-between">
+                <label className="text-xs font-medium text-brand-light tracking-wide">Senha</label>
+                <Link href="/esqueci-senha" className="text-xs text-brand-medium hover:text-white transition-colors duration-150">
+                  Esqueci minha senha
+                </Link>
+              </div>
               <div className="relative">
                 <input
                   type={mostrarSenha ? "text" : "password"}
@@ -127,6 +133,18 @@ export default function LoginPage() {
 
           </form>
         </div>
+
+        {/* Links legais */}
+        <div className="mt-4 flex justify-center gap-4">
+          <Link href="/termos" className="text-xs transition-colors duration-150" style={{ color: "#4b5563" }}>
+            Termos de uso
+          </Link>
+          <span className="text-xs" style={{ color: "#1f2937" }}>·</span>
+          <Link href="/privacidade" className="text-xs transition-colors duration-150" style={{ color: "#4b5563" }}>
+            Privacidade
+          </Link>
+        </div>
+
       </div>
     </div>
   );

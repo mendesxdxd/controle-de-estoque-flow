@@ -7,15 +7,19 @@ export default async function EstoquePage() {
   const supabase = await createClient();
   const tenant = await getTenant();
 
+  if (!tenant) return null;
+
   const [{ data: movimentacoes }, { data: produtos }] = await Promise.all([
     supabase
       .from("movimentacoes")
       .select("*, produtos(id, nome, unidade)")
+      .eq("tenant_id", tenant.id)
       .or("observacao.neq.AJUSTE_INICIAL,observacao.is.null")
       .order("created_at", { ascending: false }),
     supabase
       .from("produtos")
       .select("id, nome, unidade, caixas_por_palete")
+      .eq("tenant_id", tenant.id)
       .order("nome"),
   ]);
 

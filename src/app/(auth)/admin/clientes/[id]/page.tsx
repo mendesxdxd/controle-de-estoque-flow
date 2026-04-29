@@ -2,10 +2,11 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { listarUsuariosTenant, listarUsuariosSemTenant, excluirUsuarioTenantComSenha, atualizarPermissao, desvincularUsuario } from "../../actions";
+import { listarUsuariosTenant, listarUsuariosSemTenant, excluirUsuarioTenantComSenha, atualizarPermissao, atualizarRole, desvincularUsuario } from "../../actions";
 import BotoesUsuario from "./BotoesUsuario";
 import FormularioEditarTenant from "./FormularioEditarTenant";
 import VincularUsuario from "./VincularUsuario";
+import BotaoGerarPagamento from "./BotaoGerarPagamento";
 
 export default async function DetalheClientePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -37,6 +38,17 @@ export default async function DetalheClientePage({ params }: { params: Promise<{
           </p>
         </div>
         <div className="flex gap-2 items-start flex-wrap justify-end">
+          <div className="flex items-center gap-2 self-center">
+            <span
+              className="text-xs font-semibold px-2 py-0.5 rounded-full"
+              style={tenant.ativo !== false
+                ? { background: "rgba(52,211,153,0.12)", color: "#34d399" }
+                : { background: "rgba(239,68,68,0.12)", color: "#ef4444" }}
+            >
+              {tenant.ativo !== false ? "Ativo" : "Inativo"}
+            </span>
+          </div>
+          <BotaoGerarPagamento tenantId={id} />
           <FormularioEditarTenant
             id={id}
             nomeInicial={tenant.nome}
@@ -71,7 +83,7 @@ export default async function DetalheClientePage({ params }: { params: Promise<{
                 </tr>
               </thead>
               <tbody>
-                {usuarios.map((u: any, i: number) => (
+                {usuarios.map((u, i: number) => (
                   <tr key={u.id} className={`border-b border-brand-border/40 ${i % 2 === 0 ? "table-row-even" : "table-row-odd"}`}>
                     <td className="py-3 px-4 font-medium text-white">{u.nome ?? "—"}</td>
                     <td className="py-3 px-4 text-brand-light">{u.email ?? "—"}</td>
@@ -85,7 +97,9 @@ export default async function DetalheClientePage({ params }: { params: Promise<{
                         emailUsuario={u.email ?? ""}
                         podeFechamento={u.pode_fechamento}
                         notaObrigatoria={u.nota_obrigatoria}
+                        roleInicial={u.role ?? "admin"}
                         atualizarPermissao={atualizarPermissao}
+                        atualizarRole={atualizarRole}
                         desvincularUsuario={desvincularUsuario}
                         excluirUsuario={excluirUsuarioTenantComSenha}
                       />

@@ -59,13 +59,13 @@ export default function TabelaEstoque({ movimentacoes, produtos, notaObrigatoria
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex justify-between items-center gap-3">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
         <DatePicker value={dataSelecionada} onChange={setDataSelecionada} />
         <div className="flex gap-3">
-          <button onClick={() => handleNova("saida")} className="btn-secondary">
+          <button onClick={() => handleNova("saida")} className="btn-secondary flex-1 sm:flex-none">
             Registrar saida
           </button>
-          <button onClick={() => handleNova("entrada")} className="btn-primary">
+          <button onClick={() => handleNova("entrada")} className="btn-primary flex-1 sm:flex-none">
             Registrar entrada
           </button>
         </div>

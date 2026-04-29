@@ -2,6 +2,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { getTenant } from "@/lib/tenant";
+import { exigirRole } from "@/lib/permissoes";
 import { revalidatePath } from "next/cache";
 
 type ItemNota = {
@@ -17,6 +18,7 @@ type DadosNota = {
 };
 
 export async function registrarNota(dados: DadosNota) {
+  try { await exigirRole("admin", "operador"); } catch { return { erro: "Sem permissao para registrar movimentacoes." }; }
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { erro: "Nao autenticado." };
@@ -62,9 +64,11 @@ export async function registrarNota(dados: DadosNota) {
 
   revalidatePath("/estoque");
   revalidatePath("/dashboard");
+  return { sucesso: true };
 }
 
 export async function excluirMovimentacao(id: string) {
+  try { await exigirRole("admin"); } catch { return { erro: "Sem permissao para excluir movimentacoes." }; }
   const supabase = await createClient();
   const tenant = await getTenant();
   if (!tenant) return { erro: "Tenant nao encontrado." };
@@ -79,4 +83,5 @@ export async function excluirMovimentacao(id: string) {
 
   revalidatePath("/estoque");
   revalidatePath("/dashboard");
+  return { sucesso: true };
 }
