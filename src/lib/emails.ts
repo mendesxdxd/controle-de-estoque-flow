@@ -1,7 +1,11 @@
 import { Resend } from "resend";
 import { createAdminClient } from "@/lib/supabase/admin";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+let _resend: Resend | null = null;
+function getResend(): Resend {
+  if (!_resend) _resend = new Resend(process.env.RESEND_API_KEY);
+  return _resend;
+}
 const FROM = "FlowEstoque <noreply@flowestoque.com.br>";
 
 async function getEmailsDoTenant(tenantId: string): Promise<string[]> {
@@ -49,7 +53,7 @@ function base(conteudo: string): string {
 
 async function enviar(emails: string[], subject: string, html: string): Promise<void> {
   try {
-    await resend.emails.send({ from: FROM, to: emails, subject, html });
+    await getResend().emails.send({ from: FROM, to: emails, subject, html });
   } catch {
     // falha no envio nao deve quebrar o fluxo principal
   }
