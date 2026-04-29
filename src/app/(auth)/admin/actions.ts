@@ -45,7 +45,6 @@ export async function excluirTenant(id: string, senhaAdmin: string) {
 
   try {
     await admin.from("movimentacoes").delete().eq("tenant_id", id);
-    await admin.from("estoque_atual").delete().eq("tenant_id", id);
     await admin.from("produtos").delete().eq("tenant_id", id);
     await admin.from("categorias").delete().eq("tenant_id", id);
     await admin.from("perfis").delete().eq("tenant_id", id);
