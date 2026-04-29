@@ -2,8 +2,10 @@
 import { getTenant } from "@/lib/tenant";
 import { EstoqueAtualRow, Movimentacao } from "@/types";
 import { formatarMoeda } from "@/lib/utils";
+import { Icon } from "@iconify/react";
 import GraficoCapacidade from "./GraficoCapacidade";
 import GraficoEstoque from "@/components/shared/GraficoEstoque";
+import CardValorEstoque from "./CardValorEstoque";
 
 export default async function DashboardPage() {
 const supabase = await createClient();
@@ -54,9 +56,7 @@ const supabase = await createClient();
           <div className="flex items-center justify-between">
             <span className="text-xs font-medium text-brand-medium uppercase tracking-wider">Produtos</span>
             <div className="w-8 h-8 rounded-lg bg-brand-hover flex items-center justify-center text-brand-light">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
-              </svg>
+              <Icon icon="lucide:package" width={15} />
             </div>
           </div>
           <span className="text-5xl font-bold text-white tracking-tight">{totalProdutos}</span>
@@ -67,30 +67,14 @@ const supabase = await createClient();
           <div className="flex items-center justify-between">
             <span className="text-xs font-medium text-brand-medium uppercase tracking-wider">Categorias</span>
             <div className="w-8 h-8 rounded-lg bg-brand-hover flex items-center justify-center text-brand-light">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M9 5H2v7l6.29 6.29c.94.94 2.48.94 3.42 0l3.58-3.58c.94-.94.94-2.48 0-3.42L9 5Z" />
-                <path d="M6 9.01V9" />
-                <path d="m15 5 6.3 6.3a2.4 2.4 0 0 1 0 3.4L17 19" />
-              </svg>
+              <Icon icon="lucide:tag" width={15} />
             </div>
           </div>
           <span className="text-5xl font-bold text-white tracking-tight">{totalCategorias ?? 0}</span>
           <span className="text-xs text-brand-muted border-t border-brand-border pt-3">cadastradas</span>
         </div>
 
-        <div className="bg-brand-card backdrop-blur-sm border border-brand-border rounded-2xl p-5 flex flex-col gap-4 hover:border-brand-border-hl transition-all duration-200">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-brand-medium uppercase tracking-wider">Valor em estoque</span>
-            <div className="w-8 h-8 rounded-lg bg-brand-hover flex items-center justify-center text-brand-light">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                <line x1="12" x2="12" y1="2" y2="22" />
-                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-              </svg>
-            </div>
-          </div>
-          <span className="text-3xl font-bold text-white tracking-tight leading-tight">{formatarMoeda(valorEmEstoque)}</span>
-          <span className="text-xs text-brand-muted border-t border-brand-border pt-3">preco de custo</span>
-        </div>
+        <CardValorEstoque valor={formatarMoeda(valorEmEstoque)} />
 
         <div className={`backdrop-blur-sm border rounded-2xl p-5 flex flex-col gap-4 transition-all duration-200 ${
           estoqueBaixo.length > 0
@@ -102,18 +86,14 @@ const supabase = await createClient();
               Estoque baixo
             </span>
             <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${estoqueBaixo.length > 0 ? "bg-red-500/10 text-red-400" : "bg-brand-hover text-brand-light"}`}>
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" />
-                <path d="M12 9v4" />
-                <path d="M12 17h.01" />
-              </svg>
+              <Icon icon="lucide:triangle-alert" width={15} />
             </div>
           </div>
           <span className={`text-5xl font-bold tracking-tight ${estoqueBaixo.length > 0 ? "text-red-400" : "text-white"}`}>
             {estoqueBaixo.length}
           </span>
           <span className={`text-xs border-t pt-3 ${estoqueBaixo.length > 0 ? "text-red-500/70 border-red-800/30" : "text-brand-muted border-brand-border"}`}>
-            {estoqueBaixo.length > 0 ? `produto${estoqueBaixo.length !== 1 ? "s" : ""} abaixo do minimo` : "tudo em ordem"}
+            {estoqueBaixo.length > 0 ? `produto${estoqueBaixo.length !== 1 ? "s" : ""} abaixo do mínimo` : "tudo em ordem"}
           </span>
         </div>
       </div>
@@ -127,15 +107,15 @@ const supabase = await createClient();
       )}
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        {/* Movimentacoes de hoje */}
+        {/* Movimentações de hoje */}
         <section className="bg-brand-card backdrop-blur-sm border border-brand-border rounded-2xl overflow-hidden">
           <div className="px-5 py-4 border-b border-brand-border flex items-center justify-between">
-            <h2 className="text-sm font-semibold text-white">Movimentacoes de hoje</h2>
+            <h2 className="text-sm font-semibold text-white">Movimentações de hoje</h2>
             <span className="text-xs text-brand-muted">hoje</span>
           </div>
 
           {!ultimasMovimentacoes || ultimasMovimentacoes.length === 0 ? (
-            <p className="text-sm text-brand-medium p-5">Nenhuma movimentacao registrada.</p>
+            <p className="text-sm text-brand-medium p-5">Nenhuma movimentação registrada.</p>
           ) : (
             <table className="w-full text-sm border-collapse">
               <thead>
@@ -149,20 +129,21 @@ const supabase = await createClient();
               <tbody>
                 {(ultimasMovimentacoes as Movimentacao[]).map((mov, i) => (
                   <tr key={mov.id} className={`border-b border-brand-border/40 ${i % 2 === 0 ? "" : "bg-brand-hover/20"} hover:bg-brand-hover/30 transition-colors`}>
-                    <td className="py-3 px-5 text-brand-medium whitespace-nowrap text-xs">
-                      {new Date(mov.created_at).toLocaleDateString("pt-BR")}
+                    <td className="py-3 px-5 whitespace-nowrap">
+                      <div className="text-xs font-semibold text-white/90">{new Date(mov.created_at).toLocaleDateString("pt-BR")}</div>
+                      <div className="text-[10px] text-brand-muted mt-0.5">{new Date(mov.created_at).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}</div>
                     </td>
                     <td className="py-3 px-5 font-medium text-white text-xs">{mov.produtos?.nome ?? "—"}</td>
                     <td className="py-3 px-5">
-                      <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${
+                      <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${
                         mov.tipo === "entrada"
-                          ? "bg-brand-primary/15 text-brand-primary"
-                          : "bg-brand-hover text-brand-light"
+                          ? "bg-emerald-500/15 text-emerald-400"
+                          : "bg-red-500/15 text-red-400"
                       }`}>
                         {mov.tipo}
                       </span>
                     </td>
-                    <td className="py-3 px-5 text-right text-white font-medium text-xs tabular-nums">
+                    <td className="py-3 px-5 text-right text-white font-semibold text-xs tabular-nums">
                       {mov.quantidade.toLocaleString("pt-BR")} {mov.produtos?.unidade ?? ""}
                     </td>
                   </tr>
@@ -184,14 +165,14 @@ const supabase = await createClient();
           </div>
 
           {estoqueBaixo.length === 0 ? (
-            <p className="text-sm text-brand-medium p-5">Todos os produtos estao acima do estoque minimo.</p>
+            <p className="text-sm text-brand-medium p-5">Todos os produtos estão acima do estoque mínimo.</p>
           ) : (
             <table className="w-full text-sm border-collapse">
               <thead>
                 <tr className="border-b border-brand-border">
                   <th className="text-left text-xs font-medium text-brand-muted uppercase tracking-wider py-3 px-5">Produto</th>
                   <th className="text-right text-xs font-medium text-brand-muted uppercase tracking-wider py-3 px-5">Atual</th>
-                  <th className="text-right text-xs font-medium text-brand-muted uppercase tracking-wider py-3 px-5">Minimo</th>
+                  <th className="text-right text-xs font-medium text-brand-muted uppercase tracking-wider py-3 px-5">Mínimo</th>
                 </tr>
               </thead>
               <tbody>

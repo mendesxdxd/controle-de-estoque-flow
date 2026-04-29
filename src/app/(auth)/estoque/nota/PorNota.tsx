@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
+import { Icon } from "@iconify/react";
 import { Movimentacao } from "@/types";
 
 const MESES = ["jan","fev","mar","abr","mai","jun","jul","ago","set","out","nov","dez"];
@@ -18,7 +19,7 @@ function MonthPicker({ value, onChange }: { value: string; onChange: (v: string)
   const [selYear, selMonth] = value ? value.split("-").map(Number) : [0, 0];
   const label = selYear && selMonth
     ? MESES[selMonth - 1].charAt(0).toUpperCase() + MESES[selMonth - 1].slice(1) + " " + selYear
-    : "Selecionar mes";
+    : "Selecionar mês";
 
   useEffect(() => {
     function handler(e: MouseEvent) {
@@ -68,11 +69,7 @@ function MonthPicker({ value, onChange }: { value: string; onChange: (v: string)
         }}
       >
         <span>{label}</span>
-        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style={{ opacity: 0.7 }}>
-          <rect x="1" y="1.5" width="12" height="11" rx="2.5" stroke="#8B83FF" strokeWidth="1.3"/>
-          <path d="M1 5h12" stroke="#8B83FF" strokeWidth="1.3"/>
-          <path d="M4.5 0v2M9.5 0v2" stroke="#8B83FF" strokeWidth="1.3" strokeLinecap="round"/>
-        </svg>
+        <Icon icon="tabler:calendar" width={14} style={{ opacity: 0.7, color: "#8B83FF" }} />
       </div>
 
       {open && (
@@ -116,7 +113,7 @@ function MonthPicker({ value, onChange }: { value: string; onChange: (v: string)
           {/* footer */}
           <div style={{ display: "flex", justifyContent: "space-between", paddingTop: 10, borderTop: "1px solid #1a1a2e" }}>
             <button onClick={clearMonth} style={{ fontSize: 11, fontWeight: 700, cursor: "pointer", background: "none", border: "none", color: "#3d3a6e" }}>Limpar</button>
-            <button onClick={goThisMonth} style={{ fontSize: 11, fontWeight: 700, cursor: "pointer", background: "none", border: "none", color: "#6C63FF" }}>Este mes</button>
+            <button onClick={goThisMonth} style={{ fontSize: 11, fontWeight: 700, cursor: "pointer", background: "none", border: "none", color: "#6C63FF" }}>Este mês</button>
           </div>
         </div>
       )}
@@ -140,7 +137,8 @@ function mesAtual(): string {
 
 function gerarMensagemMensal(
   linhas: { of: string; data: Date; totalPaletes: number }[],
-  mes: string
+  mes: string,
+  titulo = "RELATÓRIO DE OFs"
 ): string {
   const [ano, m] = mes.split("-");
   const nomeMes = new Date(Number(ano), Number(m) - 1, 1)
@@ -154,10 +152,10 @@ function gerarMensagemMensal(
         const data = row.data.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" });
         return `${row.of} - ${data} - ${fmtPaletes(row.totalPaletes)} paletes`;
       })
-    : ["Nenhuma OF neste mes."];
+    : ["Nenhuma OF neste mês."];
 
   return [
-    `*RELATORIO DE OFS - ${nomeMes}*`,
+    `*${titulo} - ${nomeMes}*`,
     ``,
     ...itens,
     ``,
@@ -168,7 +166,12 @@ function gerarMensagemMensal(
 export default function PorNota({ movimentacoes }: Props) {
   const [busca, setBusca] = useState("");
   const [mesSelecionado, setMesSelecionado] = useState(mesAtual);
-  const [copiado, setCopiado] = useState(false);
+  const [toastMsg, setToastMsg] = useState<string | null>(null);
+
+  function showToast(msg: string) {
+    setToastMsg(msg);
+    setTimeout(() => setToastMsg(null), 2500);
+  }
 
   const { todasOFs, totalOFs, totalPaletesGeral } = useMemo(() => {
     const mapa: Record<string, { of: string; data: Date; tipo: string; totalCaixas: number; totalPaletes: number }> = {};
@@ -238,24 +241,38 @@ export default function PorNota({ movimentacoes }: Props) {
       return d.getFullYear() === ano && d.getMonth() + 1 === mes;
     });
 
-    const mapa: Record<string, { of: string; data: Date; totalPaletes: number }> = {};
-    for (const mov of movsFiltrados) {
-      const of = mov.nota_fiscal!.trim();
-      if (!mapa[of]) mapa[of] = { of, data: new Date(mov.created_at), totalPaletes: 0 };
-      const cxPalete = mov.produtos?.caixas_por_palete;
-      if (cxPalete && cxPalete > 0) mapa[of].totalPaletes += mov.quantidade / cxPalete;
-      if (new Date(mov.created_at) > mapa[of].data) mapa[of].data = new Date(mov.created_at);
+    function buildMapa(movs: Movimentacao[]) {
+      const mapa: Record<string, { of: string; data: Date; totalPaletes: number }> = {};
+      for (const mov of movs) {
+        const of = mov.nota_fiscal!.trim();
+        if (!mapa[of]) mapa[of] = { of, data: new Date(mov.created_at), totalPaletes: 0 };
+        const cxPalete = mov.produtos?.caixas_por_palete;
+        if (cxPalete && cxPalete > 0) mapa[of].totalPaletes += mov.quantidade / cxPalete;
+        if (new Date(mov.created_at) > mapa[of].data) mapa[of].data = new Date(mov.created_at);
+      }
+      return Object.values(mapa).sort((a, b) => b.data.getTime() - a.data.getTime());
     }
 
-    const linhas = Object.values(mapa).sort((a, b) => b.data.getTime() - a.data.getTime());
-    return { linhas, totalPaletes: linhas.reduce((acc, r) => acc + r.totalPaletes, 0) };
+    const linhas = buildMapa(movsFiltrados);
+    const linhasEntrada = buildMapa(movsFiltrados.filter((m) => m.tipo === "entrada"));
+    const linhasSaida = buildMapa(movsFiltrados.filter((m) => m.tipo === "saida"));
+
+    return { linhas, linhasEntrada, linhasSaida, totalPaletes: linhas.reduce((acc, r) => acc + r.totalPaletes, 0) };
   }, [movimentacoes, mesSelecionado]);
 
   async function handleCopiarRelatorio() {
-    const texto = gerarMensagemMensal(relatorioMes.linhas, mesSelecionado);
-    await navigator.clipboard.writeText(texto);
-    setCopiado(true);
-    setTimeout(() => setCopiado(false), 2500);
+    await navigator.clipboard.writeText(gerarMensagemMensal(relatorioMes.linhas, mesSelecionado));
+    showToast("Relatório copiado!");
+  }
+
+  async function handleCopiarEntradas() {
+    await navigator.clipboard.writeText(gerarMensagemMensal(relatorioMes.linhasEntrada, mesSelecionado, "ENTRADAS DO MÊS"));
+    showToast("Entradas copiadas!");
+  }
+
+  async function handleCopiarSaidas() {
+    await navigator.clipboard.writeText(gerarMensagemMensal(relatorioMes.linhasSaida, mesSelecionado, "SAÍDAS DO MÊS"));
+    showToast("Saídas copiadas!");
   }
 
   return (
@@ -293,17 +310,31 @@ export default function PorNota({ movimentacoes }: Props) {
         <div className="flex items-center gap-2 flex-wrap">
           <MonthPicker value={mesSelecionado} onChange={setMesSelecionado} />
           <button onClick={handleCopiarRelatorio} className="btn-secondary flex items-center gap-2">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-            </svg>
-            Copiar relatorio
+            <Icon icon="tabler:clipboard-copy" width={14} />
+            Copiar relatório
+          </button>
+          <button
+            onClick={handleCopiarEntradas}
+            className="flex items-center gap-2 text-xs font-semibold px-3 py-2 rounded-lg transition-all duration-150"
+            style={{ background: "rgba(16,185,129,0.12)", border: "1px solid rgba(16,185,129,0.3)", color: "#34d399" }}
+          >
+            <Icon icon="tabler:arrow-bar-to-down" width={14} />
+            Entradas
+          </button>
+          <button
+            onClick={handleCopiarSaidas}
+            className="flex items-center gap-2 text-xs font-semibold px-3 py-2 rounded-lg transition-all duration-150"
+            style={{ background: "rgba(239,68,68,0.12)", border: "1px solid rgba(239,68,68,0.3)", color: "#f87171" }}
+          >
+            <Icon icon="tabler:arrow-bar-to-up" width={14} />
+            Saídas
           </button>
 
           {typeof document !== "undefined" && createPortal(
             <div style={{ position: "fixed", top: 24, left: "50%", pointerEvents: "none", zIndex: 9999 }}>
               <div style={{
-                transform: copiado ? "translateX(-50%) translateY(0)" : "translateX(-50%) translateY(-10px)",
-                opacity: copiado ? 1 : 0,
+                transform: toastMsg ? "translateX(-50%) translateY(0)" : "translateX(-50%) translateY(-10px)",
+                opacity: toastMsg ? 1 : 0,
                 transition: "opacity 0.25s ease, transform 0.25s ease",
                 background: "rgba(15,15,26,0.92)",
                 border: "1px solid rgba(108,99,255,0.35)",
@@ -316,7 +347,7 @@ export default function PorNota({ movimentacoes }: Props) {
                 whiteSpace: "nowrap",
                 boxShadow: "0 8px 24px rgba(0,0,0,0.4)",
               }}>
-                Relatorio copiado!
+                {toastMsg}
               </div>
             </div>,
             document.body
@@ -331,7 +362,7 @@ export default function PorNota({ movimentacoes }: Props) {
             <thead>
               <tr className="table-header">
                 <th className="table-th">Numero da OF</th>
-                <th className="table-th">Ultima movimentacao</th>
+                <th className="table-th">Última movimentação</th>
                 <th className="table-th">Tipo</th>
                 <th className="table-th-right">Caixas</th>
                 <th className="table-th-right">Paletes</th>
@@ -348,8 +379,8 @@ export default function PorNota({ movimentacoes }: Props) {
                   <td className="py-3 px-4 text-brand-medium">{row.data.toLocaleDateString("pt-BR")}</td>
                   <td className="py-3 px-4">
                     <span className={`text-xs font-medium px-2.5 py-1 rounded-full capitalize ${
-                      row.tipo === "entrada" ? "bg-brand-primary/15 text-brand-primary"
-                      : row.tipo === "saida" ? "bg-brand-hover text-brand-light"
+                      row.tipo === "entrada" ? "bg-emerald-500/15 text-emerald-400"
+                      : row.tipo === "saida" ? "bg-red-500/15 text-red-400"
                       : "bg-brand-hover text-brand-medium"
                     }`}>
                       {row.tipo}
@@ -366,7 +397,7 @@ export default function PorNota({ movimentacoes }: Props) {
 
       {busca.trim() && resultado.length === 0 && (
         <div className="glass-panel py-16 text-center">
-          <p className="text-sm text-brand-light">Nenhuma movimentacao encontrada para essa OF.</p>
+          <p className="text-sm text-brand-light">Nenhuma movimentação encontrada para essa OF.</p>
         </div>
       )}
 
@@ -387,7 +418,7 @@ export default function PorNota({ movimentacoes }: Props) {
           </div>
           <div className="grid grid-cols-4 gap-4">
             <div className="glass-panel p-4">
-              <p className="text-xs text-brand-medium mb-1">Movimentacoes</p>
+              <p className="text-xs text-brand-medium mb-1">Movimentações</p>
               <p className="text-2xl font-bold text-white">{resumo.totalMovs}</p>
             </div>
             <div className="glass-panel p-4">
@@ -406,7 +437,7 @@ export default function PorNota({ movimentacoes }: Props) {
           <p className="text-xs text-brand-medium px-1">
             {resumo.dataMin.toLocaleDateString("pt-BR") === resumo.dataMax.toLocaleDateString("pt-BR")
               ? `Data: ${resumo.dataMin.toLocaleDateString("pt-BR")}`
-              : `Periodo: ${resumo.dataMin.toLocaleDateString("pt-BR")} — ${resumo.dataMax.toLocaleDateString("pt-BR")}`
+              : `Período: ${resumo.dataMin.toLocaleDateString("pt-BR")} — ${resumo.dataMax.toLocaleDateString("pt-BR")}`
             }
           </p>
           <div className="glass-table overflow-x-auto">
@@ -415,7 +446,7 @@ export default function PorNota({ movimentacoes }: Props) {
                 <tr className="table-header">
                   <th className="table-th">Produto</th>
                   <th className="table-th-right">Entradas</th>
-                  <th className="table-th-right">Saidas</th>
+                  <th className="table-th-right">Saídas</th>
                   <th className="table-th-right">Saldo</th>
                 </tr>
               </thead>

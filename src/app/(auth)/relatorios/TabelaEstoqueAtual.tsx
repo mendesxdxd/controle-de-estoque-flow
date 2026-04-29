@@ -2,8 +2,10 @@
 
 import { useState } from "react";
 import { createPortal } from "react-dom";
+import { Icon } from "@iconify/react";
 import { EstoqueAtualRow, Movimentacao } from "@/types";
 import { formatarMoeda } from "@/lib/utils";
+import ValorPrivado from "@/components/shared/ValorPrivado";
 
 type Props = {
   rows: EstoqueAtualRow[];
@@ -42,7 +44,7 @@ function gerarPDF(rows: EstoqueAtualRow[], valorTotal: number, totalPaletes: num
       doc.setFontSize(9);
       doc.setFont("helvetica", "normal");
       doc.setTextColor(113, 113, 122);
-      doc.text("Relatorio de Estoque", 14, 21);
+      doc.text("Relatório de Estoque", 14, 21);
 
       // Data alinhada a direita
       doc.setFontSize(9);
@@ -52,7 +54,7 @@ function gerarPDF(rows: EstoqueAtualRow[], valorTotal: number, totalPaletes: num
       autoTable(doc, {
         startY: 34,
         margin: { left: 14, right: 14 },
-        head: [["Produto", "Categoria", "Un.", "Estoque Atual", "Paletes", "Min.", "Preco Custo", "Valor em Estoque", "Status"]],
+        head: [["Produto", "Categoria", "Un.", "Estoque Atual", "Paletes", "Mín.", "Preço Custo", "Valor em Estoque", "Status"]],
         body: rows.map((r) => [
           r.nome,
           r.categoria ?? "—",
@@ -250,7 +252,7 @@ function gerarMensagem(rows: EstoqueAtualRow[], valorTotal: number, totalPaletes
   });
 
   return [
-    `*RELATORIO DE ESTOQUE*`,
+    `*RELATÓRIO DE ESTOQUE*`,
     `_${hoje}_`,
     ``,
     ...linhas,
@@ -263,7 +265,7 @@ function gerarMensagem(rows: EstoqueAtualRow[], valorTotal: number, totalPaletes
 }
 
 function baixarCSV(rows: EstoqueAtualRow[]) {
-  const cabecalho = ["Produto", "Categoria", "Unidade", "Estoque Atual", "Paletes", "Est. Minimo", "Preco Custo (R$)", "Valor em Estoque (R$)", "Status"];
+  const cabecalho = ["Produto", "Categoria", "Unidade", "Estoque Atual", "Paletes", "Est. Mínimo", "Preço Custo (R$)", "Valor em Estoque (R$)", "Status"];
   const linhas = rows.map((r) => [
     r.nome,
     r.categoria ?? "",
@@ -315,7 +317,7 @@ export default function TabelaEstoqueAtual({ rows, movimentacoes, podeFechamento
   async function handleCopiar() {
     try {
       await navigator.clipboard.writeText(gerarMensagem(rows, valorTotal, totalPaletes));
-      showToast("Relatorio copiado!");
+      showToast("Relatório copiado!");
     } catch {}
   }
 
@@ -353,42 +355,26 @@ export default function TabelaEstoqueAtual({ rows, movimentacoes, podeFechamento
       <div className="flex justify-end gap-2 flex-wrap">
         {podeFechamento && (
           <button onClick={handleCopiarFechamento} className="btn-secondary flex items-center gap-2">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-            </svg>
+            <Icon icon="tabler:clipboard-copy" width={14} />
             Fechamento do dia
           </button>
         )}
         <button onClick={handleCopiar} className="btn-secondary flex items-center gap-2">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-            <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
-            <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
-          </svg>
+          <Icon icon="tabler:copy" width={14} />
           Copiar mensagem
         </button>
         <button
           onClick={() => baixarCSV(rows)}
           className="btn-secondary flex items-center gap-2"
         >
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
-            <polyline points="14 2 14 8 20 8"/>
-            <line x1="16" y1="13" x2="8" y2="13"/>
-            <line x1="16" y1="17" x2="8" y2="17"/>
-            <line x1="10" y1="9" x2="8" y2="9"/>
-          </svg>
+          <Icon icon="tabler:file-type-csv" width={14} />
           Exportar CSV
         </button>
         <button
           onClick={() => gerarPDF(rows, valorTotal, totalPaletes)}
           className="btn-secondary flex items-center gap-2"
         >
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
-            <polyline points="14 2 14 8 20 8"/>
-            <line x1="16" y1="17" x2="8" y2="17"/>
-            <line x1="10" y1="9" x2="8" y2="9"/>
-          </svg>
+          <Icon icon="tabler:file-type-pdf" width={14} />
           Exportar PDF
         </button>
       </div>
@@ -401,8 +387,8 @@ export default function TabelaEstoqueAtual({ rows, movimentacoes, podeFechamento
               <th className="table-th">Categoria</th>
               <th className="table-th">Unidade</th>
               <th className="table-th-right">Estoque Atual</th>
-              <th className="table-th-right">Est. Minimo</th>
-              <th className="table-th-right">Preco Custo</th>
+              <th className="table-th-right">Est. Mínimo</th>
+              <th className="table-th-right">Preço Custo</th>
               <th className="table-th-right">Valor em Estoque</th>
               <th className="table-th">Status</th>
             </tr>
@@ -427,9 +413,9 @@ export default function TabelaEstoqueAtual({ rows, movimentacoes, podeFechamento
                     )}
                   </td>
                   <td className="py-3 px-4 text-right text-brand-light td-num">{row.estoque_minimo.toLocaleString("pt-BR")}</td>
-                  <td className="py-3 px-4 text-right text-brand-light td-num">{formatarMoeda(row.preco_custo)}</td>
+                  <td className="py-3 px-4 text-right text-brand-light td-num"><ValorPrivado>{formatarMoeda(row.preco_custo)}</ValorPrivado></td>
                   <td className="py-3 px-4 text-right font-medium text-white td-num">
-                    {formatarMoeda(row.estoque_atual * row.preco_custo)}
+                    <ValorPrivado>{formatarMoeda(row.estoque_atual * row.preco_custo)}</ValorPrivado>
                   </td>
                   <td className="py-3 px-4">
                     <span className={baixo ? "badge-status-baixo" : "badge-status-ok"}>
@@ -457,7 +443,7 @@ export default function TabelaEstoqueAtual({ rows, movimentacoes, podeFechamento
                 Valor total em estoque
               </td>
               <td className="py-3 px-4 text-right font-bold text-white">
-                {formatarMoeda(valorTotal)}
+                <ValorPrivado>{formatarMoeda(valorTotal)}</ValorPrivado>
               </td>
               <td />
             </tr>

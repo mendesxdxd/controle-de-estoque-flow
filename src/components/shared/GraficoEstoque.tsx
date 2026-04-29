@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { Icon } from "@iconify/react";
 import { Movimentacao } from "@/types";
 
 type Filtro = "hoje" | "7d" | "6m" | "1a";
@@ -167,12 +168,10 @@ export default function GraficoEstoque({ movimentacoes }: { movimentacoes: Movim
             <button
               onClick={() => setModoAberto((v) => !v)}
               className="flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-lg transition-all duration-150"
-              style={{ background: "#1a1a2e", border: "1px solid #252540", color: "#8B83FF" }}
+              style={{ background: "rgba(108,99,255,0.18)", border: "1px solid rgba(108,99,255,0.5)", color: "#c4beff", boxShadow: "0 0 10px rgba(108,99,255,0.15)" }}
             >
               {modo === "qtd" ? "Quantidade" : "Paletes"}
-              <svg width="10" height="10" viewBox="0 0 12 12" fill="none" className={`transition-transform duration-200 ${modoAberto ? "rotate-180" : ""}`}>
-                <path d="M2 4l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
+              <Icon icon="tabler:chevron-down" width={10} className={`transition-transform duration-200 ${modoAberto ? "rotate-180" : ""}`} />
             </button>
             {modoAberto && (
               <div

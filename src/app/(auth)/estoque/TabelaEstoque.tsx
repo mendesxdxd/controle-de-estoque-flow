@@ -49,12 +49,12 @@ export default function TabelaEstoque({ movimentacoes, produtos, notaObrigatoria
   }
 
   async function handleExcluir(id: string) {
-    if (!confirm("Deseja excluir esta movimentacao?")) return;
+    if (!confirm("Deseja excluir esta movimentação?")) return;
     setExcluindo(id);
     const resultado = await excluirMovimentacao(id);
     setExcluindo(null);
     if (resultado?.erro) setToast(resultado.erro);
-    else setToast("Movimentacao excluida.");
+    else setToast("Movimentação excluída.");
   }
 
   return (
@@ -62,10 +62,10 @@ export default function TabelaEstoque({ movimentacoes, produtos, notaObrigatoria
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
         <DatePicker value={dataSelecionada} onChange={setDataSelecionada} />
         <div className="flex gap-3">
-          <button onClick={() => handleNova("saida")} className="btn-secondary flex-1 sm:flex-none">
-            Registrar saida
+          <button onClick={() => handleNova("saida")} className="flex-1 sm:flex-none text-sm font-semibold px-4 py-2 rounded-xl transition-all duration-150 active:scale-[0.98] text-red-400 border border-red-500/30 bg-red-500/10 hover:bg-red-500/20">
+            Registrar saída
           </button>
-          <button onClick={() => handleNova("entrada")} className="btn-primary flex-1 sm:flex-none">
+          <button onClick={() => handleNova("entrada")} className="flex-1 sm:flex-none text-sm font-semibold px-4 py-2 rounded-xl transition-all duration-150 active:scale-[0.98] text-white bg-emerald-600 hover:bg-emerald-500 shadow-sm">
             Registrar entrada
           </button>
         </div>
@@ -78,14 +78,14 @@ export default function TabelaEstoque({ movimentacoes, produtos, notaObrigatoria
           tipoInicial={tipoInicial}
           notaObrigatoria={notaObrigatoria}
           onFechar={() => setAbrirForm(false)}
-          onSucesso={() => setToast("Movimentacao registrada.")}
+          onSucesso={() => setToast("Movimentação registrada.")}
         />
       )}
 
       {movimentacoesFiltradas.length === 0 ? (
         <div className="empty-state">
-          <p className="empty-state-text">Nenhuma movimentacao nesta data.</p>
-          <button onClick={() => handleNova("entrada")} className="btn-primary">
+          <p className="empty-state-text">Nenhuma movimentação nesta data.</p>
+          <button onClick={() => handleNova("entrada")} className="text-sm font-semibold px-4 py-2 rounded-xl transition-all duration-150 active:scale-[0.98] text-white bg-emerald-600 hover:bg-emerald-500 shadow-sm">
             Registrar entrada
           </button>
         </div>
@@ -99,7 +99,7 @@ export default function TabelaEstoque({ movimentacoes, produtos, notaObrigatoria
                 <th className="table-th">Produto</th>
                 <th className="table-th">Tipo</th>
                 <th className="table-th-right">Quantidade</th>
-                <th className="table-th">Observacao</th>
+                <th className="table-th">Observação</th>
                 <th className="py-3 px-4" />
               </tr>
             </thead>
@@ -120,8 +120,8 @@ export default function TabelaEstoque({ movimentacoes, produtos, notaObrigatoria
                   <td className="py-3 px-4">
                     <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${
                       mov.tipo === "entrada"
-                        ? "bg-brand-primary/15 text-brand-primary"
-                        : "bg-brand-hover text-brand-light"
+                        ? "bg-emerald-500/15 text-emerald-400"
+                        : "bg-red-500/15 text-red-400"
                     }`}>
                       {mov.tipo}
                     </span>

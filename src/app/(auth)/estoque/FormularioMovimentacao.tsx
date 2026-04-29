@@ -1,6 +1,7 @@
 ﻿"use client";
 
 import { useState } from "react";
+import { Icon } from "@iconify/react";
 import { Produto } from "@/types";
 import { registrarNota } from "./actions";
 
@@ -52,7 +53,7 @@ export default function FormularioMovimentacao({ produtos, saldoPorProduto, tipo
     setErro("");
 
     if (notaObrigatoria && !notaFiscal.trim()) {
-      setErro("Numero da nota e obrigatorio.");
+      setErro("Número da nota é obrigatório.");
       return;
     }
 
@@ -101,7 +102,7 @@ export default function FormularioMovimentacao({ produtos, saldoPorProduto, tipo
     <div className="glass-panel p-6">
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-sm font-bold uppercase tracking-wider text-white">
-          Registrar movimentacao
+          Registrar movimentação
         </h2>
         <button onClick={onFechar} className="text-xs text-brand-medium hover:text-white transition-colors">
           Fechar
@@ -109,17 +110,21 @@ export default function FormularioMovimentacao({ produtos, saldoPorProduto, tipo
       </div>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-4 w-full max-w-lg">
-        <div className="flex bg-brand-hover border border-brand-border rounded-xl p-1 w-fit gap-1">
+        <div className="flex bg-brand-card border border-brand-border rounded-xl p-1 w-fit gap-1">
           {(["entrada", "saida"] as const).map((t) => (
             <button
               key={t}
               type="button"
               onClick={() => setTipo(t)}
               className={`px-5 py-2 text-sm font-semibold capitalize rounded-lg transition-all duration-150 ${
-                tipo === t ? "bg-brand-hover text-white" : "text-brand-medium hover:text-white hover:bg-brand-hover"
+                tipo === t
+                  ? t === "entrada"
+                    ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
+                    : "bg-red-500/20 text-red-400 border border-red-500/30"
+                  : "text-brand-medium hover:text-white hover:bg-brand-hover"
               }`}
             >
-              {t}
+              {t === "entrada" ? "Entrada" : "Saída"}
             </button>
           ))}
         </div>
@@ -176,17 +181,29 @@ export default function FormularioMovimentacao({ produtos, saldoPorProduto, tipo
               {caixasPorPalete && (
                 <div className="flex flex-col gap-1">
                   <label className="text-xs font-semibold uppercase tracking-wider text-brand-light">Registrar por</label>
-                  <div className="flex bg-brand-hover border border-brand-border rounded-xl p-1 w-fit gap-1">
+                  <div className="flex bg-brand-card border border-brand-border rounded-xl p-1 w-fit gap-1">
                     {(["cx", "palete"] as const).map((u) => (
                       <button
                         key={u}
                         type="button"
                         onClick={() => atualizarItem(index, "unidade", u)}
-                        className={`px-4 py-1.5 text-sm font-semibold rounded-lg transition-all duration-150 ${
-                          item.unidade === u ? "bg-brand-hover text-white" : "text-brand-medium hover:text-white hover:bg-brand-hover"
+                        className={`flex items-center gap-2 px-4 py-1.5 text-sm font-semibold rounded-lg transition-all duration-150 ${
+                          item.unidade === u
+                            ? "bg-brand-hover border border-brand-border-hl text-white"
+                            : "text-brand-medium hover:text-white hover:bg-brand-hover"
                         }`}
                       >
-                        {u === "cx" ? "Caixa" : "Palete"}
+                        {u === "cx" ? (
+                          <>
+                            <Icon icon="lucide:package" width={13} />
+                            Caixa
+                          </>
+                        ) : (
+                          <>
+                            <Icon icon="lucide:layers" width={13} />
+                            Palete
+                          </>
+                        )}
                       </button>
                     ))}
                   </div>
@@ -200,7 +217,7 @@ export default function FormularioMovimentacao({ produtos, saldoPorProduto, tipo
                   </label>
                   {tipo === "saida" && saldoAtual !== null && (
                     <span className="text-xs text-brand-medium">
-                      Disponivel: <span className={saldoAtual === 0 ? "text-red-400" : "text-brand-light"}>{saldoAtual} cx</span>
+                      Disponível: <span className={saldoAtual === 0 ? "text-red-400" : "text-brand-light"}>{saldoAtual} cx</span>
                     </span>
                   )}
                 </div>
@@ -211,9 +228,12 @@ export default function FormularioMovimentacao({ produtos, saldoPorProduto, tipo
                   onChange={(e) => atualizarItem(index, "quantidade", e.target.value)}
                   className="input-field"
                 />
-                {item.unidade === "palete" && caixasPorPalete && qtdNum > 0 && (
+                {caixasPorPalete && qtdNum > 0 && (
                   <p className="text-xs text-brand-primary mt-1">
-                    {qtdNum} palete{qtdNum > 1 ? "s" : ""} × {caixasPorPalete} cx = <span className="font-semibold">{qtdEmCaixas} cx</span>
+                    {item.unidade === "palete"
+                      ? <>{qtdNum} palete{qtdNum > 1 ? "s" : ""} × {caixasPorPalete} cx = <span className="font-semibold">{qtdEmCaixas} cx</span></>
+                      : <>{qtdNum} cx = <span className="font-semibold">{(qtdNum / caixasPorPalete).toLocaleString("pt-BR", { maximumFractionDigits: 2 })} palete{qtdNum / caixasPorPalete !== 1 ? "s" : ""}</span></>
+                    }
                   </p>
                 )}
               </div>

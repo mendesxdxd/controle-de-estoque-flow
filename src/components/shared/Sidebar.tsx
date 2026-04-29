@@ -4,105 +4,28 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { Icon } from "@iconify/react";
 
-const estoqueIcon = (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M12 2H2v10l9.29 9.29c.94.94 2.48.94 3.42 0l6.58-6.58c.94-.94.94-2.48 0-3.42L12 2Z" />
-    <path d="M7 7h.01" />
-  </svg>
-);
+const estoqueIcon = <Icon icon="tabler:archive" width={16} />;
 
 const estoqueSubItems = [
-  { href: "/estoque", label: "Movimentacoes" },
+  { href: "/estoque", label: "Movimentações" },
   { href: "/estoque/resumo", label: "Resumo do dia" },
   { href: "/estoque/produto", label: "Produto no estoque" },
   { href: "/estoque/nota", label: "Ordem de Frete" },
 ];
 
 const links = [
-  {
-    href: "/dashboard",
-    label: "Dashboard",
-    icon: (
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-        <rect width="7" height="9" x="3" y="3" rx="1" />
-        <rect width="7" height="5" x="14" y="3" rx="1" />
-        <rect width="7" height="9" x="14" y="12" rx="1" />
-        <rect width="7" height="5" x="3" y="16" rx="1" />
-      </svg>
-    ),
-  },
-  {
-    href: "/produtos",
-    label: "Produtos",
-    icon: (
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
-        <polyline points="3.29 7 12 12 20.71 7" />
-        <line x1="12" x2="12" y1="22" y2="12" />
-      </svg>
-    ),
-  },
-  {
-    href: "/categorias",
-    label: "Categorias",
-    icon: (
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M9 5H2v7l6.29 6.29c.94.94 2.48.94 3.42 0l3.58-3.58c.94-.94.94-2.48 0-3.42L9 5Z" />
-        <path d="M6 9.01V9" />
-        <path d="m15 5 6.3 6.3a2.4 2.4 0 0 1 0 3.4L17 19" />
-      </svg>
-    ),
-  },
-  {
-    href: "/relatorios",
-    label: "Relatorios",
-    icon: (
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-        <line x1="18" x2="18" y1="20" y2="10" />
-        <line x1="12" x2="12" y1="20" y2="4" />
-        <line x1="6" x2="6" y1="20" y2="14" />
-      </svg>
-    ),
-  },
+  { href: "/dashboard",  label: "Dashboard",  icon: <Icon icon="tabler:layout-dashboard" width={16} /> },
+  { href: "/produtos",   label: "Produtos",   icon: <Icon icon="tabler:package" width={16} /> },
+  { href: "/categorias", label: "Categorias", icon: <Icon icon="tabler:tags" width={16} /> },
+  { href: "/relatorios", label: "Relatórios", icon: <Icon icon="tabler:chart-bar" width={16} /> },
 ];
 
 const secondaryLinks = [
-  {
-    href: "/perfil",
-    label: "Perfil",
-    icon: (
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-        <circle cx="12" cy="8" r="4" />
-        <path d="M20 21a8 8 0 1 0-16 0" />
-      </svg>
-    ),
-  },
-  {
-    href: "/usuarios",
-    label: "Usuarios",
-    adminOnly: true,
-    icon: (
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-        <circle cx="9" cy="7" r="4" />
-        <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
-        <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-      </svg>
-    ),
-  },
-  {
-    href: "/admin",
-    label: "Admin",
-    adminOnly: true,
-    icon: (
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M12 2a5 5 0 0 1 5 5c0 3.5-2.5 6-5 8-2.5-2-5-4.5-5-8a5 5 0 0 1 5-5z" />
-        <path d="M12 22v-4" />
-        <path d="M8 22h8" />
-      </svg>
-    ),
-  },
+  { href: "/perfil",   label: "Perfil",    icon: <Icon icon="tabler:user" width={16} /> },
+  { href: "/usuarios", label: "Usuários",  adminOnly: true, icon: <Icon icon="tabler:users" width={16} /> },
+  { href: "/admin",    label: "Admin",     adminOnly: true, icon: <Icon icon="tabler:shield" width={16} /> },
 ];
 
 export default function Sidebar({ isAdmin, userEmail, role }: { isAdmin: boolean; userEmail: string; role: string }) {
@@ -165,18 +88,7 @@ export default function Sidebar({ isAdmin, userEmail, role }: { isAdmin: boolean
           className="text-brand-light hover:text-white p-1 transition-colors"
           aria-label="Menu"
         >
-          {aberto ? (
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <line x1="18" y1="6" x2="6" y2="18" />
-              <line x1="6" y1="6" x2="18" y2="18" />
-            </svg>
-          ) : (
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <line x1="3" y1="6" x2="21" y2="6" />
-              <line x1="3" y1="12" x2="21" y2="12" />
-              <line x1="3" y1="18" x2="21" y2="18" />
-            </svg>
-          )}
+          {aberto ? <Icon icon="tabler:x" width={20} /> : <Icon icon="tabler:menu-2" width={20} />}
         </button>
       </div>
 
@@ -254,12 +166,7 @@ export default function Sidebar({ isAdmin, userEmail, role }: { isAdmin: boolean
                 className="pr-3 py-2.5 pl-2"
                 style={{ color: estoqueAtivo ? "rgba(255,255,255,0.4)" : "#374151" }}
               >
-                <svg
-                  width="12" height="12" viewBox="0 0 12 12" fill="none"
-                  className={`transition-transform duration-200 ${estoqueExpandido ? "rotate-180" : ""}`}
-                >
-                  <path d="M2 4l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
+                <Icon icon="tabler:chevron-down" width={12} className={`transition-transform duration-200 ${estoqueExpandido ? "rotate-180" : ""}`} />
               </button>
             </div>
 
@@ -291,7 +198,7 @@ export default function Sidebar({ isAdmin, userEmail, role }: { isAdmin: boolean
           </div>
 
           <NavLink href="/categorias" label="Categorias" icon={links[2].icon} onClick={handleNavegar} />
-          <NavLink href="/relatorios" label="Relatorios" icon={links[3].icon} onClick={handleNavegar} />
+          <NavLink href="/relatorios" label="Relatórios" icon={links[3].icon} onClick={handleNavegar} />
 
           <div className="mt-4 pt-4 border-t border-brand-border flex flex-col gap-1">
             {secondaryLinks.map((link) => {
@@ -313,11 +220,7 @@ export default function Sidebar({ isAdmin, userEmail, role }: { isAdmin: boolean
             onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.04)"; (e.currentTarget as HTMLElement).style.color = "#fff"; }}
             onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = "transparent"; (e.currentTarget as HTMLElement).style.color = "#6b7280"; }}
           >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-              <polyline points="16 17 21 12 16 7" />
-              <line x1="21" x2="9" y1="12" y2="12" />
-            </svg>
+            <Icon icon="tabler:logout" width={16} />
             Sair
           </button>
         </div>

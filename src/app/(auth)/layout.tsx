@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { getTenant } from "@/lib/tenant";
 import Sidebar from "@/components/shared/Sidebar";
 import TopBar from "@/components/shared/TopBar";
+import { ValorOcultoProvider } from "@/contexts/ValorOcultoContext";
 
 export default async function AuthLayout({
   children,
@@ -22,6 +23,7 @@ export default async function AuthLayout({
   const role = tenant?.role ?? "visualizador";
 
   return (
+    <ValorOcultoProvider>
     <div className="min-h-screen bg-black flex relative overflow-hidden">
       {/* Orbs de fundo globais */}
       <div className="fixed top-0 left-0 w-[600px] h-[600px] bg-indigo-700/10 rounded-full blur-[140px] pointer-events-none -translate-x-1/2 -translate-y-1/2" />
@@ -35,5 +37,6 @@ export default async function AuthLayout({
         </div>
       </main>
     </div>
+    </ValorOcultoProvider>
   );
 }

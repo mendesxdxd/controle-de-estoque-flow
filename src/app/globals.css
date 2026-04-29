@@ -134,10 +134,10 @@
   }
   body {
     @apply bg-brand-bg text-foreground;
-    font-family: Helvetica, Arial, sans-serif;
+    font-family: var(--font-inter), Inter, system-ui, sans-serif;
   }
   h1, h2, h3, h4, h5, h6 {
-    font-family: Helvetica, Arial, sans-serif;
+    font-family: var(--font-inter), Inter, system-ui, sans-serif;
     font-weight: 700;
     letter-spacing: -0.02em;
   }
@@ -231,9 +231,7 @@
   }
 
   .badge-status-ok {
-    @apply text-xs font-medium px-2.5 py-1 rounded-full;
-    background: rgba(61, 58, 110, 0.3);
-    color: #8B83FF;
+    @apply text-xs font-medium px-2.5 py-1 rounded-full bg-emerald-500/15 text-emerald-400;
   }
 
   .badge-status-baixo {
