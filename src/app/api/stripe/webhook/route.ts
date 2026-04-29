@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { stripe } from "@/lib/stripe";
+import { getStripe } from "@/lib/stripe";
 import { createAdminClient } from "@/lib/supabase/admin";
 import {
   enviarEmailBoasVindas,
@@ -7,6 +7,8 @@ import {
   enviarEmailPagamentoFalhou,
   enviarEmailContaSuspensa,
 } from "@/lib/emails";
+
+export const dynamic = "force-dynamic";
 
 async function getNomeTenant(tenantId: string): Promise<string> {
   try {
@@ -28,7 +30,7 @@ export async function POST(req: NextRequest) {
 
   let event;
   try {
-    event = stripe.webhooks.constructEvent(body, sig, process.env.STRIPE_WEBHOOK_SECRET);
+    event = getStripe().webhooks.constructEvent(body, sig, process.env.STRIPE_WEBHOOK_SECRET);
   } catch {
     return NextResponse.json({ erro: "Assinatura invalida." }, { status: 400 });
   }

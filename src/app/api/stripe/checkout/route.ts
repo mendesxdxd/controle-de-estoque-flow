@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { stripe } from "@/lib/stripe";
+import { getStripe } from "@/lib/stripe";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { isAdminUser } from "@/lib/admin";
+
+export const dynamic = "force-dynamic";
 
 export async function POST(req: NextRequest) {
   const { tenantId } = await req.json();
@@ -14,6 +16,7 @@ export async function POST(req: NextRequest) {
   const { data: tenant } = await admin.from("tenants").select("id, nome, stripe_customer_id").eq("id", tenantId).single();
   if (!tenant) return NextResponse.json({ erro: "Empresa nao encontrada." }, { status: 404 });
 
+  const stripe = getStripe();
   let customerId = tenant.stripe_customer_id;
   if (!customerId) {
     const customer = await stripe.customers.create({
