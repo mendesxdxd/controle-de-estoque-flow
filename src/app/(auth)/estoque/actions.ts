@@ -14,6 +14,7 @@ type ItemNota = {
 type DadosNota = {
   nota_fiscal: string;
   tipo: "entrada" | "saida";
+  transportadora: string | null;
   itens: ItemNota[];
 };
 
@@ -55,6 +56,7 @@ export async function registrarNota(dados: DadosNota) {
     quantidade: item.quantidade,
     observacao: item.observacao,
     nota_fiscal: dados.nota_fiscal,
+    transportadora: dados.transportadora,
     user_id: user.id,
     tenant_id: tenant.id,
   }));

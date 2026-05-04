@@ -27,6 +27,7 @@ function novoItem(): ItemForm {
 export default function FormularioMovimentacao({ produtos, saldoPorProduto, tipoInicial, notaObrigatoria, onFechar, onSucesso }: Props) {
   const [tipo, setTipo] = useState<"entrada" | "saida">(tipoInicial);
   const [notaFiscal, setNotaFiscal] = useState("");
+  const [transportadora, setTransportadora] = useState<"MA TRANSP" | "OUTRAS" | "">("");
   const [itens, setItens] = useState<ItemForm[]>([novoItem()]);
   const [erro, setErro] = useState("");
   const [salvando, setSalvando] = useState(false);
@@ -83,6 +84,7 @@ export default function FormularioMovimentacao({ produtos, saldoPorProduto, tipo
       const resultado = await registrarNota({
         nota_fiscal: notaFiscal.trim(),
         tipo,
+        transportadora: transportadora || null,
         itens: itensMapeados,
       });
 
@@ -140,6 +142,28 @@ export default function FormularioMovimentacao({ produtos, saldoPorProduto, tipo
             className="input-field"
             placeholder="Ex: 6100181424"
           />
+        </div>
+
+        <div className="flex flex-col gap-1">
+          <label className="text-xs font-semibold uppercase tracking-wider text-brand-light">
+            Transportadora <span className="text-brand-medium normal-case font-normal">(opcional)</span>
+          </label>
+          <div className="flex bg-brand-card border border-brand-border rounded-xl p-1 w-fit gap-1">
+            {(["MA TRANSP", "OUTRAS"] as const).map((t) => (
+              <button
+                key={t}
+                type="button"
+                onClick={() => setTransportadora(transportadora === t ? "" : t)}
+                className={`px-4 py-1.5 text-xs font-semibold rounded-lg transition-all duration-150 ${
+                  transportadora === t
+                    ? "bg-brand-hover border border-brand-border-hl text-white"
+                    : "text-brand-medium hover:text-white hover:bg-brand-hover"
+                }`}
+              >
+                {t}
+              </button>
+            ))}
+          </div>
         </div>
 
         {itens.map((item, index) => {

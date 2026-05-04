@@ -163,6 +163,74 @@ function gerarMensagemMensal(
   ].filter((l) => l !== null).join("\n");
 }
 
+async function exportarExcel(movimentacoes: Movimentacao[], mes: string) {
+  const XLSX = await import("xlsx");
+  const [ano, mesNum] = mes.split("-").map(Number);
+
+  const movsFiltrados = movimentacoes.filter((mov) => {
+    if (!mov.nota_fiscal?.trim()) return false;
+    const d = new Date(mov.created_at);
+    return d.getFullYear() === ano && d.getMonth() + 1 === mesNum;
+  });
+
+  const mapaOF: Record<string, {
+    data: Date;
+    of: string;
+    tipo: string;
+    totalPaletes: number;
+    produtos: string[];
+    transportadora: string;
+  }> = {};
+
+  for (const mov of movsFiltrados) {
+    const of = mov.nota_fiscal!.trim();
+    if (!mapaOF[of]) {
+      mapaOF[of] = {
+        data: new Date(mov.created_at),
+        of,
+        tipo: mov.tipo === "entrada" ? "DESCARGA" : "CARREGAMENTO",
+        totalPaletes: 0,
+        produtos: [],
+        transportadora: mov.transportadora ?? "",
+      };
+    }
+    const movDate = new Date(mov.created_at);
+    if (movDate > mapaOF[of].data) mapaOF[of].data = movDate;
+    const cxPal = mov.produtos?.caixas_por_palete;
+    if (cxPal && cxPal > 0) mapaOF[of].totalPaletes += mov.quantidade / cxPal;
+    const nomeProd = mov.produtos?.nome;
+    if (nomeProd && !mapaOF[of].produtos.includes(nomeProd)) mapaOF[of].produtos.push(nomeProd);
+    if (!mapaOF[of].transportadora && mov.transportadora) mapaOF[of].transportadora = mov.transportadora;
+  }
+
+  const linhas = Object.values(mapaOF).sort((a, b) => a.data.getTime() - b.data.getTime());
+
+  const rows = linhas.map((row) => ({
+    Data: row.data.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric" }),
+    OF: row.of,
+    Tipo: row.tipo,
+    Paletes: Number(row.totalPaletes.toFixed(2)),
+    Produto: row.produtos.join(" / "),
+    Transportadora: row.transportadora,
+  }));
+
+  const ws = XLSX.utils.json_to_sheet(rows);
+  ws["!cols"] = [
+    { wch: 12 },
+    { wch: 16 },
+    { wch: 16 },
+    { wch: 10 },
+    { wch: 55 },
+    { wch: 14 },
+  ];
+
+  const wb = XLSX.utils.book_new();
+  const nomeMes = new Date(ano, mesNum - 1, 1)
+    .toLocaleDateString("pt-BR", { month: "long", year: "numeric" });
+  XLSX.utils.book_append_sheet(wb, ws, "Relatório");
+  XLSX.writeFile(wb, `relatorio-${nomeMes}.xlsx`);
+}
+
 export default function PorNota({ movimentacoes }: Props) {
   const [busca, setBusca] = useState("");
   const [mesSelecionado, setMesSelecionado] = useState(mesAtual);
@@ -309,6 +377,14 @@ export default function PorNota({ movimentacoes }: Props) {
         {/* Controles relatorio mensal */}
         <div className="flex items-center gap-2 flex-wrap">
           <MonthPicker value={mesSelecionado} onChange={setMesSelecionado} />
+          <button
+            onClick={() => exportarExcel(movimentacoes, mesSelecionado)}
+            className="flex items-center gap-2 text-xs font-semibold px-3 py-2 rounded-lg transition-all duration-150"
+            style={{ background: "rgba(16,185,129,0.10)", border: "1px solid rgba(16,185,129,0.25)", color: "#6ee7b7" }}
+          >
+            <Icon icon="tabler:file-spreadsheet" width={14} />
+            Exportar Excel
+          </button>
           <button onClick={handleCopiarRelatorio} className="btn-secondary flex items-center gap-2">
             <Icon icon="tabler:clipboard-copy" width={14} />
             Copiar relatório

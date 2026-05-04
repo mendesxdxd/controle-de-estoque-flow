@@ -26,6 +26,7 @@ export type Movimentacao = {
   quantidade: number;
   observacao: string | null;
   nota_fiscal: string | null;
+  transportadora: string | null;
   created_at: string;
   produtos?: Produto | null;
 };
