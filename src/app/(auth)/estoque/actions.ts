@@ -4,22 +4,29 @@ import { createClient } from "@/lib/supabase/server";
 import { getTenant } from "@/lib/tenant";
 import { exigirRole } from "@/lib/permissoes";
 import { revalidatePath } from "next/cache";
+import { logAuditoria } from "@/lib/auditoria";
+import { z } from "zod";
 
-type ItemNota = {
-  produto_id: string;
-  quantidade: number;
-  observacao: string | null;
-};
+const schemaItem = z.object({
+  produto_id: z.string().uuid(),
+  quantidade: z.number().int().positive().max(999999),
+  observacao: z.string().max(500).nullable(),
+});
 
-type DadosNota = {
-  nota_fiscal: string;
-  tipo: "entrada" | "saida";
-  transportadora: string | null;
-  itens: ItemNota[];
-};
+const schemaNota = z.object({
+  nota_fiscal: z.string().max(100),
+  tipo: z.enum(["entrada", "saida"]),
+  transportadora: z.string().max(100).nullable(),
+  itens: z.array(schemaItem).min(1).max(100),
+});
+
+type DadosNota = z.infer<typeof schemaNota>;
 
 export async function registrarNota(dados: DadosNota) {
   try { await exigirRole("admin", "operador"); } catch { return { erro: "Sem permissao para registrar movimentacoes." }; }
+
+  const parse = schemaNota.safeParse(dados);
+  if (!parse.success) return { erro: parse.error.issues[0].message };
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { erro: "Nao autenticado." };
@@ -71,9 +78,19 @@ export async function registrarNota(dados: DadosNota) {
 
 export async function excluirMovimentacao(id: string) {
   try { await exigirRole("admin"); } catch { return { erro: "Sem permissao para excluir movimentacoes." }; }
+
+  if (!z.string().uuid().safeParse(id).success) return { erro: "ID invalido." };
+
   const supabase = await createClient();
   const tenant = await getTenant();
   if (!tenant) return { erro: "Tenant nao encontrado." };
+
+  const { data: mov } = await supabase
+    .from("movimentacoes")
+    .select("tipo, quantidade, nota_fiscal, produto_id")
+    .eq("id", id)
+    .eq("tenant_id", tenant.id)
+    .single();
 
   const { error } = await supabase
     .from("movimentacoes")
@@ -82,6 +99,14 @@ export async function excluirMovimentacao(id: string) {
     .eq("tenant_id", tenant.id);
 
   if (error) return { erro: "Erro ao excluir movimentacao." };
+
+  await logAuditoria({
+    acao: "excluir_movimentacao",
+    tabela: "movimentacoes",
+    registro_id: id,
+    tenant_id: tenant.id,
+    detalhes: { tipo: mov?.tipo, quantidade: mov?.quantidade, nota_fiscal: mov?.nota_fiscal },
+  });
 
   revalidatePath("/estoque");
   revalidatePath("/dashboard");

@@ -37,6 +37,14 @@ export async function POST(req: NextRequest) {
 
   const admin = createAdminClient();
 
+  const { error: duplicado } = await admin
+    .from("stripe_events")
+    .insert({ id: event.id });
+
+  if (duplicado) {
+    return NextResponse.json({ recebido: true });
+  }
+
   try {
     switch (event.type) {
       case "customer.subscription.created": {

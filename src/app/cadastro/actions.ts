@@ -1,6 +1,8 @@
 "use server";
 
 import { createAdminClient } from "@/lib/supabase/admin";
+import { headers } from "next/headers";
+import { verificarRateLimit } from "@/lib/rateLimit";
 
 type DadosCadastro = {
   empresa: string;
@@ -11,6 +13,11 @@ type DadosCadastro = {
 };
 
 export async function cadastrarEmpresa(dados: DadosCadastro) {
+  const hdrs = await headers();
+  const ip = hdrs.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
+  const permitido = await verificarRateLimit(ip, "cadastro");
+  if (!permitido) return { erro: "Muitas tentativas. Aguarde um momento e tente novamente." };
+
   const admin = createAdminClient();
 
   const { data: convite } = await admin

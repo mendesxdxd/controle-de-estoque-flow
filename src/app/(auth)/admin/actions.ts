@@ -3,6 +3,7 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { verificarAdmin } from "@/lib/admin";
 import { revalidatePath } from "next/cache";
+import { logAuditoria } from "@/lib/auditoria";
 
 export async function listarTenants() {
   await verificarAdmin();
@@ -58,6 +59,13 @@ export async function excluirTenant(id: string, senhaAdmin: string) {
   } catch {
     return { erro: "Erro ao excluir dados da empresa." };
   }
+
+  await logAuditoria({
+    acao: "excluir_tenant",
+    tabela: "tenants",
+    registro_id: id,
+    detalhes: { usuarios_removidos: perfis?.length ?? 0 },
+  });
 
   revalidatePath("/admin");
   return { sucesso: true };
@@ -195,12 +203,17 @@ export async function atualizarPermissao(
   return { sucesso: true };
 }
 
+const ROLES_VALIDAS = ["admin", "operador", "visualizador"] as const;
+
 export async function atualizarRole(
   userId: string,
   tenantId: string,
   role: "admin" | "operador" | "visualizador"
 ) {
   await verificarAdmin();
+  if (!ROLES_VALIDAS.includes(role as typeof ROLES_VALIDAS[number])) {
+    return { erro: "Role invalida." };
+  }
   const admin = createAdminClient();
   const { error } = await admin
     .from("perfis")
@@ -208,6 +221,15 @@ export async function atualizarRole(
     .eq("user_id", userId)
     .eq("tenant_id", tenantId);
   if (error) return { erro: "Erro ao atualizar role." };
+
+  await logAuditoria({
+    acao: "atualizar_role",
+    tabela: "perfis",
+    registro_id: userId,
+    tenant_id: tenantId,
+    detalhes: { nova_role: role },
+  });
+
   revalidatePath(`/admin/clientes/${tenantId}`);
   return { sucesso: true };
 }

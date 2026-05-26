@@ -58,6 +58,12 @@ export async function updateSession(request: NextRequest) {
   const isApiRoute = pathname.startsWith("/api");
   const isOnboarding = pathname.startsWith("/onboarding");
 
+  if (user && isAdminRoute && user.email !== process.env.ADMIN_EMAIL) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/dashboard";
+    return NextResponse.redirect(url);
+  }
+
   if (user && !isAdminRoute && !isApiRoute && !isOnboarding && !isPublicRoute) {
     const { data: perfil } = await supabase
       .from("perfis")
