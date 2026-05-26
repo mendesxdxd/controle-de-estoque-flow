@@ -1,36 +1,86 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# FlowEstoque
 
-## Getting Started
+Sistema SaaS de controle de estoque multi-tenant, desenvolvido para operações logísticas com foco em rastreabilidade de movimentações por nota fiscal.
 
-First, run the development server:
+## Visão geral
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+Aplicação web completa com autenticação, painel administrativo, controle de produtos, movimentações de entrada/saída, relatórios e exportação para Excel. Arquitetura multi-tenant com isolamento por RLS no Supabase.
+
+## Funcionalidades
+
+- **Autenticação** — login, cadastro por convite, redefinição de senha
+- **Multi-tenant** — cada empresa tem dados isolados via Row Level Security
+- **Produtos** — cadastro com categorias, preço de custo/venda, estoque mínimo e caixas por palete
+- **Movimentações** — registro de entradas e saídas por nota fiscal com transportadora
+- **Relatórios** — histórico por nota, por produto e estoque atual com alertas de mínimo
+- **Exportação Excel** — relatório mensal no formato operacional da empresa
+- **Dashboard** — KPIs, gráfico de capacidade e últimas movimentações
+- **Painel admin** — gestão de tenants, usuários, roles e convites
+- **Auditoria** — log de ações destrutivas (excluir produto, movimentação, tenant, alterar role)
+- **Rate limiting** — proteção contra abuso no cadastro
+
+## Stack
+
+| Camada | Tecnologia |
+|---|---|
+| Framework | Next.js 15 (App Router) |
+| Linguagem | TypeScript |
+| Estilização | Tailwind CSS + shadcn/ui |
+| Backend/DB | Supabase (PostgreSQL + Auth + RLS) |
+| Validação | Zod |
+| Pagamentos | Stripe |
+| Emails | Resend |
+| Deploy | Vercel |
+
+## Segurança
+
+- Row Level Security em todas as tabelas com isolamento por tenant
+- Validação Zod em todas as server actions
+- Rate limiting por IP no cadastro
+- Rota `/admin` protegida no middleware via variável de ambiente
+- Idempotência no webhook Stripe via tabela `stripe_events`
+- Audit log de ações destrutivas
+- Roles: `admin`, `operador`, `visualizador`
+
+## Estrutura do projeto
+
+```
+src/
+├── app/
+│   ├── (auth)/           # Rotas autenticadas
+│   │   ├── admin/        # Painel administrativo
+│   │   ├── dashboard/    # KPIs e gráficos
+│   │   ├── estoque/      # Registro de movimentações
+│   │   ├── produtos/     # Cadastro de produtos
+│   │   ├── categorias/   # Categorias de produtos
+│   │   └── relatorios/   # Relatórios e exportação
+│   └── api/stripe/       # Webhooks Stripe
+├── lib/
+│   ├── supabase/         # Clients (server, client, admin, middleware)
+│   ├── auditoria.ts      # Log de auditoria
+│   ├── rateLimit.ts      # Rate limiting por IP
+│   ├── permissoes.ts     # Controle de roles
+│   └── emails.ts         # Templates de email
+└── types/                # Tipos globais
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Variáveis de ambiente
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```env
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
+SUPABASE_SERVICE_ROLE_KEY=
+STRIPE_SECRET_KEY=
+STRIPE_WEBHOOK_SECRET=
+RESEND_API_KEY=
+ADMIN_EMAIL=
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Rodando localmente
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+npm install
+cp .env.example .env.local
+# preencha as variáveis no .env.local
+npm run dev
+```
