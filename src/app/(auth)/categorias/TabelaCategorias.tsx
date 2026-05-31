@@ -39,7 +39,7 @@ export default function TabelaCategorias({ categorias }: Props) {
     if (resultado?.erro) {
       setToast(resultado.erro);
     } else {
-      setToast("Categoria excluida.");
+      setToast("Categoria excluída.");
     }
   }
 
@@ -72,7 +72,7 @@ export default function TabelaCategorias({ categorias }: Props) {
             <thead>
               <tr className="table-header">
                 <th className="table-th">Nome</th>
-                <th className="table-th">Descricao</th>
+                <th className="table-th">Descrição</th>
                 <th className="table-th">Criado em</th>
                 <th className="py-3 px-4" />
               </tr>

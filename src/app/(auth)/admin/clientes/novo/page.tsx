@@ -17,7 +17,7 @@ export default function NovoClientePage() {
     setErro("");
 
     if (!nome.trim()) {
-      setErro("O nome e obrigatorio.");
+      setErro("O nome é obrigatório.");
       return;
     }
 

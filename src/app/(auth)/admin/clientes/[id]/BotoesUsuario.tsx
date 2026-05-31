@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { createPortal } from "react-dom";
+import { Icon } from "@iconify/react";
 
 type Role = "admin" | "operador" | "visualizador";
 
@@ -57,7 +58,7 @@ export default function BotoesUsuario({ userId, tenantId, emailUsuario, podeFech
   }
 
   async function handleDesvincular() {
-    if (!confirm("Deseja remover este usuario da empresa? O acesso sera revogado mas a conta sera mantida.")) return;
+    if (!confirm("Deseja remover este usuário da empresa? O acesso será revogado mas a conta será mantida.")) return;
     setDesvinculando(true);
     await desvincularUsuario(userId, tenantId);
     setDesvinculando(false);
@@ -108,14 +109,12 @@ export default function BotoesUsuario({ userId, tenantId, emailUsuario, podeFech
         <div>
           <div className="flex items-center gap-2 mb-1">
             <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: "rgba(239,68,68,0.12)" }}>
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6" />
-              </svg>
+              <Icon icon="tabler:trash" width={12} style={{ color: "#ef4444" }} />
             </div>
-            <h3 className="text-sm font-bold text-white">Excluir usuario</h3>
+            <h3 className="text-sm font-bold text-white">Excluir usuário</h3>
           </div>
           <p className="text-xs text-brand-medium ml-8">
-            Voce esta prestes a excluir <span className="text-white font-medium">{emailUsuario}</span>. Esta acao e permanente.
+            Você está prestes a excluir <span className="text-white font-medium">{emailUsuario}</span>. Esta ação é permanente.
           </p>
         </div>
 
@@ -149,7 +148,7 @@ export default function BotoesUsuario({ userId, tenantId, emailUsuario, podeFech
             disabled={excluindo}
             className="btn-danger text-xs flex-1"
           >
-            {excluindo ? "Excluindo..." : "Confirmar exclusao"}
+            {excluindo ? "Excluindo..." : "Confirmar exclusão"}
           </button>
         </div>
       </div>

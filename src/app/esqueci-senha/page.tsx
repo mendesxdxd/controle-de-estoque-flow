@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { Icon } from "@iconify/react";
 import { createClient } from "@/lib/supabase/client";
 
 export default function EsqueciSenhaPage() {
@@ -65,10 +66,7 @@ export default function EsqueciSenhaPage() {
                   className="w-14 h-14 rounded-2xl flex items-center justify-center"
                   style={{ background: "rgba(108,99,255,0.12)", border: "1px solid rgba(108,99,255,0.2)" }}
                 >
-                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#8B83FF" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                    <rect width="20" height="16" x="2" y="4" rx="2" />
-                    <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
-                  </svg>
+                  <Icon icon="tabler:mail" width={28} style={{ color: "#8B83FF" }} />
                 </div>
                 <div className="text-center">
                   <p className="text-sm font-semibold text-white mb-1">Email enviado</p>
@@ -105,10 +103,7 @@ export default function EsqueciSenhaPage() {
                     className="w-full bg-brand-card border border-brand-border rounded-xl px-4 py-3 pr-10 text-sm text-white placeholder-brand-muted focus:outline-none focus:border-brand-primary/50 focus:bg-brand-card focus:ring-1 focus:ring-brand-primary/20 transition-all duration-200"
                     placeholder="seu@email.com"
                   />
-                  <svg className="absolute right-3 top-1/2 -translate-y-1/2 text-brand-muted" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                    <rect width="20" height="16" x="2" y="4" rx="2" />
-                    <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
-                  </svg>
+                  <Icon icon="tabler:mail" width={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-brand-muted" />
                 </div>
               </div>
 

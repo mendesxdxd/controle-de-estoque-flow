@@ -1,3 +1,5 @@
+import { Icon } from "@iconify/react";
+
 export default function InativoPage() {
   return (
     <div className="min-h-screen flex items-center justify-center p-4" style={{ background: "#080810" }}>
@@ -6,11 +8,7 @@ export default function InativoPage() {
           className="w-12 h-12 rounded-full flex items-center justify-center mx-auto"
           style={{ background: "rgba(239,68,68,0.12)" }}
         >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="12" cy="12" r="10" />
-            <line x1="12" y1="8" x2="12" y2="12" />
-            <line x1="12" y1="16" x2="12.01" y2="16" />
-          </svg>
+          <Icon icon="tabler:alert-circle" width={20} style={{ color: "#ef4444" }} />
         </div>
         <div>
           <h1 className="text-lg font-bold text-white">Conta inativa</h1>

@@ -22,17 +22,17 @@ export default function NovoUsuarioPage() {
     setErro("");
 
     if (!nome.trim()) {
-      setErro("Nome e obrigatorio.");
+      setErro("Nome é obrigatório.");
       return;
     }
 
     if (!email.trim() || !senha.trim()) {
-      setErro("Email e senha sao obrigatorios.");
+      setErro("Email e senha são obrigatórios.");
       return;
     }
 
     if (senha.length < 6) {
-      setErro("A senha deve ter no minimo 6 caracteres.");
+      setErro("A senha deve ter no mínimo 6 caracteres.");
       return;
     }
 
@@ -55,12 +55,12 @@ export default function NovoUsuarioPage() {
         <span className="text-zinc-700">/</span>
         <Link href={`/admin/clientes/${tenantId}`} className="text-brand-medium hover:text-white transition-colors text-sm">Empresa</Link>
         <span className="text-zinc-700">/</span>
-        <span className="text-sm text-white">Novo usuario</span>
+        <span className="text-sm text-white">Novo usuário</span>
       </div>
 
       <div>
-        <h1 className="page-title">Novo usuario</h1>
-        <p className="page-subtitle">Criar e vincular usuario a empresa</p>
+        <h1 className="page-title">Novo usuário</h1>
+        <p className="page-subtitle">Criar e vincular usuário à empresa</p>
       </div>
 
       <div className="glass-panel p-6">
@@ -72,7 +72,7 @@ export default function NovoUsuarioPage() {
               value={nome}
               onChange={(e) => setNome(e.target.value)}
               className="input-field"
-              placeholder="Nome do usuario"
+              placeholder="Nome do usuário"
             />
           </div>
 
@@ -94,7 +94,7 @@ export default function NovoUsuarioPage() {
               value={senha}
               onChange={(e) => setSenha(e.target.value)}
               className="input-field"
-              placeholder="Minimo 6 caracteres"
+              placeholder="Mínimo 6 caracteres"
             />
           </div>
 
@@ -117,7 +117,7 @@ export default function NovoUsuarioPage() {
 
           <div className="flex gap-3 mt-2">
             <button type="submit" disabled={salvando} className="btn-primary">
-              {salvando ? "Criando..." : "Criar usuario"}
+              {salvando ? "Criando..." : "Criar usuário"}
             </button>
             <Link href={`/admin/clientes/${tenantId}`} className="btn-secondary">
               Cancelar

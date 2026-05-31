@@ -20,6 +20,11 @@ export default async function AuthLayout({
   const isAdmin = user.email === process.env.ADMIN_EMAIL;
   const userEmail = user.email ?? "";
   const tenant = await getTenant();
+
+  if (!tenant && !isAdmin) {
+    redirect("/sem-acesso");
+  }
+
   const role = tenant?.role ?? "visualizador";
 
   return (

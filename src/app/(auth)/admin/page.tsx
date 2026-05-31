@@ -29,7 +29,7 @@ export default async function AdminPage() {
         <div className="flex items-center justify-between border-b border-zinc-700 pb-3">
           <div>
             <h2 className="text-sm font-bold uppercase tracking-wider text-white">Convites</h2>
-            <p className="text-xs text-brand-medium mt-0.5">Gere um link para uma empresa criar a propria conta</p>
+            <p className="text-xs text-brand-medium mt-0.5">Gere um link para uma empresa criar a própria conta</p>
           </div>
           <BotaoGerarConvite />
         </div>

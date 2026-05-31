@@ -16,12 +16,12 @@ export default function PerfilPage() {
     setSucesso(false);
 
     if (novaSenha.length < 6) {
-      setErro("A nova senha deve ter no minimo 6 caracteres.");
+      setErro("A nova senha deve ter no mínimo 6 caracteres.");
       return;
     }
 
     if (novaSenha !== confirmarSenha) {
-      setErro("As senhas nao coincidem.");
+      setErro("As senhas não coincidem.");
       return;
     }
 
@@ -58,7 +58,7 @@ export default function PerfilPage() {
               value={novaSenha}
               onChange={(e) => setNovaSenha(e.target.value)}
               className="input-field"
-              placeholder="Minimo 6 caracteres"
+              placeholder="Mínimo 6 caracteres"
             />
           </div>
 

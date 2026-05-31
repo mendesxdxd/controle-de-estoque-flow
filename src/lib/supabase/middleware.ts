@@ -38,7 +38,8 @@ export async function updateSession(request: NextRequest) {
     pathname.startsWith("/auth/") ||
     pathname.startsWith("/termos") ||
     pathname.startsWith("/privacidade") ||
-    pathname.startsWith("/inativo");
+    pathname.startsWith("/inativo") ||
+    pathname.startsWith("/sem-acesso");
 
   const isPasswordResetRoute = pathname.startsWith("/redefinir-senha");
 
@@ -65,11 +66,19 @@ export async function updateSession(request: NextRequest) {
   }
 
   if (user && !isAdminRoute && !isApiRoute && !isOnboarding && !isPublicRoute) {
+    const isSystemAdmin = user.email === process.env.ADMIN_EMAIL;
+
     const { data: perfil } = await supabase
       .from("perfis")
       .select("tenant_id")
       .eq("user_id", user.id)
       .single();
+
+    if (!perfil?.tenant_id && !isSystemAdmin) {
+      const url = request.nextUrl.clone();
+      url.pathname = "/sem-acesso";
+      return NextResponse.redirect(url);
+    }
 
     if (perfil?.tenant_id) {
       const { data: tenant } = await supabase

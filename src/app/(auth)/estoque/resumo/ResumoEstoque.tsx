@@ -45,7 +45,7 @@ export default function ResumoEstoque({ movimentacoes }: Props) {
       {/* Cards */}
       <div className="grid grid-cols-3 gap-4">
         <div className="glass-panel p-4">
-          <p className="text-xs text-brand-medium mb-1">Movimentacoes</p>
+          <p className="text-xs text-brand-medium mb-1">Movimentações</p>
           <p className="text-2xl font-bold text-white">{totalMovs}</p>
         </div>
         <div className="glass-panel p-4">
@@ -53,14 +53,14 @@ export default function ResumoEstoque({ movimentacoes }: Props) {
           <p className="text-2xl font-bold text-brand-primary">{totalEntradas} cx</p>
         </div>
         <div className="glass-panel p-4">
-          <p className="text-xs text-brand-medium mb-1">Total saidas</p>
+          <p className="text-xs text-brand-medium mb-1">Total saídas</p>
           <p className="text-2xl font-bold text-brand-light">{totalSaidas} cx</p>
         </div>
       </div>
 
       {resumo.length === 0 ? (
         <div className="glass-panel py-16 text-center">
-          <p className="text-sm text-brand-light">Nenhuma movimentacao nesta data.</p>
+          <p className="text-sm text-brand-light">Nenhuma movimentação nesta data.</p>
         </div>
       ) : (
         <div className="glass-table overflow-x-auto">
@@ -69,7 +69,7 @@ export default function ResumoEstoque({ movimentacoes }: Props) {
               <tr className="table-header">
                 <th className="table-th">Produto</th>
                 <th className="table-th-right">Entradas</th>
-                <th className="table-th-right">Saidas</th>
+                <th className="table-th-right">Saídas</th>
                 <th className="table-th-right">Saldo</th>
               </tr>
             </thead>

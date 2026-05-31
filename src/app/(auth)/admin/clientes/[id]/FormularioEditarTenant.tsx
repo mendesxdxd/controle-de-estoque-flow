@@ -25,7 +25,7 @@ export default function FormularioEditarTenant({ id, nomeInicial, capacidadeInic
 
   async function handleSalvar() {
     if (!nome.trim()) {
-      setErro("Nome e obrigatorio.");
+      setErro("Nome é obrigatório.");
       return;
     }
     setSalvando(true);

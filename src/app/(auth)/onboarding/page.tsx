@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import { Icon } from "@iconify/react";
 import { concluirOnboarding } from "./actions";
 
-const etapas = ["Bem-vindo", "Configuracoes", "Pronto"];
+const etapas = ["Bem-vindo", "Configurações", "Pronto"];
 
 export default function OnboardingPage() {
   const [etapa, setEtapa] = useState(0);
@@ -41,11 +42,7 @@ export default function OnboardingPage() {
                     boxShadow: i === etapa ? "0 0 12px rgba(108,99,255,0.4)" : "none",
                   }}
                 >
-                  {i < etapa ? (
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                      <polyline points="20 6 9 17 4 12" />
-                    </svg>
-                  ) : i + 1}
+                  {i < etapa ? <Icon icon="tabler:check" width={12} /> : i + 1}
                 </div>
                 <span className="text-[10px]" style={{ color: i === etapa ? "#8B83FF" : "#374151" }}>{label}</span>
               </div>
@@ -83,14 +80,12 @@ export default function OnboardingPage() {
                 >
                   {[
                     "Gerencie seu estoque em tempo real",
-                    "Controle entradas e saidas com facilidade",
-                    "Relatorios e metricas do seu negocio",
+                    "Controle entradas e saídas com facilidade",
+                    "Relatórios e métricas do seu negócio",
                   ].map((item) => (
                     <div key={item} className="flex items-center gap-2.5">
                       <div className="w-4 h-4 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: "rgba(108,99,255,0.25)" }}>
-                        <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="#8B83FF" strokeWidth="3">
-                          <polyline points="20 6 9 17 4 12" />
-                        </svg>
+                        <Icon icon="tabler:check" width={8} style={{ color: "#8B83FF" }} />
                       </div>
                       <span className="text-xs text-brand-light">{item}</span>
                     </div>
@@ -102,7 +97,7 @@ export default function OnboardingPage() {
                   className="w-full py-3 rounded-xl text-white text-sm font-semibold transition-all duration-200 active:scale-[0.98]"
                   style={{ background: "linear-gradient(135deg, #8B83FF, #6C63FF)", boxShadow: "0 4px 14px rgba(108,99,255,0.25)" }}
                 >
-                  Comecar configuracao
+                  Começar configuração
                 </button>
               </div>
             )}
@@ -111,8 +106,8 @@ export default function OnboardingPage() {
             {etapa === 1 && (
               <div className="flex flex-col gap-6">
                 <div>
-                  <h2 className="text-lg font-bold text-white mb-1">Configuracoes iniciais</h2>
-                  <p className="text-sm text-brand-medium">Essas configuracoes podem ser alteradas depois no painel.</p>
+                  <h2 className="text-lg font-bold text-white mb-1">Configurações iniciais</h2>
+                  <p className="text-sm text-brand-medium">Essas configurações podem ser alteradas depois no painel.</p>
                 </div>
 
                 <div className="flex flex-col gap-5">
@@ -130,7 +125,7 @@ export default function OnboardingPage() {
                       className="w-full bg-brand-card border border-brand-border rounded-xl px-4 py-3 text-sm text-white placeholder-brand-muted focus:outline-none focus:border-brand-primary/50 focus:ring-1 focus:ring-brand-primary/20 transition-all duration-200"
                     />
                     <p className="text-xs" style={{ color: "#4b5563" }}>
-                      Numero maximo de unidades no estoque. Deixe vazio se nao tiver limite.
+                      Número máximo de unidades no estoque. Deixe vazio se não tiver limite.
                     </p>
                   </div>
 
@@ -139,9 +134,9 @@ export default function OnboardingPage() {
                     style={{ background: "#111120", border: "1px solid #1a1a2e" }}
                   >
                     <div>
-                      <p className="text-sm font-medium text-white">Nota obrigatoria</p>
+                      <p className="text-sm font-medium text-white">Nota obrigatória</p>
                       <p className="text-xs mt-0.5" style={{ color: "#4b5563" }}>
-                        Exigir nota fiscal em todas as movimentacoes
+                        Exigir nota fiscal em todas as movimentações
                       </p>
                     </div>
                     <button
@@ -182,7 +177,7 @@ export default function OnboardingPage() {
               <div className="flex flex-col gap-6">
                 <div>
                   <h2 className="text-lg font-bold text-white mb-1">Tudo pronto!</h2>
-                  <p className="text-sm text-brand-medium">Revise suas configuracoes antes de comecar.</p>
+                  <p className="text-sm text-brand-medium">Revise suas configurações antes de começar.</p>
                 </div>
 
                 <div className="flex flex-col gap-3">
@@ -201,7 +196,7 @@ export default function OnboardingPage() {
                     className="rounded-xl px-4 py-3.5 flex items-center justify-between"
                     style={{ background: "#111120", border: "1px solid #1a1a2e" }}
                   >
-                    <span className="text-sm text-brand-light">Nota obrigatoria</span>
+                    <span className="text-sm text-brand-light">Nota obrigatória</span>
                     <span
                       className="text-xs font-semibold px-2 py-0.5 rounded-full"
                       style={{
@@ -209,7 +204,7 @@ export default function OnboardingPage() {
                         color: notaObrigatoria ? "#8B83FF" : "#6b7280",
                       }}
                     >
-                      {notaObrigatoria ? "Sim" : "Nao"}
+                      {notaObrigatoria ? "Sim" : "Não"}
                     </span>
                   </div>
                 </div>

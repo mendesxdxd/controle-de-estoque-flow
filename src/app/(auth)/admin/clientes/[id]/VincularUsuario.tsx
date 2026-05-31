@@ -28,11 +28,11 @@ export default function VincularUsuario({ tenantId, usuariosSemTenant }: Props) 
 
   async function handleSalvar() {
     if (!userId) {
-      setErro("Selecione um usuario.");
+      setErro("Selecione um usuário.");
       return;
     }
     if (!nome.trim()) {
-      setErro("Nome e obrigatorio.");
+      setErro("Nome é obrigatório.");
       return;
     }
     setSalvando(true);
@@ -56,7 +56,7 @@ export default function VincularUsuario({ tenantId, usuariosSemTenant }: Props) 
   return (
     <div className="glass-panel p-4 flex flex-col gap-3 w-full max-w-sm">
       <div className="flex flex-col gap-1">
-        <label className="text-xs font-semibold uppercase tracking-wider text-brand-light">Usuario</label>
+        <label className="text-xs font-semibold uppercase tracking-wider text-brand-light">Usuário</label>
         <select
           value={userId}
           onChange={(e) => setUserId(e.target.value)}
@@ -76,7 +76,7 @@ export default function VincularUsuario({ tenantId, usuariosSemTenant }: Props) 
           value={nome}
           onChange={(e) => setNome(e.target.value)}
           className="input-field"
-          placeholder="Nome do usuario"
+          placeholder="Nome do usuário"
         />
       </div>
 

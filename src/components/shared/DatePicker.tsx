@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
+import { Icon } from "@iconify/react";
 
 const MESES = ["Janeiro","Fevereiro","Marco","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
 
@@ -129,11 +130,7 @@ export default function DatePicker({ value, onChange }: Props) {
         }}
       >
         <span className="text-white text-sm font-semibold">{formatarLabel()}</span>
-        <svg style={{ opacity: 0.6 }} width="15" height="15" viewBox="0 0 16 16" fill="none">
-          <rect x="1" y="2" width="14" height="13" rx="3" stroke="#8B83FF" strokeWidth="1.5"/>
-          <path d="M1 6h14" stroke="#8B83FF" strokeWidth="1.5"/>
-          <path d="M5 1v2M11 1v2" stroke="#8B83FF" strokeWidth="1.5" strokeLinecap="round"/>
-        </svg>
+        <Icon icon="tabler:calendar" width={15} style={{ opacity: 0.6, color: "#8B83FF" }} />
       </div>
 
       {aberto && typeof window !== "undefined" && createPortal(

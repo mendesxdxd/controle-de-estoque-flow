@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Icon } from "@iconify/react";
 
 export default function NotFound() {
   return (
@@ -29,11 +30,7 @@ export default function NotFound() {
                 border: "1px solid rgba(108,99,255,0.2)",
               }}
             >
-              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#8B83FF" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="12" cy="12" r="10" />
-                <path d="M12 8v4" />
-                <path d="M12 16h.01" />
-              </svg>
+              <Icon icon="tabler:info-circle" width={36} style={{ color: "#8B83FF" }} />
             </div>
 
             <div className="flex flex-col gap-1.5">

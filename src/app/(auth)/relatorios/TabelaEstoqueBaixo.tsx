@@ -15,7 +15,7 @@ export default function TabelaEstoqueBaixo({ rows }: Props) {
             <th className="table-th">Produto</th>
             <th className="table-th">Categoria</th>
             <th className="table-th-right">Estoque Atual</th>
-            <th className="table-th-right">Est. Minimo</th>
+            <th className="table-th-right">Est. Mínimo</th>
             <th className="table-th-right">Diferenca</th>
           </tr>
         </thead>

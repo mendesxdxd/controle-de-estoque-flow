@@ -3,19 +3,19 @@
 import { usePathname } from "next/navigation";
 
 const rotas: { match: (p: string) => boolean; label: string; sub?: string }[] = [
-  { match: (p) => p === "/dashboard",        label: "Dashboard",            sub: "Visao geral"         },
+  { match: (p) => p === "/dashboard",        label: "Dashboard",            sub: "Visão geral"         },
   { match: (p) => p === "/produtos",         label: "Produtos",             sub: "Catalogo de produtos" },
   { match: (p) => p.startsWith("/produtos/"),label: "Produtos",             sub: "Detalhes do produto"  },
-  { match: (p) => p === "/estoque",          label: "Estoque",              sub: "Movimentacoes"       },
+  { match: (p) => p === "/estoque",          label: "Estoque",              sub: "Movimentações"       },
   { match: (p) => p === "/estoque/resumo",   label: "Estoque",              sub: "Resumo do dia"       },
   { match: (p) => p === "/estoque/produto",  label: "Estoque",              sub: "Produto no estoque"  },
   { match: (p) => p === "/estoque/nota",     label: "Estoque",              sub: "Ordem de Frete"      },
   { match: (p) => p === "/categorias",       label: "Categorias",           sub: "Todas as categorias" },
-  { match: (p) => p === "/relatorios",       label: "Relatorios",           sub: "Analise de dados"    },
+  { match: (p) => p === "/relatorios",       label: "Relatórios",           sub: "Análise de dados"    },
   { match: (p) => p === "/perfil",           label: "Perfil",               sub: "Sua conta"           },
-  { match: (p) => p === "/usuarios",         label: "Usuarios",             sub: "Gerenciar usuarios"  },
-  { match: (p) => p === "/admin",            label: "Admin",                sub: "Administracao"       },
-  { match: (p) => p === "/onboarding",      label: "Configuracao",         sub: "Primeiros passos"    },
+  { match: (p) => p === "/usuarios",         label: "Usuários",             sub: "Gerenciar usuários"  },
+  { match: (p) => p === "/admin",            label: "Admin",                sub: "Administração"       },
+  { match: (p) => p === "/onboarding",      label: "Configuração",         sub: "Primeiros passos"    },
 ];
 
 type Props = { role: string };

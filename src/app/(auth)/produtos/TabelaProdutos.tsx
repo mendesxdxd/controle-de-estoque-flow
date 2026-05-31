@@ -41,7 +41,7 @@ export default function TabelaProdutos({ produtos, categorias }: Props) {
     if (resultado?.erro) {
       setToast(resultado.erro);
     } else {
-      setToast("Produto excluido.");
+      setToast("Produto excluído.");
     }
   }
 
@@ -74,7 +74,7 @@ export default function TabelaProdutos({ produtos, categorias }: Props) {
           <table className="w-full text-sm border-collapse min-w-[800px]">
             <thead>
               <tr className="table-header">
-                <th className="table-th">Codigo</th>
+                <th className="table-th">Código</th>
                 <th className="table-th">Nome</th>
                 <th className="table-th">Categoria</th>
                 <th className="table-th">Unidade</th>

@@ -28,7 +28,7 @@ export default function FormularioProduto({ produto, categorias, onFechar, onSuc
     setErro("");
 
     if (!nome.trim()) {
-      setErro("O nome e obrigatorio.");
+      setErro("O nome é obrigatório.");
       return;
     }
 
@@ -83,14 +83,14 @@ export default function FormularioProduto({ produto, categorias, onFechar, onSuc
 
         <div className="flex flex-col gap-1">
           <label className="text-xs font-semibold uppercase tracking-wider text-brand-light">
-            Codigo <span className="text-brand-light normal-case font-normal">(opcional)</span>
+            Código <span className="text-brand-light normal-case font-normal">(opcional)</span>
           </label>
           <input
             type="text"
             value={codigo}
             onChange={(e) => setCodigo(e.target.value)}
             className="input-field"
-            placeholder="SKU ou codigo interno"
+            placeholder="SKU ou código interno"
           />
         </div>
 
@@ -127,7 +127,7 @@ export default function FormularioProduto({ produto, categorias, onFechar, onSuc
         </div>
 
         <div className="flex flex-col gap-1">
-          <label className="text-xs font-semibold uppercase tracking-wider text-brand-light">Estoque minimo</label>
+          <label className="text-xs font-semibold uppercase tracking-wider text-brand-light">Estoque mínimo</label>
           <input
             type="number"
             min="0"
@@ -152,7 +152,7 @@ export default function FormularioProduto({ produto, categorias, onFechar, onSuc
         </div>
 
         <div className="flex flex-col gap-1">
-          <label className="text-xs font-semibold uppercase tracking-wider text-brand-light">Preco de custo</label>
+          <label className="text-xs font-semibold uppercase tracking-wider text-brand-light">Preço de custo</label>
           <input
             type="number"
             min="0"
@@ -164,7 +164,7 @@ export default function FormularioProduto({ produto, categorias, onFechar, onSuc
         </div>
 
         <div className="flex flex-col gap-1">
-          <label className="text-xs font-semibold uppercase tracking-wider text-brand-light">Preco de venda</label>
+          <label className="text-xs font-semibold uppercase tracking-wider text-brand-light">Preço de venda</label>
           <input
             type="number"
             min="0"

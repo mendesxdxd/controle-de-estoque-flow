@@ -18,7 +18,7 @@ export default function TabelaUsuarios({ usuarios }: Props) {
   if (usuarios.length === 0) {
     return (
       <div className="glass-panel py-16 text-center">
-        <p className="text-sm text-brand-medium">Nenhum usuario cadastrado.</p>
+        <p className="text-sm text-brand-medium">Nenhum usuário cadastrado.</p>
       </div>
     );
   }
@@ -31,7 +31,7 @@ export default function TabelaUsuarios({ usuarios }: Props) {
             <th className="table-th">Nome</th>
             <th className="table-th">Email</th>
             <th className="table-th">Cliente</th>
-            <th className="table-th">Ultimo acesso</th>
+            <th className="table-th">Último acesso</th>
           </tr>
         </thead>
         <tbody>

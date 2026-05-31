@@ -48,7 +48,7 @@ export default async function RelatoriosPage() {
         <section className="flex flex-col gap-4">
           <div className="flex items-center justify-between border-b border-zinc-700 pb-3">
             <h2 className="text-sm font-bold uppercase tracking-wider text-white">Estoque baixo</h2>
-            <span className="text-xs font-semibold text-red-400">{estoqueBaixo.length} produto{estoqueBaixo.length !== 1 ? "s" : ""} abaixo do minimo</span>
+            <span className="text-xs font-semibold text-red-400">{estoqueBaixo.length} produto{estoqueBaixo.length !== 1 ? "s" : ""} abaixo do mínimo</span>
           </div>
           <TabelaEstoqueBaixo rows={estoqueBaixo} />
         </section>
@@ -56,7 +56,7 @@ export default async function RelatoriosPage() {
 
       <section className="flex flex-col gap-4">
         <div className="flex items-center justify-between border-b border-zinc-700 pb-3">
-          <h2 className="text-sm font-bold uppercase tracking-wider text-white">Movimentacoes</h2>
+          <h2 className="text-sm font-bold uppercase tracking-wider text-white">Movimentações</h2>
           <span className="text-xs text-brand-medium">{movimentacoes?.length ?? 0} registros</span>
         </div>
         <FiltroMovimentacoes movimentacoes={(movimentacoes as Movimentacao[]) ?? []} />

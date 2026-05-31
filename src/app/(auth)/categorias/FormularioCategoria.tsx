@@ -21,7 +21,7 @@ export default function FormularioCategoria({ categoria, onFechar, onSucesso }: 
     setErro("");
 
     if (!nome.trim()) {
-      setErro("O nome e obrigatorio.");
+      setErro("O nome é obrigatório.");
       return;
     }
 
@@ -70,14 +70,14 @@ export default function FormularioCategoria({ categoria, onFechar, onSucesso }: 
 
         <div className="flex flex-col gap-1">
           <label className="text-xs font-semibold uppercase tracking-wider text-brand-light">
-            Descricao <span className="text-brand-light normal-case font-normal">(opcional)</span>
+            Descrição <span className="text-brand-light normal-case font-normal">(opcional)</span>
           </label>
           <input
             type="text"
             value={descricao}
             onChange={(e) => setDescricao(e.target.value)}
             className="input-field"
-            placeholder="Descricao da categoria"
+            placeholder="Descrição da categoria"
           />
         </div>
 

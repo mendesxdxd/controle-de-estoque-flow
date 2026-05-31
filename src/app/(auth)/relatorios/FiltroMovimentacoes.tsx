@@ -1,11 +1,12 @@
 ﻿"use client";
 
 import { useState, useMemo } from "react";
+import { Icon } from "@iconify/react";
 import { Movimentacao } from "@/types";
 import DatePicker from "@/components/shared/DatePicker";
 
 function baixarCSVMovimentacoes(movs: Movimentacao[], data: string) {
-  const cabecalho = ["Data", "Hora", "Produto", "Unidade", "Tipo", "Quantidade", "OF", "Observacao"];
+  const cabecalho = ["Data", "Hora", "Produto", "Unidade", "Tipo", "Quantidade", "OF", "Observação"];
   const linhas = movs.map((m) => {
     const d = new Date(m.created_at);
     return [
@@ -91,7 +92,7 @@ export default function FiltroMovimentacoes({ movimentacoes }: Props) {
             Entradas: <span className="font-bold text-brand-primary">{totalEntradas}</span>
           </span>
           <span className="text-xs text-brand-medium">
-            Saidas: <span className="font-bold text-brand-light">{totalSaidas}</span>
+            Saídas: <span className="font-bold text-brand-light">{totalSaidas}</span>
           </span>
         </div>
         {filtradas.length > 0 && (
@@ -99,11 +100,7 @@ export default function FiltroMovimentacoes({ movimentacoes }: Props) {
             onClick={() => baixarCSVMovimentacoes(filtradas, data)}
             className="btn-secondary flex items-center gap-2"
           >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-              <polyline points="7 10 12 15 17 10"/>
-              <line x1="12" y1="15" x2="12" y2="3"/>
-            </svg>
+            <Icon icon="tabler:download" width={14} />
             Exportar CSV
           </button>
         )}
@@ -111,7 +108,7 @@ export default function FiltroMovimentacoes({ movimentacoes }: Props) {
 
       {filtradas.length === 0 ? (
         <div className="glass-panel py-16 text-center">
-          <p className="text-sm text-brand-light">Nenhuma movimentacao nesta data.</p>
+          <p className="text-sm text-brand-light">Nenhuma movimentação nesta data.</p>
         </div>
       ) : (
         <div className="glass-table overflow-x-auto">
@@ -122,7 +119,7 @@ export default function FiltroMovimentacoes({ movimentacoes }: Props) {
                 <th className="table-th">Produto</th>
                 <th className="table-th">Tipo</th>
                 <th className="table-th-right">Quantidade</th>
-                <th className="table-th">Observacao</th>
+                <th className="table-th">Observação</th>
               </tr>
             </thead>
             <tbody>
@@ -138,7 +135,7 @@ export default function FiltroMovimentacoes({ movimentacoes }: Props) {
                   <td className="py-3 px-4 font-medium text-white">{mov.produtos?.nome ?? "—"}</td>
                   <td className="py-3 px-4">
                     <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${
-                      mov.tipo === "entrada" ? "bg-brand-primary/15 text-brand-primary" : "bg-brand-hover text-brand-light"
+                      mov.tipo === "entrada" ? "bg-emerald-500/15 text-emerald-400" : "bg-red-500/15 text-red-400"
                     }`}>
                       {mov.tipo}
                     </span>

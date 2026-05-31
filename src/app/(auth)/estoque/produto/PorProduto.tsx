@@ -62,7 +62,7 @@ export default function PorProduto({ movimentacoes, produtos }: Props) {
 
       {produtoId && movsProduto.length === 0 && (
         <div className="glass-panel py-16 text-center">
-          <p className="text-sm text-brand-light">Nenhuma movimentacao encontrada.</p>
+          <p className="text-sm text-brand-light">Nenhuma movimentação encontrada.</p>
         </div>
       )}
 
@@ -81,7 +81,7 @@ export default function PorProduto({ movimentacoes, produtos }: Props) {
               <p className="text-2xl font-bold text-brand-primary">{stats.totalEntradas} {stats.unidade}</p>
             </div>
             <div className="glass-panel p-4">
-              <p className="text-xs text-brand-medium mb-1">Total saidas</p>
+              <p className="text-xs text-brand-medium mb-1">Total saídas</p>
               <p className="text-2xl font-bold text-brand-light">{stats.totalSaidas} {stats.unidade}</p>
             </div>
           </div>
@@ -112,7 +112,7 @@ export default function PorProduto({ movimentacoes, produtos }: Props) {
           {/* Tabela */}
           {movsFiltradas.length === 0 ? (
             <div className="glass-panel py-12 text-center">
-              <p className="text-sm text-brand-light">Nenhuma movimentacao no periodo selecionado.</p>
+              <p className="text-sm text-brand-light">Nenhuma movimentação no período selecionado.</p>
             </div>
           ) : (
             <>
@@ -128,7 +128,7 @@ export default function PorProduto({ movimentacoes, produtos }: Props) {
                       <th className="table-th">Data</th>
                       <th className="table-th">Tipo</th>
                       <th className="table-th-right">Quantidade</th>
-                      <th className="table-th">Observacao</th>
+                      <th className="table-th">Observação</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -140,7 +140,7 @@ export default function PorProduto({ movimentacoes, produtos }: Props) {
                         </td>
                         <td className="py-3 px-4">
                           <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${
-                            mov.tipo === "entrada" ? "bg-brand-primary/15 text-brand-primary" : "bg-brand-hover text-brand-light"
+                            mov.tipo === "entrada" ? "bg-emerald-500/15 text-emerald-400" : "bg-red-500/15 text-red-400"
                           }`}>
                             {mov.tipo}
                           </span>

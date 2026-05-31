@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { createPortal } from "react-dom";
+import { Icon } from "@iconify/react";
 import { excluirTenant } from "./actions";
 
 export default function BotaoExcluirTenant({ id, nome }: { id: string; nome: string }) {
@@ -44,14 +45,12 @@ export default function BotaoExcluirTenant({ id, nome }: { id: string; nome: str
         <div>
           <div className="flex items-center gap-2 mb-1">
             <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: "rgba(239,68,68,0.12)" }}>
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6" />
-              </svg>
+              <Icon icon="tabler:trash" width={12} style={{ color: "#ef4444" }} />
             </div>
             <h3 className="text-sm font-bold text-white">Excluir empresa</h3>
           </div>
           <p className="text-xs text-brand-medium ml-8">
-            Voce esta prestes a excluir <span className="text-white font-medium">{nome}</span>. Todos os usuarios, produtos, estoque e movimentacoes serao apagados permanentemente.
+            Você está prestes a excluir <span className="text-white font-medium">{nome}</span>. Todos os usuários, produtos, estoque e movimentações serão apagados permanentemente.
           </p>
         </div>
 
@@ -85,7 +84,7 @@ export default function BotaoExcluirTenant({ id, nome }: { id: string; nome: str
             disabled={excluindo}
             className="btn-danger text-xs flex-1"
           >
-            {excluindo ? "Excluindo..." : "Confirmar exclusao"}
+            {excluindo ? "Excluindo..." : "Confirmar exclusão"}
           </button>
         </div>
       </div>

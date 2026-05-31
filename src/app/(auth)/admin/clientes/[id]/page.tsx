@@ -56,20 +56,20 @@ export default async function DetalheClientePage({ params }: { params: Promise<{
           />
           <VincularUsuario tenantId={id} usuariosSemTenant={semTenant} />
           <Link href={`/admin/clientes/${id}/usuarios/novo`} className="btn-primary">
-            Novo usuario
+            Novo usuário
           </Link>
         </div>
       </div>
 
       <section className="flex flex-col gap-4">
         <div className="flex items-center justify-between border-b border-zinc-700 pb-3">
-          <h2 className="text-sm font-bold uppercase tracking-wider text-white">Usuarios</h2>
-          <span className="text-xs text-brand-medium">{usuarios.length} usuario{usuarios.length !== 1 ? "s" : ""}</span>
+          <h2 className="text-sm font-bold uppercase tracking-wider text-white">Usuários</h2>
+          <span className="text-xs text-brand-medium">{usuarios.length} usuário{usuarios.length !== 1 ? "s" : ""}</span>
         </div>
 
         {usuarios.length === 0 ? (
           <div className="glass-panel py-16 text-center">
-            <p className="text-sm text-brand-light">Nenhum usuario vinculado.</p>
+            <p className="text-sm text-brand-light">Nenhum usuário vinculado.</p>
           </div>
         ) : (
           <div className="glass-table overflow-x-auto">
@@ -78,7 +78,7 @@ export default async function DetalheClientePage({ params }: { params: Promise<{
                 <tr className="table-header">
                   <th className="table-th">Nome</th>
                   <th className="table-th">Email</th>
-                  <th className="table-th">Ultimo acesso</th>
+                  <th className="table-th">Último acesso</th>
                   <th className="py-3 px-4" />
                 </tr>
               </thead>
