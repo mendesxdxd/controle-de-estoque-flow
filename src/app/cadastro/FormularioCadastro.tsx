@@ -21,8 +21,8 @@ export default function FormularioCadastro({ token }: { token: string }) {
     e.preventDefault();
     setErro("");
 
-    if (senha.length < 6) {
-      setErro("A senha deve ter no minimo 6 caracteres.");
+    if (senha.length < 8) {
+      setErro("A senha deve ter no minimo 8 caracteres.");
       return;
     }
 
@@ -120,9 +120,9 @@ export default function FormularioCadastro({ token }: { token: string }) {
                   value={senha}
                   onChange={(e) => setSenha(e.target.value)}
                   required
-                  minLength={6}
+                  minLength={8}
                   className="w-full bg-brand-card border border-brand-border rounded-xl px-4 py-3 pr-10 text-sm text-white placeholder-brand-muted focus:outline-none focus:border-brand-primary/50 focus:ring-1 focus:ring-brand-primary/20 transition-all duration-200"
-                  placeholder="Minimo 6 caracteres"
+                  placeholder="Minimo 8 caracteres"
                 />
                 <button
                   type="button"

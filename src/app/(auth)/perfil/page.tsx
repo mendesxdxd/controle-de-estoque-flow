@@ -15,8 +15,8 @@ export default function PerfilPage() {
     setErro("");
     setSucesso(false);
 
-    if (novaSenha.length < 6) {
-      setErro("A nova senha deve ter no mínimo 6 caracteres.");
+    if (novaSenha.length < 8) {
+      setErro("A nova senha deve ter no mínimo 8 caracteres.");
       return;
     }
 
@@ -58,7 +58,7 @@ export default function PerfilPage() {
               value={novaSenha}
               onChange={(e) => setNovaSenha(e.target.value)}
               className="input-field"
-              placeholder="Mínimo 6 caracteres"
+              placeholder="Mínimo 8 caracteres"
             />
           </div>
 

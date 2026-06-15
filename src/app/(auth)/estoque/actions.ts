@@ -39,20 +39,25 @@ export async function registrarNota(dados: DadosNota) {
   }
 
   if (dados.tipo === "saida") {
+    const produtoIds = [...new Set(dados.itens.map((i) => i.produto_id))];
+    const { data: estoqueRows } = await supabase
+      .from("estoque_atual")
+      .select("id, nome, estoque_atual")
+      .eq("tenant_id", tenant.id)
+      .in("id", produtoIds);
+
+    const saldoMap = new Map((estoqueRows ?? []).map((r) => [r.id, r.estoque_atual]));
+
+    const qtdPorProduto = new Map<string, number>();
     for (const item of dados.itens) {
-      const { data: movs } = await supabase
-        .from("movimentacoes")
-        .select("tipo, quantidade")
-        .eq("produto_id", item.produto_id)
-        .eq("tenant_id", tenant.id);
+      qtdPorProduto.set(item.produto_id, (qtdPorProduto.get(item.produto_id) ?? 0) + item.quantidade);
+    }
 
-      const saldo = (movs ?? []).reduce(
-        (acc, m) => (m.tipo === "entrada" ? acc + m.quantidade : acc - m.quantidade),
-        0
-      );
-
-      if (item.quantidade > saldo) {
-        return { erro: `Estoque insuficiente para um dos produtos. Saldo: ${saldo}.` };
+    for (const [produtoId, qtdTotal] of qtdPorProduto) {
+      const saldo = saldoMap.get(produtoId) ?? 0;
+      if (qtdTotal > saldo) {
+        const nome = estoqueRows?.find((r) => r.id === produtoId)?.nome ?? "Produto";
+        return { erro: `Estoque insuficiente para ${nome}. Saldo: ${saldo}.` };
       }
     }
   }

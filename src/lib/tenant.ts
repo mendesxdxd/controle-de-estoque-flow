@@ -1,6 +1,7 @@
+import { cache } from "react";
 import { createClient } from "@/lib/supabase/server";
 
-export async function getTenant() {
+export const getTenant = cache(async function getTenant() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return null;
@@ -27,4 +28,4 @@ export async function getTenant() {
     nota_obrigatoria: perfil.nota_obrigatoria ?? false,
     role: (perfil.role ?? "admin") as "admin" | "operador" | "visualizador",
   } : null;
-}
+});

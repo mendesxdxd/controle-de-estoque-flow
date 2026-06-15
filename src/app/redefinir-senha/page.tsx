@@ -18,8 +18,8 @@ export default function RedefinirSenhaPage() {
     e.preventDefault();
     setErro("");
 
-    if (senha.length < 6) {
-      setErro("A senha deve ter no minimo 6 caracteres.");
+    if (senha.length < 8) {
+      setErro("A senha deve ter no minimo 8 caracteres.");
       return;
     }
 
@@ -77,9 +77,9 @@ export default function RedefinirSenhaPage() {
                   onChange={(e) => setSenha(e.target.value)}
                   required
                   autoFocus
-                  minLength={6}
+                  minLength={8}
                   className="w-full bg-brand-card border border-brand-border rounded-xl px-4 py-3 pr-10 text-sm text-white placeholder-brand-muted focus:outline-none focus:border-brand-primary/50 focus:bg-brand-card focus:ring-1 focus:ring-brand-primary/20 transition-all duration-200"
-                  placeholder="Minimo 6 caracteres"
+                  placeholder="Minimo 8 caracteres"
                 />
                 <button
                   type="button"
@@ -118,7 +118,7 @@ export default function RedefinirSenhaPage() {
               <div className="flex flex-col gap-1.5">
                 <div className="flex gap-1">
                   {[1, 2, 3, 4].map((n) => {
-                    const forca = senha.length < 6 ? 1 : senha.length < 8 ? 2 : /[A-Z]/.test(senha) && /[0-9]/.test(senha) ? 4 : 3;
+                    const forca = senha.length < 8 ? 1 : senha.length < 10 ? 2 : /[A-Z]/.test(senha) && /[0-9]/.test(senha) ? 4 : 3;
                     return (
                       <div
                         key={n}
@@ -136,7 +136,7 @@ export default function RedefinirSenhaPage() {
                   })}
                 </div>
                 <p className="text-xs" style={{ color: "#6b7280" }}>
-                  {senha.length < 6 ? "Muito curta" : senha.length < 8 ? "Fraca" : /[A-Z]/.test(senha) && /[0-9]/.test(senha) ? "Forte" : "Media"}
+                  {senha.length < 8 ? "Muito curta" : senha.length < 10 ? "Fraca" : /[A-Z]/.test(senha) && /[0-9]/.test(senha) ? "Forte" : "Media"}
                 </p>
               </div>
             )}

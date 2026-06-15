@@ -18,7 +18,8 @@ export default async function RelatoriosPage() {
       .select("*, produtos(id, nome, unidade, caixas_por_palete)")
       .eq("tenant_id", tenant.id)
       .or("observacao.neq.AJUSTE_INICIAL,observacao.is.null")
-      .order("created_at", { ascending: false }),
+      .order("created_at", { ascending: false })
+      .limit(10000),
   ]);
 
   const podeFechamento = tenant?.pode_fechamento ?? false;

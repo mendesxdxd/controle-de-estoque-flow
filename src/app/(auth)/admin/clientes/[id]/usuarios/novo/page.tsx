@@ -31,8 +31,8 @@ export default function NovoUsuarioPage() {
       return;
     }
 
-    if (senha.length < 6) {
-      setErro("A senha deve ter no mínimo 6 caracteres.");
+    if (senha.length < 8) {
+      setErro("A senha deve ter no mínimo 8 caracteres.");
       return;
     }
 
@@ -94,7 +94,7 @@ export default function NovoUsuarioPage() {
               value={senha}
               onChange={(e) => setSenha(e.target.value)}
               className="input-field"
-              placeholder="Mínimo 6 caracteres"
+              placeholder="Mínimo 8 caracteres"
             />
           </div>
 

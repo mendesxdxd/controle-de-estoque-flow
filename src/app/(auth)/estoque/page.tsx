@@ -15,7 +15,8 @@ export default async function EstoquePage() {
       .select("*, produtos(id, nome, unidade)")
       .eq("tenant_id", tenant.id)
       .or("observacao.neq.AJUSTE_INICIAL,observacao.is.null")
-      .order("created_at", { ascending: false }),
+      .order("created_at", { ascending: false })
+      .limit(10000),
     supabase
       .from("produtos")
       .select("id, nome, unidade, caixas_por_palete")

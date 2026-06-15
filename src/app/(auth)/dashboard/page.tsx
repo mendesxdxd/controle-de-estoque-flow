@@ -30,14 +30,16 @@ const supabase = await createClient();
       .eq("tenant_id", tenant.id)
       .or("observacao.neq.AJUSTE_INICIAL,observacao.is.null")
       .gte("created_at", new Date(new Date().setHours(0, 0, 0, 0)).toISOString())
-      .order("created_at", { ascending: false }),
+      .order("created_at", { ascending: false })
+      .limit(200),
     supabase
       .from("movimentacoes")
       .select("produto_id, tipo, quantidade, created_at, produtos(nome, unidade, caixas_por_palete)")
       .eq("tenant_id", tenant.id)
       .or("observacao.neq.AJUSTE_INICIAL,observacao.is.null")
       .gte("created_at", doisAnosAtras.toISOString())
-      .order("created_at", { ascending: false }),
+      .order("created_at", { ascending: false })
+      .limit(5000),
   ]);
 
   const podeGraficos = tenant?.pode_fechamento ?? false;

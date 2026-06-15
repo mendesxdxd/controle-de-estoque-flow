@@ -1,6 +1,10 @@
 import { Resend } from "resend";
 import { createAdminClient } from "@/lib/supabase/admin";
 
+function escapeHtml(str: string): string {
+  return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
+
 let _resend: Resend | null = null;
 function getResend(): Resend {
   if (!_resend) _resend = new Resend(process.env.RESEND_API_KEY);
@@ -65,7 +69,7 @@ export async function enviarEmailBoasVindas(tenantId: string, nomeEmpresa: strin
 
   const html = base(`
     <h1 style="margin:0 0 8px;font-size:22px;font-weight:700;color:#ffffff;">Bem-vindo ao FlowEstoque!</h1>
-    <p style="margin:0 0 24px;font-size:14px;color:#8888aa;line-height:1.6;">Sua empresa <strong style="color:#ffffff;">${nomeEmpresa}</strong> esta ativa e pronta para uso.</p>
+    <p style="margin:0 0 24px;font-size:14px;color:#8888aa;line-height:1.6;">Sua empresa <strong style="color:#ffffff;">${escapeHtml(nomeEmpresa)}</strong> esta ativa e pronta para uso.</p>
     <p style="margin:0 0 32px;font-size:14px;color:#8888aa;line-height:1.6;">Acesse o sistema pelo link abaixo e comece a gerenciar seu estoque agora.</p>
     <a href="https://flowestoque.com.br/dashboard" style="display:inline-block;background:#ffffff;color:#080810;font-size:14px;font-weight:600;text-decoration:none;padding:12px 28px;border-radius:8px;">Acessar o sistema</a>
     <p style="margin:32px 0 0;font-size:12px;color:#4a4a6a;">Qualquer duvida, entre em contato pelo suporte@flowestoque.com.br</p>
@@ -80,7 +84,7 @@ export async function enviarEmailPagamentoRecebido(tenantId: string, nomeEmpresa
 
   const html = base(`
     <h1 style="margin:0 0 8px;font-size:22px;font-weight:700;color:#ffffff;">Pagamento confirmado</h1>
-    <p style="margin:0 0 24px;font-size:14px;color:#8888aa;line-height:1.6;">Recebemos o pagamento da assinatura de <strong style="color:#ffffff;">${nomeEmpresa}</strong>.</p>
+    <p style="margin:0 0 24px;font-size:14px;color:#8888aa;line-height:1.6;">Recebemos o pagamento da assinatura de <strong style="color:#ffffff;">${escapeHtml(nomeEmpresa)}</strong>.</p>
     <table cellpadding="0" cellspacing="0" style="background:#1a1a2e;border:1px solid #1e1e2e;border-radius:8px;padding:20px 24px;margin-bottom:32px;width:100%;">
       <tr><td><p style="margin:0 0 4px;font-size:12px;color:#4a4a6a;text-transform:uppercase;letter-spacing:0.5px;">Valor</p><p style="margin:0;font-size:24px;font-weight:700;color:#ffffff;">R$ 500,00</p></td></tr>
       <tr><td style="padding-top:16px;"><p style="margin:0 0 4px;font-size:12px;color:#4a4a6a;text-transform:uppercase;letter-spacing:0.5px;">Periodo</p><p style="margin:0;font-size:14px;color:#ffffff;">Mensalidade — proximo vencimento em 30 dias</p></td></tr>
@@ -98,7 +102,7 @@ export async function enviarEmailPagamentoFalhou(tenantId: string, nomeEmpresa: 
 
   const html = base(`
     <h1 style="margin:0 0 8px;font-size:22px;font-weight:700;color:#ffffff;">Problema no pagamento</h1>
-    <p style="margin:0 0 24px;font-size:14px;color:#8888aa;line-height:1.6;">Nao conseguimos processar o pagamento da assinatura de <strong style="color:#ffffff;">${nomeEmpresa}</strong>.</p>
+    <p style="margin:0 0 24px;font-size:14px;color:#8888aa;line-height:1.6;">Nao conseguimos processar o pagamento da assinatura de <strong style="color:#ffffff;">${escapeHtml(nomeEmpresa)}</strong>.</p>
     <div style="background:#1a0a0a;border:1px solid #3a1a1a;border-radius:8px;padding:20px 24px;margin-bottom:32px;">
       <p style="margin:0;font-size:14px;color:#ef4444;line-height:1.6;">O acesso ao sistema foi suspenso. Regularize o pagamento para reativar.</p>
     </div>
@@ -116,7 +120,7 @@ export async function enviarEmailContaSuspensa(tenantId: string, nomeEmpresa: st
 
   const html = base(`
     <h1 style="margin:0 0 8px;font-size:22px;font-weight:700;color:#ffffff;">Conta suspensa</h1>
-    <p style="margin:0 0 24px;font-size:14px;color:#8888aa;line-height:1.6;">A assinatura de <strong style="color:#ffffff;">${nomeEmpresa}</strong> foi encerrada e o acesso ao sistema foi suspenso.</p>
+    <p style="margin:0 0 24px;font-size:14px;color:#8888aa;line-height:1.6;">A assinatura de <strong style="color:#ffffff;">${escapeHtml(nomeEmpresa)}</strong> foi encerrada e o acesso ao sistema foi suspenso.</p>
     <div style="background:#1a0a0a;border:1px solid #3a1a1a;border-radius:8px;padding:20px 24px;margin-bottom:32px;">
       <p style="margin:0;font-size:14px;color:#ef4444;line-height:1.6;">Para reativar o acesso, entre em contato com nossa equipe.</p>
     </div>

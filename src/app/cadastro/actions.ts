@@ -18,6 +18,12 @@ export async function cadastrarEmpresa(dados: DadosCadastro) {
   const permitido = await verificarRateLimit(ip, "cadastro");
   if (!permitido) return { erro: "Muitas tentativas. Aguarde um momento e tente novamente." };
 
+  if (!dados.empresa?.trim()) return { erro: "Nome da empresa e obrigatorio." };
+  if (!dados.email?.trim()) return { erro: "Email e obrigatorio." };
+  if (!dados.nome?.trim()) return { erro: "Nome e obrigatorio." };
+  if (!dados.senha || dados.senha.length < 8) return { erro: "Senha deve ter pelo menos 8 caracteres." };
+  if (!dados.token?.trim()) return { erro: "Token de convite e obrigatorio." };
+
   const admin = createAdminClient();
 
   const { data: convite } = await admin

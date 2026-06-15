@@ -9,14 +9,14 @@ export async function verificarRateLimit(ip: string, endpoint: string): Promise<
     const agora = new Date();
     const inicioJanela = new Date(agora.getTime() - JANELA_SEGUNDOS * 1000);
 
-    const { data } = await admin
+    const { data: existing } = await admin
       .from("rate_limits")
       .select("requests, window_start")
       .eq("ip", ip)
       .eq("endpoint", endpoint)
       .single();
 
-    if (!data || new Date(data.window_start) < inicioJanela) {
+    if (!existing || new Date(existing.window_start) < inicioJanela) {
       await admin.from("rate_limits").upsert({
         ip,
         endpoint,
@@ -26,15 +26,22 @@ export async function verificarRateLimit(ip: string, endpoint: string): Promise<
       return true;
     }
 
-    if (data.requests >= MAX_REQUESTS) return false;
+    if (existing.requests >= MAX_REQUESTS) return false;
 
     await admin.from("rate_limits")
-      .update({ requests: data.requests + 1 })
+      .update({ requests: existing.requests + 1 })
       .eq("ip", ip)
       .eq("endpoint", endpoint);
 
-    return true;
+    const { data: updated } = await admin
+      .from("rate_limits")
+      .select("requests")
+      .eq("ip", ip)
+      .eq("endpoint", endpoint)
+      .single();
+
+    return (updated?.requests ?? 0) <= MAX_REQUESTS;
   } catch {
-    return true; // em caso de falha no rate limit, não bloqueia
+    return true;
   }
 }

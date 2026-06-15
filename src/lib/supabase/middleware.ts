@@ -68,25 +68,20 @@ export async function updateSession(request: NextRequest) {
   if (user && !isAdminRoute && !isApiRoute && !isOnboarding && !isPublicRoute) {
     const isSystemAdmin = user.email === process.env.ADMIN_EMAIL;
 
-    const { data: perfil } = await supabase
-      .from("perfis")
-      .select("tenant_id")
-      .eq("user_id", user.id)
-      .single();
-
-    if (!perfil?.tenant_id && !isSystemAdmin) {
-      const url = request.nextUrl.clone();
-      url.pathname = "/sem-acesso";
-      return NextResponse.redirect(url);
-    }
-
-    if (perfil?.tenant_id) {
-      const { data: tenant } = await supabase
-        .from("tenants")
-        .select("ativo")
-        .eq("id", perfil.tenant_id)
+    if (!isSystemAdmin) {
+      const { data: perfil } = await supabase
+        .from("perfis")
+        .select("tenant_id, tenants(ativo)")
+        .eq("user_id", user.id)
         .single();
 
+      if (!perfil?.tenant_id) {
+        const url = request.nextUrl.clone();
+        url.pathname = "/sem-acesso";
+        return NextResponse.redirect(url);
+      }
+
+      const tenant = perfil.tenants as unknown as { ativo: boolean } | null;
       if (tenant && tenant.ativo === false) {
         const url = request.nextUrl.clone();
         url.pathname = "/inativo";

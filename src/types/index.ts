@@ -34,6 +34,7 @@ export type Movimentacao = {
 export type EstoqueAtualRow = {
   id: string;
   user_id: string;
+  tenant_id: string;
   nome: string;
   codigo: string | null;
   unidade: string;

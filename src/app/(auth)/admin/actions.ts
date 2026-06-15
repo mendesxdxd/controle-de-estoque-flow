@@ -5,6 +5,21 @@ import { verificarAdmin } from "@/lib/admin";
 import { revalidatePath } from "next/cache";
 import { logAuditoria } from "@/lib/auditoria";
 
+async function listAllUsers(admin: ReturnType<typeof createAdminClient>) {
+  let page = 1;
+  const perPage = 1000;
+  const { data: first } = await admin.auth.admin.listUsers({ page, perPage });
+  const allUsers = [...(first?.users ?? [])];
+  while (allUsers.length === page * perPage) {
+    page++;
+    const { data } = await admin.auth.admin.listUsers({ page, perPage });
+    const users = data?.users ?? [];
+    if (users.length === 0) break;
+    allUsers.push(...users);
+  }
+  return allUsers;
+}
+
 export async function listarTenants() {
   await verificarAdmin();
   const admin = createAdminClient();
@@ -33,10 +48,15 @@ export async function criarTenant(nome: string, capacidadeArmazem: number | null
 export async function excluirTenant(id: string, senhaAdmin: string) {
   await verificarAdmin();
 
+  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  if (!uuidRegex.test(id)) return { erro: "ID invalido." };
+
   const supabase = await (await import("@/lib/supabase/server")).createClient();
   const { data: { user } } = await supabase.auth.getUser();
+  if (!user?.email) return { erro: "Nao autenticado." };
+
   const { error: authError } = await supabase.auth.signInWithPassword({
-    email: user!.email!,
+    email: user.email,
     password: senhaAdmin,
   });
   if (authError) return { erro: "Senha incorreta." };
@@ -44,21 +64,18 @@ export async function excluirTenant(id: string, senhaAdmin: string) {
   const admin = createAdminClient();
   const { data: perfis } = await admin.from("perfis").select("user_id").eq("tenant_id", id);
 
-  try {
-    await admin.from("movimentacoes").delete().eq("tenant_id", id);
-    await admin.from("produtos").delete().eq("tenant_id", id);
-    await admin.from("categorias").delete().eq("tenant_id", id);
-    await admin.from("perfis").delete().eq("tenant_id", id);
-
-    for (const perfil of perfis ?? []) {
-      await admin.auth.admin.deleteUser(perfil.user_id);
-    }
-
-    const { error } = await admin.from("tenants").delete().eq("id", id);
-    if (error) return { erro: "Erro ao excluir empresa." };
-  } catch {
-    return { erro: "Erro ao excluir dados da empresa." };
+  const tabelas = ["movimentacoes", "produtos", "categorias", "perfis"] as const;
+  for (const tabela of tabelas) {
+    const { error } = await admin.from(tabela).delete().eq("tenant_id", id);
+    if (error) return { erro: `Erro ao excluir ${tabela} da empresa.` };
   }
+
+  for (const perfil of perfis ?? []) {
+    await admin.auth.admin.deleteUser(perfil.user_id);
+  }
+
+  const { error } = await admin.from("tenants").delete().eq("id", id);
+  if (error) return { erro: "Erro ao excluir empresa." };
 
   await logAuditoria({
     acao: "excluir_tenant",
@@ -98,9 +115,9 @@ export async function listarUsuariosTenant(tenantId: string) {
 
   if (!perfis || perfis.length === 0) return { usuarios: [] };
 
-  const { data: authData } = await admin.auth.admin.listUsers();
+  const allUsers = await listAllUsers(admin);
   const perfilMap = new Map(perfis.map((p) => [p.user_id, p]));
-  const usuarios = (authData?.users ?? [])
+  const usuarios = allUsers
     .filter((u) => perfilMap.has(u.id))
     .map((u) => {
       const perfil = perfilMap.get(u.id)!;
@@ -128,7 +145,7 @@ export async function criarUsuarioTenant(
 ) {
   await verificarAdmin();
   if (!email.trim()) return { erro: "Email e obrigatorio." };
-  if (!senha || senha.length < 6) return { erro: "Senha deve ter pelo menos 6 caracteres." };
+  if (!senha || senha.length < 8) return { erro: "Senha deve ter pelo menos 8 caracteres." };
 
   const admin = createAdminClient();
 
@@ -157,11 +174,11 @@ export async function listarUsuariosSemTenant() {
   await verificarAdmin();
   const admin = createAdminClient();
 
-  const { data: authData } = await admin.auth.admin.listUsers();
+  const allUsers = await listAllUsers(admin);
   const { data: perfis } = await admin.from("perfis").select("user_id");
 
   const idsComTenant = new Set((perfis ?? []).map((p) => p.user_id));
-  const usuarios = (authData?.users ?? [])
+  const usuarios = allUsers
     .filter((u) => !idsComTenant.has(u.id))
     .map((u) => ({ id: u.id, email: u.email ?? "" }));
 

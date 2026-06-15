@@ -7,15 +7,25 @@ export async function listarUsuarios() {
   await verificarAdmin();
   const admin = createAdminClient();
 
-  const { data: authData, error } = await admin.auth.admin.listUsers();
+  let page = 1;
+  const perPage = 1000;
+  const { data: first, error } = await admin.auth.admin.listUsers({ page, perPage });
   if (error) return { erro: "Erro ao listar usuarios.", usuarios: [] };
+  const allUsers = [...(first?.users ?? [])];
+  while (allUsers.length === page * perPage) {
+    page++;
+    const { data } = await admin.auth.admin.listUsers({ page, perPage });
+    const users = data?.users ?? [];
+    if (users.length === 0) break;
+    allUsers.push(...users);
+  }
 
   const { data: perfis } = await admin
     .from("perfis")
     .select("user_id, nome, tenant_id, tenants(nome)");
 
   const perfilMap = new Map((perfis ?? []).map((p) => [p.user_id, p]));
-  const usuarios = authData.users.map((u) => {
+  const usuarios = allUsers.map((u) => {
     const perfil = perfilMap.get(u.id);
     const rawTenant = (perfil?.tenants ?? null) as { nome: string } | { nome: string }[] | null;
     const tenantNome = rawTenant == null ? null
