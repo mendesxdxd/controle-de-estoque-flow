@@ -50,5 +50,9 @@ CLAUDE.md
 AGENTS.md
 skills-lock.json
 
+# ai tooling
+.agents/
+.windsurf/
+
 .vercel
 .env*
