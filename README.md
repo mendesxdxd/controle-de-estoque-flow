@@ -1,15 +1,15 @@
 # FlowEstoque
 
-Sistema SaaS de controle de estoque multi-tenant, desenvolvido para operações logísticas com foco em rastreabilidade de movimentações por nota fiscal.
+Sistema de controle de estoque para operações logísticas, com foco em rastreabilidade de movimentações por nota fiscal. Atualmente em uso interno por uma empresa para gestão diária do armazém.
 
 ## Visão geral
 
-Aplicação web completa com autenticação, painel administrativo, controle de produtos, movimentações de entrada/saída, relatórios e exportação para Excel. Arquitetura multi-tenant com isolamento por RLS no Supabase.
+Aplicação web completa com autenticação, controle de produtos, movimentações de entrada/saída, relatórios e exportação para Excel. Originalmente desenhada como SaaS multi-tenant (com isolamento de dados por RLS no Supabase e cobrança via Stripe), hoje opera como sistema interno de uma única empresa — a arquitetura multi-tenant permanece no código e pode ser reativada quando necessário.
 
 ## Funcionalidades
 
 - **Autenticação** — login, cadastro por convite, redefinição de senha
-- **Multi-tenant** — cada empresa tem dados isolados via Row Level Security
+- **Multi-tenant (arquitetura)** — suporte a múltiplas empresas com dados isolados via Row Level Security
 - **Produtos** — cadastro com categorias, preço de custo/venda, estoque mínimo e caixas por palete
 - **Movimentações** — registro de entradas e saídas por nota fiscal com transportadora
 - **Relatórios** — histórico por nota, por produto e estoque atual com alertas de mínimo
