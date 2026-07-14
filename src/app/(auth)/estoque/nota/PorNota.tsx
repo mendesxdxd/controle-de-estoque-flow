@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { createPortal } from "react-dom";
 import { Icon } from "@iconify/react";
 import { Movimentacao } from "@/types";
 
@@ -135,34 +134,6 @@ function mesAtual(): string {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
 }
 
-function gerarMensagemMensal(
-  linhas: { of: string; data: Date; totalPaletes: number }[],
-  mes: string,
-  titulo = "RELATÓRIO DE OFs"
-): string {
-  const [ano, m] = mes.split("-");
-  const nomeMes = new Date(Number(ano), Number(m) - 1, 1)
-    .toLocaleDateString("pt-BR", { month: "long", year: "numeric" })
-    .toUpperCase();
-
-  const totalPal = linhas.reduce((acc, r) => acc + r.totalPaletes, 0);
-
-  const itens = linhas.length > 0
-    ? linhas.map((row) => {
-        const data = row.data.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" });
-        return `${row.of} - ${data} - ${fmtPaletes(row.totalPaletes)} paletes`;
-      })
-    : ["Nenhuma OF neste mês."];
-
-  return [
-    `*${titulo} - ${nomeMes}*`,
-    ``,
-    ...itens,
-    ``,
-    linhas.length > 0 ? `*Total: ${linhas.length} OFs | ${fmtPaletes(totalPal)} paletes*` : null,
-  ].filter((l) => l !== null).join("\n");
-}
-
 async function exportarExcel(movimentacoes: Movimentacao[], mes: string) {
   const XLSX = await import("xlsx");
   const [ano, mesNum] = mes.split("-").map(Number);
@@ -234,12 +205,6 @@ async function exportarExcel(movimentacoes: Movimentacao[], mes: string) {
 export default function PorNota({ movimentacoes }: Props) {
   const [busca, setBusca] = useState("");
   const [mesSelecionado, setMesSelecionado] = useState(mesAtual);
-  const [toastMsg, setToastMsg] = useState<string | null>(null);
-
-  function showToast(msg: string) {
-    setToastMsg(msg);
-    setTimeout(() => setToastMsg(null), 2500);
-  }
 
   const { todasOFs, totalOFs, totalPaletesGeral } = useMemo(() => {
     const mapa: Record<string, { of: string; data: Date; tipo: string; totalCaixas: number; totalPaletes: number }> = {};
@@ -301,48 +266,6 @@ export default function PorNota({ movimentacoes }: Props) {
     };
   }, [movimentacoes, busca]);
 
-  const relatorioMes = useMemo(() => {
-    const [ano, mes] = mesSelecionado.split("-").map(Number);
-    const movsFiltrados = movimentacoes.filter((mov) => {
-      if (!mov.nota_fiscal?.trim()) return false;
-      const d = new Date(mov.created_at);
-      return d.getFullYear() === ano && d.getMonth() + 1 === mes;
-    });
-
-    function buildMapa(movs: Movimentacao[]) {
-      const mapa: Record<string, { of: string; data: Date; totalPaletes: number }> = {};
-      for (const mov of movs) {
-        const of = mov.nota_fiscal!.trim();
-        if (!mapa[of]) mapa[of] = { of, data: new Date(mov.created_at), totalPaletes: 0 };
-        const cxPalete = mov.produtos?.caixas_por_palete;
-        if (cxPalete && cxPalete > 0) mapa[of].totalPaletes += mov.quantidade / cxPalete;
-        if (new Date(mov.created_at) > mapa[of].data) mapa[of].data = new Date(mov.created_at);
-      }
-      return Object.values(mapa).sort((a, b) => b.data.getTime() - a.data.getTime());
-    }
-
-    const linhas = buildMapa(movsFiltrados);
-    const linhasEntrada = buildMapa(movsFiltrados.filter((m) => m.tipo === "entrada"));
-    const linhasSaida = buildMapa(movsFiltrados.filter((m) => m.tipo === "saida"));
-
-    return { linhas, linhasEntrada, linhasSaida, totalPaletes: linhas.reduce((acc, r) => acc + r.totalPaletes, 0) };
-  }, [movimentacoes, mesSelecionado]);
-
-  async function handleCopiarRelatorio() {
-    await navigator.clipboard.writeText(gerarMensagemMensal(relatorioMes.linhas, mesSelecionado));
-    showToast("Relatório copiado!");
-  }
-
-  async function handleCopiarEntradas() {
-    await navigator.clipboard.writeText(gerarMensagemMensal(relatorioMes.linhasEntrada, mesSelecionado, "ENTRADAS DO MÊS"));
-    showToast("Entradas copiadas!");
-  }
-
-  async function handleCopiarSaidas() {
-    await navigator.clipboard.writeText(gerarMensagemMensal(relatorioMes.linhasSaida, mesSelecionado, "SAÍDAS DO MÊS"));
-    showToast("Saídas copiadas!");
-  }
-
   return (
     <div className="flex flex-col gap-6">
 
@@ -385,49 +308,6 @@ export default function PorNota({ movimentacoes }: Props) {
             <Icon icon="tabler:file-spreadsheet" width={14} />
             Exportar Excel
           </button>
-          <button onClick={handleCopiarRelatorio} className="btn-secondary flex items-center gap-2">
-            <Icon icon="tabler:clipboard-copy" width={14} />
-            Copiar relatório
-          </button>
-          <button
-            onClick={handleCopiarEntradas}
-            className="flex items-center gap-2 text-xs font-semibold px-3 py-2 rounded-lg transition-all duration-150"
-            style={{ background: "rgba(16,185,129,0.12)", border: "1px solid rgba(16,185,129,0.3)", color: "#34d399" }}
-          >
-            <Icon icon="tabler:arrow-bar-to-down" width={14} />
-            Entradas
-          </button>
-          <button
-            onClick={handleCopiarSaidas}
-            className="flex items-center gap-2 text-xs font-semibold px-3 py-2 rounded-lg transition-all duration-150"
-            style={{ background: "rgba(239,68,68,0.12)", border: "1px solid rgba(239,68,68,0.3)", color: "#f87171" }}
-          >
-            <Icon icon="tabler:arrow-bar-to-up" width={14} />
-            Saídas
-          </button>
-
-          {typeof document !== "undefined" && createPortal(
-            <div style={{ position: "fixed", top: 24, left: "50%", pointerEvents: "none", zIndex: 9999 }}>
-              <div style={{
-                transform: toastMsg ? "translateX(-50%) translateY(0)" : "translateX(-50%) translateY(-10px)",
-                opacity: toastMsg ? 1 : 0,
-                transition: "opacity 0.25s ease, transform 0.25s ease",
-                background: "rgba(15,15,26,0.92)",
-                border: "1px solid rgba(108,99,255,0.35)",
-                color: "#c4beff",
-                borderRadius: "10px",
-                padding: "9px 20px",
-                fontSize: "13px",
-                fontWeight: 600,
-                backdropFilter: "blur(10px)",
-                whiteSpace: "nowrap",
-                boxShadow: "0 8px 24px rgba(0,0,0,0.4)",
-              }}>
-                {toastMsg}
-              </div>
-            </div>,
-            document.body
-          )}
         </div>
       </div>
 

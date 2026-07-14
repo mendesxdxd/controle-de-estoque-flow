@@ -12,7 +12,11 @@ const estoqueSubItems = [
   { href: "/estoque", label: "Movimentações" },
   { href: "/estoque/resumo", label: "Resumo do dia" },
   { href: "/estoque/produto", label: "Produto no estoque" },
-  { href: "/estoque/nota", label: "Ordem de Frete" },
+];
+
+const ofSubItems = [
+  { href: "/ordens-frete", label: "Ordens de Frete" },
+  { href: "/estoque/nota", label: "Relatório de OF" },
 ];
 
 const links = [
@@ -32,10 +36,12 @@ export default function Sidebar({ isAdmin, userEmail, role }: { isAdmin: boolean
   const pathname = usePathname();
   const router = useRouter();
   const [aberto, setAberto] = useState(false);
-  const [estoqueExpandido, setEstoqueExpandido] = useState(pathname.startsWith("/estoque"));
+  const [estoqueExpandido, setEstoqueExpandido] = useState(pathname.startsWith("/estoque") && pathname !== "/estoque/nota");
+  const [ofExpandido, setOfExpandido] = useState(pathname === "/ordens-frete" || pathname === "/estoque/nota");
 
   useEffect(() => {
-    setEstoqueExpandido(pathname.startsWith("/estoque"));
+    setEstoqueExpandido(pathname.startsWith("/estoque") && pathname !== "/estoque/nota");
+    setOfExpandido(pathname === "/ordens-frete" || pathname === "/estoque/nota");
   }, [pathname]);
 
   async function handleLogout() {
@@ -70,7 +76,8 @@ export default function Sidebar({ isAdmin, userEmail, role }: { isAdmin: boolean
     );
   }
 
-  const estoqueAtivo = pathname.startsWith("/estoque");
+  const estoqueAtivo = pathname.startsWith("/estoque") && pathname !== "/estoque/nota";
+  const ofAtivo = pathname === "/ordens-frete" || pathname === "/estoque/nota";
 
   return (
     <>
@@ -175,6 +182,62 @@ export default function Sidebar({ isAdmin, userEmail, role }: { isAdmin: boolean
               style={{ maxHeight: estoqueExpandido ? `${estoqueSubItems.length * 40}px` : "0px", opacity: estoqueExpandido ? 1 : 0 }}
             >
               {estoqueSubItems.map((item) => {
+                const subAtivo = pathname === item.href;
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={handleNavegar}
+                    className="relative flex items-center gap-2 px-3 py-1.5 text-xs font-semibold rounded-lg transition-all duration-150 overflow-hidden"
+                    style={{
+                      color: subAtivo ? "#fff" : "#6b7280",
+                      background: subAtivo ? "rgba(108,99,255,0.1)" : "transparent",
+                    }}
+                  >
+                    {subAtivo && (
+                      <span className="absolute left-0 inset-y-0 w-0.5 bg-brand-primary rounded-r-full" />
+                    )}
+                    {item.label}
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Ordens de Frete expansivel */}
+          <div
+            onMouseEnter={() => setOfExpandido(true)}
+            onMouseLeave={() => setOfExpandido(false)}
+          >
+            <div
+              className="relative flex items-center rounded-xl overflow-hidden transition-all duration-150"
+              style={{ background: ofAtivo ? "rgba(108,99,255,0.12)" : "transparent" }}
+            >
+              {ofAtivo && <span className="absolute left-0 inset-y-0 w-0.5 bg-brand-primary rounded-r-full" />}
+              <Link
+                href="/ordens-frete"
+                onClick={handleNavegar}
+                className="flex-1 flex items-center gap-3 px-3 py-2.5 text-sm font-semibold transition-colors"
+                style={{ color: ofAtivo ? "#fff" : "#6b7280" }}
+              >
+                <span style={{ color: ofAtivo ? "#8B83FF" : "#4b5563" }}><Icon icon="tabler:truck-delivery" width={16} /></span>
+                Ordens de Frete
+              </Link>
+              <button
+                type="button"
+                onClick={(e) => { e.preventDefault(); setOfExpandido((v) => !v); }}
+                className="pr-3 py-2.5 pl-2"
+                style={{ color: ofAtivo ? "rgba(255,255,255,0.4)" : "#374151" }}
+              >
+                <Icon icon="tabler:chevron-down" width={12} className={`transition-transform duration-200 ${ofExpandido ? "rotate-180" : ""}`} />
+              </button>
+            </div>
+
+            <div
+              className="ml-7 mt-1 flex flex-col gap-0.5 overflow-hidden transition-all duration-200"
+              style={{ maxHeight: ofExpandido ? `${ofSubItems.length * 40}px` : "0px", opacity: ofExpandido ? 1 : 0 }}
+            >
+              {ofSubItems.map((item) => {
                 const subAtivo = pathname === item.href;
                 return (
                   <Link

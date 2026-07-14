@@ -27,8 +27,60 @@ export type Movimentacao = {
   observacao: string | null;
   nota_fiscal: string | null;
   transportadora: string | null;
+  nota_id?: string | null;
+  baixa_id?: string | null;
   created_at: string;
   produtos?: Produto | null;
+};
+
+export type NotaTipo = "produto" | "palete";
+
+export type OrdemFrete = {
+  id: string;
+  tenant_id: string;
+  numero: string;
+  observacao: string | null;
+  user_id: string | null;
+  created_at: string;
+  notas?: Nota[];
+};
+
+export type Nota = {
+  id: string;
+  of_id: string;
+  tenant_id: string;
+  tipo: NotaTipo;
+  numero: string | null;
+  nf_palete: string | null;
+  produto_id: string | null;
+  quantidade_inicial: number;
+  observacao: string | null;
+  user_id: string | null;
+  created_at: string;
+  produtos?: Produto | null;
+};
+
+export type NotaBaixa = {
+  id: string;
+  nota_id: string;
+  tenant_id: string;
+  quantidade: number;
+  observacao: string | null;
+  user_id: string | null;
+  created_at: string;
+};
+
+export type NotaSaldo = {
+  nota_id: string;
+  of_id: string;
+  tenant_id: string;
+  tipo: NotaTipo;
+  numero: string | null;
+  produto_id: string | null;
+  quantidade_inicial: number;
+  total_baixado: number;
+  saldo: number;
+  created_at: string;
 };
 
 export type EstoqueAtualRow = {
