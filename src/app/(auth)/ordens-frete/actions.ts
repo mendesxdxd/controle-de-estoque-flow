@@ -256,7 +256,6 @@ export async function estornarCarregamento(ofSaida: string) {
     detalhes: { of_saida: parse.data, baixas_estornadas: alvos.length },
   });
 
-  revalidatePath("/conferencia");
   revalidatePath("/ordens-frete");
   revalidatePath("/conferencia");
   revalidatePath("/estoque");

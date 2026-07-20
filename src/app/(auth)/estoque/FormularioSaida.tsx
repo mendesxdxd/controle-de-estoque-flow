@@ -26,6 +26,9 @@ type NotaDisp = {
 
 /** Uma linha do carregamento: qual produto, de qual nota e quanto sai dela. */
 type LinhaSaida = {
+  // id estavel de UI: sem ele, remover uma linha do meio faz o React reconciliar
+  // pela posicao e o foco/estado do input vaza para a linha vizinha.
+  uid: number;
   produtoId: string;
   notaId: string;
   quantidade: string;
@@ -39,13 +42,14 @@ function paletesDe(caixas: number, cxp: number | null) {
   return cxp && cxp > 0 ? caixas / cxp : caixas;
 }
 
+let seqLinha = 0;
 function novaLinha(): LinhaSaida {
-  return { produtoId: "", notaId: "", quantidade: "" };
+  return { uid: seqLinha++, produtoId: "", notaId: "", quantidade: "" };
 }
 
 export default function FormularioSaida({ ofs, saldos, onFechar, onSucesso }: Props) {
   const [ofSaida, setOfSaida] = useState("");
-  const [linhas, setLinhas] = useState<LinhaSaida[]>([novaLinha()]);
+  const [linhas, setLinhas] = useState<LinhaSaida[]>(() => [novaLinha()]);
   const [observacao, setObservacao] = useState("");
   const [erro, setErro] = useState("");
   const [salvando, setSalvando] = useState(false);
@@ -259,7 +263,7 @@ export default function FormularioSaida({ ofs, saldos, onFechar, onSucesso }: Pr
             );
 
             return (
-              <div key={index} className="rom-linha flex flex-col gap-2">
+              <div key={linha.uid} className="rom-linha flex flex-col gap-2">
                 <div className="mov-grid-saida">
                   <div className="flex items-center gap-2">
                     <span className="mov-col-label mov-label-linha">Item</span>

@@ -7,6 +7,9 @@ import { criarEntradaOF } from "@/app/(auth)/ordens-frete/actions";
 import Manifesto, { ManifestoItem } from "./Manifesto";
 
 type ItemForm = {
+  // id estavel de UI: a key precisa acompanhar a linha, nao a posicao, senao
+  // remover uma linha do meio faz o foco/estado do input vazar para a vizinha.
+  uid: number;
   produto_id: string;
   numero: string;
   nfPalete: string;
@@ -21,14 +24,15 @@ type Props = {
   onSucesso?: () => void;
 };
 
+let seqItem = 0;
 function novoItem(): ItemForm {
-  return { produto_id: "", numero: "", nfPalete: "", quantidade: "1", unidade: "cx" };
+  return { uid: seqItem++, produto_id: "", numero: "", nfPalete: "", quantidade: "1", unidade: "cx" };
 }
 
 export default function FormularioEntrada({ produtos, notaObrigatoria, onFechar, onSucesso }: Props) {
   const [numeroOF, setNumeroOF] = useState("");
   const [transportadora, setTransportadora] = useState<"MA TRANSP" | "OUTRAS" | "">("");
-  const [itens, setItens] = useState<ItemForm[]>([novoItem()]);
+  const [itens, setItens] = useState<ItemForm[]>(() => [novoItem()]);
   const [erro, setErro] = useState("");
   const [salvando, setSalvando] = useState(false);
 
@@ -192,7 +196,7 @@ export default function FormularioEntrada({ produtos, notaObrigatoria, onFechar,
             const qtdEmCaixas = item.unidade === "palete" && caixasPorPalete ? qtdNum * caixasPorPalete : qtdNum;
 
             return (
-              <div key={index} className="rom-linha mov-grid">
+              <div key={item.uid} className="rom-linha mov-grid">
                 <div className="flex items-center gap-2">
                   <span className="mov-col-label mov-label-linha">Item</span>
                   <span className="rom-num">{String(index + 1).padStart(2, "0")}</span>
