@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { getTenant } from "@/lib/tenant";
-import { OrdemFrete, NotaSaldo, NotaBaixa } from "@/types";
+import { OrdemFrete, NotaSaldo } from "@/types";
 import OrdensFrete from "./OrdensFrete";
 
 export default async function OrdensFretePage() {
@@ -8,7 +8,9 @@ export default async function OrdensFretePage() {
   const tenant = await getTenant();
   if (!tenant) return null;
 
-  const [{ data: ofs }, { data: saldos }, { data: baixas }] = await Promise.all([
+  // O historico de baixas saiu desta tela (agora vive em Conferencia), entao a
+  // consulta a nota_baixas deixou de ser necessaria aqui.
+  const [{ data: ofs }, { data: saldos }] = await Promise.all([
     supabase
       .from("ofs")
       .select("*, notas(*, produtos(id, nome, unidade, caixas_por_palete))")
@@ -19,12 +21,6 @@ export default async function OrdensFretePage() {
       .from("notas_saldo")
       .select("*")
       .eq("tenant_id", tenant.id),
-    supabase
-      .from("nota_baixas")
-      .select("*")
-      .eq("tenant_id", tenant.id)
-      .order("created_at", { ascending: false })
-      .limit(10000),
   ]);
 
   return (
@@ -32,8 +28,6 @@ export default async function OrdensFretePage() {
       <OrdensFrete
         ofsIniciais={(ofs as OrdemFrete[]) ?? []}
         saldos={(saldos as NotaSaldo[]) ?? []}
-        baixas={(baixas as NotaBaixa[]) ?? []}
-        role={tenant.role}
       />
     </div>
   );

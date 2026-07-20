@@ -175,9 +175,15 @@ function gerarFechamento(rows: EstoqueAtualRow[], movimentacoes: Movimentacao[],
         const nome = m.produtos?.nome?.toUpperCase() ?? "DESCONHECIDO";
         const item = `${paletes} PALETES DE ${nome}`;
 
-        if (m.nota_fiscal) {
-          if (!porNota[m.nota_fiscal]) porNota[m.nota_fiscal] = { nota: m.nota_fiscal, itens: [] };
-          porNota[m.nota_fiscal].itens.push(item);
+        // A saida agrupa pela OF do carregamento; nota_fiscal, numa saida,
+        // guarda a OF de origem do estoque e listaria uma linha por nota.
+        // As saidas antigas nao tem of_saida, entao nota_fiscal e o fallback:
+        // era ali que a OF de saida era digitada no sistema anterior.
+        const chave = tipo === "saida" ? m.of_saida ?? m.nota_fiscal : m.nota_fiscal;
+
+        if (chave) {
+          if (!porNota[chave]) porNota[chave] = { nota: chave, itens: [] };
+          porNota[chave].itens.push(item);
         } else {
           semNota.push(`• ${item}`);
         }

@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Icon } from "@iconify/react";
 import { Produto } from "@/types";
 import { criarEntradaOF } from "@/app/(auth)/ordens-frete/actions";
+import Manifesto, { ManifestoItem } from "./Manifesto";
 
 type ItemForm = {
   produto_id: string;
@@ -110,36 +111,58 @@ export default function FormularioEntrada({ produtos, notaObrigatoria, onFechar,
     }
   }
 
-  return (
-    <div className="glass-panel p-6">
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-sm font-bold uppercase tracking-wider text-white flex items-center gap-2">
-          <span className="text-emerald-400"><Icon icon="tabler:arrow-down-circle" width={16} /></span>
-          Registrar entrada (OF)
-        </h2>
-        <button onClick={onFechar} className="text-xs text-brand-medium hover:text-white transition-colors">Fechar</button>
-      </div>
+  const itensManifesto: ManifestoItem[] = useMemo(
+    () =>
+      itens.map((item) => {
+        const produto = produtos.find((p) => p.id === item.produto_id);
+        const qtdNum = parseInt(item.quantidade) || 0;
+        return {
+          produto: produto?.nome ?? null,
+          nfProduto: item.numero.trim() || null,
+          nfPalete: item.nfPalete.trim() || null,
+          quantidade: calcularQtdCaixas(item),
+          detalhe: item.unidade === "palete" && qtdNum > 0 ? `${qtdNum} palete(s)` : null,
+        };
+      }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [itens, produtos]
+  );
 
-      <form onSubmit={handleSubmit} className="flex flex-col gap-5">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl">
-          <div className="flex flex-col gap-1">
-            <label className="text-xs font-semibold uppercase tracking-wider text-brand-light">Numero da OF</label>
-            <input type="text" value={numeroOF} onChange={(e) => setNumeroOF(e.target.value)} className="input-field" placeholder="Ex: 6100181424" />
+  // So conta linha com produto escolhido: a linha em branco ja nasce com
+  // quantidade 1 e inflaria o total antes de o usuario preencher qualquer coisa.
+  const totalCaixas = itensManifesto
+    .filter((item) => item.produto)
+    .reduce((soma, item) => soma + item.quantidade, 0);
+
+  return (
+    <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_280px]">
+      <form onSubmit={handleSubmit} className="mov-form flex flex-col gap-5 min-w-0">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-5 max-w-2xl">
+          <div className="rom-campo">
+            <label htmlFor="entrada-of" className="rom-label">Numero da OF</label>
+            <input
+              id="entrada-of"
+              type="text"
+              value={numeroOF}
+              onChange={(e) => setNumeroOF(e.target.value)}
+              className="rom-input"
+              placeholder="6100181424"
+            />
           </div>
-          <div className="flex flex-col gap-1">
-            <label className="text-xs font-semibold uppercase tracking-wider text-brand-light">
-              Transportadora <span className="text-brand-medium normal-case font-normal">(opcional)</span>
+          <div className="rom-campo">
+            <label className="rom-label">
+              Transportadora <span className="normal-case tracking-normal font-normal">(opcional)</span>
             </label>
-            <div className="flex bg-brand-card border border-brand-border rounded-xl p-1 w-fit gap-1">
+            <div className="flex items-center gap-5 py-1.5" role="group" aria-label="Transportadora">
               {(["MA TRANSP", "OUTRAS"] as const).map((t) => (
                 <button
                   key={t}
                   type="button"
+                  aria-pressed={transportadora === t}
                   onClick={() => setTransportadora(transportadora === t ? "" : t)}
-                  className={`px-4 py-1.5 text-xs font-semibold rounded-lg transition-all duration-150 ${
-                    transportadora === t ? "bg-brand-hover border border-brand-border-hl text-white" : "text-brand-medium hover:text-white hover:bg-brand-hover"
-                  }`}
+                  className="rom-radio"
                 >
+                  <span className="rom-radio-marca" aria-hidden="true" />
                   {t}
                 </button>
               ))}
@@ -147,9 +170,21 @@ export default function FormularioEntrada({ produtos, notaObrigatoria, onFechar,
           </div>
         </div>
 
-        {/* Produtos */}
-        <div className="flex flex-col gap-3">
-          <label className="text-xs font-semibold uppercase tracking-wider text-brand-light">Produtos / Notas</label>
+        {/* Produtos / Notas */}
+        <div className="flex flex-col gap-2.5">
+          <label className="rom-label">Produtos / Notas</label>
+
+          {/* Cabecalho das colunas (some quando a linha empilha) */}
+          <div className="mov-grid mov-grid-head rom-cabecalho">
+            <span className="mov-col-label">Item</span>
+            <span className="mov-col-label">Produto</span>
+            <span className="mov-col-label">NF prod.</span>
+            <span className="mov-col-label">NF palete</span>
+            <span className="mov-col-label">Unidade</span>
+            <span className="mov-col-label">Qtd</span>
+            <span className="sr-only">Ações</span>
+          </div>
+
           {itens.map((item, index) => {
             const produto = produtos.find((p) => p.id === item.produto_id);
             const caixasPorPalete = produto?.caixas_por_palete ?? null;
@@ -157,10 +192,20 @@ export default function FormularioEntrada({ produtos, notaObrigatoria, onFechar,
             const qtdEmCaixas = item.unidade === "palete" && caixasPorPalete ? qtdNum * caixasPorPalete : qtdNum;
 
             return (
-              <div key={index} className="flex flex-wrap items-end gap-3 p-3 rounded-xl" style={{ background: "#0f0f18", border: "1px solid #252540" }}>
-                <div className="flex flex-col gap-1 min-w-[180px] flex-1">
-                  <span className="text-[10px] font-semibold uppercase tracking-wider text-brand-muted">Produto</span>
-                  <select value={item.produto_id} onChange={(e) => atualizarItem(index, "produto_id", e.target.value)} className="input-field">
+              <div key={index} className="rom-linha mov-grid">
+                <div className="flex items-center gap-2">
+                  <span className="mov-col-label mov-label-linha">Item</span>
+                  <span className="rom-num">{String(index + 1).padStart(2, "0")}</span>
+                </div>
+
+                <div className="flex flex-col gap-1 min-w-0">
+                  <span className="mov-col-label mov-label-linha">Produto</span>
+                  <select
+                    value={item.produto_id}
+                    onChange={(e) => atualizarItem(index, "produto_id", e.target.value)}
+                    className="rom-input rom-texto"
+                    aria-label={`Produto da linha ${index + 1}`}
+                  >
                     <option value="">Selecione...</option>
                     {produtos.map((p) => (
                       <option key={p.id} value={p.id}>{p.nome} ({p.unidade})</option>
@@ -168,70 +213,126 @@ export default function FormularioEntrada({ produtos, notaObrigatoria, onFechar,
                   </select>
                 </div>
 
-                <div className="flex flex-col gap-1">
-                  <span className="text-[10px] font-semibold uppercase tracking-wider text-brand-muted">NF produto</span>
-                  <input type="text" value={item.numero} onChange={(e) => atualizarItem(index, "numero", e.target.value)} className="input-field" style={{ width: 120 }} placeholder="Ex: 12345" />
+                <div className="flex flex-col gap-1 min-w-0">
+                  <span className="mov-col-label mov-label-linha">NF produto</span>
+                  <input
+                    type="text"
+                    value={item.numero}
+                    onChange={(e) => atualizarItem(index, "numero", e.target.value)}
+                    className="rom-input"
+                    placeholder="12345"
+                    aria-label={`NF do produto da linha ${index + 1}`}
+                  />
                 </div>
 
-                <div className="flex flex-col gap-1">
-                  <span className="text-[10px] font-semibold uppercase tracking-wider text-brand-muted">NF palete</span>
-                  <input type="text" value={item.nfPalete} onChange={(e) => atualizarItem(index, "nfPalete", e.target.value)} className="input-field" style={{ width: 120 }} placeholder="Ex: 6789" />
+                <div className="flex flex-col gap-1 min-w-0">
+                  <span className="mov-col-label mov-label-linha">NF palete</span>
+                  <input
+                    type="text"
+                    value={item.nfPalete}
+                    onChange={(e) => atualizarItem(index, "nfPalete", e.target.value)}
+                    className="rom-input"
+                    placeholder="6789"
+                    aria-label={`NF do palete da linha ${index + 1}`}
+                  />
                 </div>
 
-                {caixasPorPalete && (
-                  <div className="flex flex-col gap-1">
-                    <span className="text-[10px] font-semibold uppercase tracking-wider text-brand-muted">Unidade</span>
-                    <div className="flex bg-brand-card border border-brand-border rounded-xl p-1 gap-1">
+                {/* A coluna existe sempre para as linhas nao desalinharem. Sem
+                    caixas_por_palete o produto so entra em caixas. */}
+                <div className="flex flex-col gap-1 min-w-0">
+                  <span className="mov-col-label mov-label-linha">Unidade</span>
+                  {caixasPorPalete ? (
+                    <div className="flex items-center gap-3" role="group" aria-label={`Unidade da linha ${index + 1}`}>
                       {(["cx", "palete"] as const).map((u) => (
                         <button
                           key={u}
                           type="button"
+                          aria-pressed={item.unidade === u}
                           onClick={() => atualizarItem(index, "unidade", u)}
-                          className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${
-                            item.unidade === u ? "bg-brand-hover border border-brand-border-hl text-white" : "text-brand-medium hover:text-white"
-                          }`}
+                          className="rom-radio"
                         >
-                          {u === "cx" ? "Caixa" : "Palete"}
+                          <span className="rom-radio-marca" aria-hidden="true" />
+                          {u === "cx" ? "cx" : "pal"}
                         </button>
                       ))}
                     </div>
-                  </div>
-                )}
-
-                <div className="flex flex-col gap-1">
-                  <span className="text-[10px] font-semibold uppercase tracking-wider text-brand-muted">
-                    Qtd {item.unidade === "palete" ? "(paletes)" : "(caixas)"}
-                  </span>
-                  <input type="number" min="1" value={item.quantidade} onChange={(e) => atualizarItem(index, "quantidade", e.target.value)} className="input-field" style={{ width: 110 }} />
-                  {caixasPorPalete && item.unidade === "palete" && qtdNum > 0 && (
-                    <span className="text-[10px] text-brand-primary">= {qtdEmCaixas} cx</span>
+                  ) : (
+                    <span
+                      className="rom-radio"
+                      title="Este produto não tem caixas por palete cadastrado."
+                    >
+                      cx
+                    </span>
                   )}
                 </div>
 
-                {itens.length > 1 && (
-                  <button type="button" onClick={() => setItens((prev) => prev.filter((_, i) => i !== index))} className="p-2 rounded-lg text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-all" title="Remover">
-                    <Icon icon="tabler:trash" width={16} />
-                  </button>
-                )}
+                <div className="flex flex-col gap-1 min-w-0">
+                  <span className="mov-col-label mov-label-linha">
+                    Qtd {item.unidade === "palete" ? "(paletes)" : "(caixas)"}
+                  </span>
+                  <input
+                    type="number"
+                    min="1"
+                    value={item.quantidade}
+                    onChange={(e) => atualizarItem(index, "quantidade", e.target.value)}
+                    className="rom-input text-right"
+                    aria-label={`Quantidade da linha ${index + 1}`}
+                  />
+                  {caixasPorPalete && item.unidade === "palete" && qtdNum > 0 && (
+                    <span className="text-[10px] font-mono text-brand-primary text-right">= {qtdEmCaixas} cx</span>
+                  )}
+                </div>
+
+                <div className="flex justify-end">
+                  {itens.length > 1 && (
+                    <button
+                      type="button"
+                      onClick={() => setItens((prev) => prev.filter((_, i) => i !== index))}
+                      className="mov-icon-btn"
+                      title="Remover"
+                      aria-label={`Remover a linha ${index + 1}`}
+                    >
+                      <Icon icon="tabler:trash" width={14} />
+                    </button>
+                  )}
+                </div>
               </div>
             );
           })}
-          <button type="button" onClick={() => setItens((prev) => [...prev, novoItem()])} className="text-xs text-brand-light hover:text-white transition-colors text-left">
-            + Adicionar produto
+
+          <button
+            type="button"
+            onClick={() => setItens((prev) => [...prev, novoItem()])}
+            className="btn-action flex items-center gap-1.5 w-fit rounded-lg px-1 py-1"
+          >
+            <Icon icon="tabler:plus" width={13} aria-hidden="true" />
+            Adicionar item
           </button>
         </div>
 
         {erro && (
-          <p className="text-xs font-medium text-red-400 bg-red-500/10 border border-red-500/20 rounded-lg px-3 py-2">{erro}</p>
+          <p className="mov-aviso" role="alert">
+            <Icon icon="tabler:alert-triangle" width={14} className="shrink-0" />
+            {erro}
+          </p>
         )}
 
         <div className="flex items-center gap-3">
           <button type="submit" disabled={salvando} className="btn-primary">
             {salvando ? "Salvando..." : "Registrar entrada"}
           </button>
-          <button type="button" onClick={onFechar} className="btn-secondary">Cancelar</button>
+          <button type="button" onClick={onFechar} className="btn-secondary">Limpar</button>
         </div>
       </form>
+
+      <Manifesto
+        tipo="entrada"
+        documento={numeroOF.trim() || null}
+        transportadora={transportadora || null}
+        itens={itensManifesto}
+        total={totalCaixas}
+        unidade="caixas"
+      />
     </div>
   );
 }

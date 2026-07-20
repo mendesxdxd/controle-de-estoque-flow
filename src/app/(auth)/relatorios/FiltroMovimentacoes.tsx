@@ -6,7 +6,7 @@ import { Movimentacao } from "@/types";
 import DatePicker from "@/components/shared/DatePicker";
 
 function baixarCSVMovimentacoes(movs: Movimentacao[], data: string) {
-  const cabecalho = ["Data", "Hora", "Produto", "Unidade", "Tipo", "Quantidade", "OF", "Observação"];
+  const cabecalho = ["Data", "Hora", "Produto", "Unidade", "Tipo", "Quantidade", "OF", "OF saída", "Observação"];
   const linhas = movs.map((m) => {
     const d = new Date(m.created_at);
     return [
@@ -17,6 +17,7 @@ function baixarCSVMovimentacoes(movs: Movimentacao[], data: string) {
       m.tipo,
       m.quantidade,
       m.nota_fiscal ?? "",
+      m.of_saida ?? "",
       m.observacao ?? "",
     ];
   });
@@ -116,6 +117,7 @@ export default function FiltroMovimentacoes({ movimentacoes }: Props) {
             <thead>
               <tr className="table-header">
                 <th className="table-th">Data</th>
+                <th className="table-th">OF saída</th>
                 <th className="table-th">Produto</th>
                 <th className="table-th">Tipo</th>
                 <th className="table-th-right">Quantidade</th>
@@ -132,6 +134,7 @@ export default function FiltroMovimentacoes({ movimentacoes }: Props) {
                     <div>{new Date(mov.created_at).toLocaleDateString("pt-BR")}</div>
                     <div className="text-xs text-brand-muted">{new Date(mov.created_at).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}</div>
                   </td>
+                  <td className="py-3 px-4 text-brand-light font-mono text-xs">{mov.of_saida ?? "—"}</td>
                   <td className="py-3 px-4 font-medium text-white">{mov.produtos?.nome ?? "—"}</td>
                   <td className="py-3 px-4">
                     <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${

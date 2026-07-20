@@ -56,3 +56,6 @@ skills-lock.json
 
 .vercel
 .env*
+
+# Screenshots locais do script de captura
+scripts/.screenshots/

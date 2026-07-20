@@ -27,6 +27,11 @@ export type Movimentacao = {
   observacao: string | null;
   nota_fiscal: string | null;
   transportadora: string | null;
+  /**
+   * OF de saida do carregamento. Apenas saidas; nulo nas anteriores ao campo.
+   * Nao confundir com nota_fiscal, que numa saida guarda a OF de ORIGEM.
+   */
+  of_saida?: string | null;
   nota_id?: string | null;
   baixa_id?: string | null;
   created_at: string;
@@ -66,6 +71,8 @@ export type NotaBaixa = {
   tenant_id: string;
   quantidade: number;
   observacao: string | null;
+  /** OF de saida do carregamento que originou esta baixa. */
+  of_saida?: string | null;
   user_id: string | null;
   created_at: string;
 };

@@ -19,12 +19,16 @@ const ofSubItems = [
   { href: "/estoque/nota", label: "Relatório de OF" },
 ];
 
+// Atencao: o JSX abaixo referencia estes itens por indice (links[0], links[1]...).
+// Inserir no meio do array troca os icones de lugar -- acrescente no fim.
 const links = [
   { href: "/dashboard",  label: "Dashboard",  icon: <Icon icon="tabler:layout-dashboard" width={16} /> },
   { href: "/produtos",   label: "Produtos",   icon: <Icon icon="tabler:package" width={16} /> },
   { href: "/categorias", label: "Categorias", icon: <Icon icon="tabler:tags" width={16} /> },
   { href: "/relatorios", label: "Relatórios", icon: <Icon icon="tabler:chart-bar" width={16} /> },
 ];
+
+const conferenciaIcon = <Icon icon="tabler:checkup-list" width={16} />;
 
 const secondaryLinks = [
   { href: "/perfil",   label: "Perfil",    icon: <Icon icon="tabler:user" width={16} /> },
@@ -260,6 +264,7 @@ export default function Sidebar({ isAdmin, userEmail, role }: { isAdmin: boolean
             </div>
           </div>
 
+          <NavLink href="/conferencia" label="Conferência" icon={conferenciaIcon} onClick={handleNavegar} />
           <NavLink href="/categorias" label="Categorias" icon={links[2].icon} onClick={handleNavegar} />
           <NavLink href="/relatorios" label="Relatórios" icon={links[3].icon} onClick={handleNavegar} />
 

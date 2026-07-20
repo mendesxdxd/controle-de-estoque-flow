@@ -8,7 +8,7 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   --font-heading: var(--font-sans);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
@@ -259,5 +259,469 @@
     @apply backdrop-blur-sm rounded-2xl overflow-hidden;
     background: #13131f;
     border: 1px solid #252540;
+  }
+
+  /* ============ Movimentacoes (entrada / saida) ============ */
+
+  /* O acento do painel acompanha o modo ativo: verde = entrada, vermelho = saida.
+     Os valores sao os mesmos emerald-400/500 e red-400/500 ja usados no app. */
+  .mov-panel {
+    @apply rounded-2xl overflow-hidden;
+    background: #13131f;
+    border: 1px solid #252540;
+  }
+  .mov-panel[data-modo="entrada"] {
+    --mov-accent: #34d399;
+    --mov-accent-soft: rgba(52, 211, 153, 0.12);
+    --mov-accent-line: rgba(52, 211, 153, 0.35);
+  }
+  .mov-panel[data-modo="saida"] {
+    --mov-accent: #f87171;
+    --mov-accent-soft: rgba(248, 113, 113, 0.12);
+    --mov-accent-line: rgba(248, 113, 113, 0.35);
+  }
+
+  .mov-panel-header {
+    @apply flex flex-wrap items-center justify-between gap-4 px-4 py-4 lg:px-6;
+    border-bottom: 1px solid #252540;
+    background: linear-gradient(180deg, var(--mov-accent-soft), transparent);
+  }
+
+  .mov-panel-title {
+    @apply text-sm font-bold uppercase tracking-wider text-white;
+  }
+
+  /* Seletor segmentado Entrada / Saida */
+  .seg {
+    @apply inline-flex gap-1 p-1 rounded-xl;
+    background: #0f0f18;
+    border: 1px solid #252540;
+  }
+
+  .seg-btn {
+    @apply flex items-center gap-2 px-4 py-2 text-xs font-bold uppercase tracking-wider
+           rounded-lg transition-all duration-150;
+    border: 1px solid transparent;
+    color: #8B83FF;
+  }
+  .seg-btn:hover { color: #fff; background: #1a1a2e; }
+
+  .seg-btn[aria-pressed="true"][data-tipo="entrada"] {
+    color: #fff;
+    background: rgba(16, 185, 129, 0.18);
+    border-color: rgba(52, 211, 153, 0.5);
+    box-shadow: 0 4px 14px rgba(16, 185, 129, 0.15);
+  }
+  .seg-btn[aria-pressed="true"][data-tipo="saida"] {
+    color: #fff;
+    background: rgba(239, 68, 68, 0.18);
+    border-color: rgba(248, 113, 113, 0.5);
+    box-shadow: 0 4px 14px rgba(239, 68, 68, 0.15);
+  }
+
+  .seg-dot {
+    @apply rounded-full;
+    width: 7px;
+    height: 7px;
+    background: currentColor;
+    opacity: 0.5;
+  }
+  .seg-btn[aria-pressed="true"] .seg-dot { opacity: 1; }
+  .seg-btn[data-tipo="entrada"][aria-pressed="true"] .seg-dot { background: #34d399; }
+  .seg-btn[data-tipo="saida"][aria-pressed="true"] .seg-dot { background: #f87171; }
+
+  /* O espaco util da linha de itens depende da sidebar e do manifesto ao lado,
+     nao da largura da janela — por isso container query, e nao breakpoint. */
+  .mov-form {
+    container-type: inline-size;
+  }
+
+  .mov-grid {
+    @apply grid gap-3;
+    grid-template-columns: 1fr;
+  }
+
+  .mov-grid-head { display: none; }
+
+  @container (min-width: 600px) {
+    .mov-grid {
+      grid-template-columns:
+        30px minmax(120px, 1.6fr) minmax(74px, 0.9fr) minmax(74px, 0.9fr)
+        auto minmax(74px, 0.9fr) 32px;
+      align-items: center;
+      gap: 0.625rem;
+    }
+    .mov-grid-head { display: grid; }
+    .mov-label-linha { display: none; }
+  }
+
+  .mov-col-label {
+    @apply text-[10px] font-bold uppercase tracking-wider;
+    color: #3d3a6e;
+  }
+
+  /* Linha de item no formato romaneio: regua tracejada, sem cartao.
+     No mobile o container query nao se aplica e a linha empilha como bloco. */
+  .rom-linha {
+    @apply rounded-lg p-3;
+    border-bottom: 1px dashed var(--rom-rule, #252540);
+    transition: background 0.12s;
+  }
+  .rom-linha:hover { background: rgba(108, 99, 255, 0.04); }
+  @container (max-width: 599px) {
+    .rom-linha {
+      background: #0f0f18;
+      border: 1px solid #252540;
+    }
+  }
+
+  .rom-cabecalho {
+    @apply px-3 pb-2;
+    border-bottom: 1px solid var(--rom-rule-forte, #3d3a6e);
+  }
+
+  /* ============ Saldo por produto ============ */
+
+  /* Faixa de estatisticas: filete vertical separando cada numero. */
+  .kpi {
+    @apply flex flex-col;
+    padding-right: 1.25rem;
+    margin-right: 1.25rem;
+    border-right: 1px solid #252540;
+  }
+  .kpi:last-child { border-right: none; margin-right: 0; padding-right: 0; }
+  .kpi-valor {
+    @apply text-xl font-bold leading-tight;
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.01em;
+  }
+  .kpi-rotulo {
+    @apply text-[11px] uppercase;
+    font-family: var(--font-mono);
+    letter-spacing: 0.09em;
+    color: #3d3a6e;
+  }
+
+  /* Variante neutra do segmentado (filtros que nao sao entrada/saida). */
+  .seg-btn[data-tipo="neutro"][aria-pressed="true"] {
+    background: rgba(108, 99, 255, 0.15);
+    border-color: transparent;
+    color: #8B83FF;
+    box-shadow: none;
+  }
+
+  /* Lista continua: sem vao entre as linhas, so um filete separando. */
+  .saldo-lista {
+    @apply overflow-hidden;
+    background: #13131f;
+    border: 1px solid #252540;
+    border-radius: 14px;
+  }
+  .saldo-linha + .saldo-linha {
+    border-top: 1px solid #252540;
+  }
+
+  .saldo-cabecalho {
+    @apply w-full grid items-center text-left transition-colors duration-150;
+    grid-template-columns: auto 1fr auto auto;
+    gap: 1rem;
+    padding: 1rem 1.125rem;
+  }
+  .saldo-cabecalho:hover { background: #171722; }
+  .saldo-cabecalho:focus-visible { outline: 2px solid #8B83FF; outline-offset: -2px; }
+
+  .saldo-icone {
+    @apply flex items-center justify-center shrink-0;
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: rgba(108, 99, 255, 0.15);
+    color: #6C63FF;
+  }
+  .saldo-icone[data-zerado="true"] {
+    background: rgba(239, 68, 68, 0.12);
+    color: #f87171;
+  }
+
+  .saldo-nome {
+    @apply block text-[15px] font-semibold text-white;
+    letter-spacing: 0.01em;
+  }
+  .saldo-meta {
+    @apply block text-xs;
+    font-family: var(--font-mono);
+    color: #3d3a6e;
+    margin-top: 2px;
+  }
+
+  .saldo-total {
+    @apply font-bold leading-tight;
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    font-size: 22px;
+    letter-spacing: -0.01em;
+    color: #34d399;
+  }
+  .saldo-total[data-zerado="true"] { color: #3d3a6e; }
+
+  .saldo-chevron {
+    @apply flex items-center justify-center;
+    color: #3d3a6e;
+    transition: transform 0.25s ease;
+  }
+  .saldo-chevron[data-aberto="true"] { transform: rotate(180deg); }
+
+  /* Expansao por altura sem medir nada: 0fr -> 1fr anima suave. */
+  .saldo-detalhe {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.26s ease;
+  }
+  .saldo-detalhe[data-aberto="true"] { grid-template-rows: 1fr; }
+  .saldo-detalhe > div { overflow: hidden; }
+
+  /* OF | NF produto | NF palete | barra | saldo */
+  .saldo-of {
+    @apply grid items-center;
+    grid-template-columns: auto auto auto 1fr auto;
+    gap: 0.875rem;
+    padding: 0.5625rem 0;
+    border-top: 1px dashed #3d3a6e;
+  }
+  .saldo-of:first-child { border-top: none; }
+
+  /* Barra: quanto do recebido ainda esta disponivel nesta OF. */
+  .saldo-barra {
+    @apply relative overflow-hidden w-full;
+    height: 3px;
+    border-radius: 3px;
+    background: #252540;
+  }
+  .saldo-barra-fill {
+    @apply absolute left-0 top-0 h-full;
+    border-radius: 3px;
+    background: #34d399;
+  }
+  .saldo-barra-fill[data-zerado="true"] { background: #3d3a6e; }
+
+  @media (max-width: 640px) {
+    /* Sem os filetes verticais: ao quebrar em duas linhas eles ficam pendurados. */
+    .kpi { border-right: none; padding-right: 1rem; margin-right: 1rem; }
+
+    .saldo-cabecalho { grid-template-columns: auto 1fr auto; gap: 0.75rem; }
+    .saldo-chevron { display: none; }
+    .saldo-of { grid-template-columns: auto 1fr auto; gap: 0.625rem; }
+    .saldo-of-nf { display: none; }
+  }
+
+  /* Linha da saida: item, produto, nota de origem, quantidade, remover. */
+  .mov-grid-saida {
+    @apply grid gap-3;
+    grid-template-columns: 1fr;
+  }
+  @container (min-width: 600px) {
+    .mov-grid-saida {
+      grid-template-columns:
+        28px minmax(130px, 1.2fr) minmax(170px, 1.5fr) minmax(80px, 0.6fr) 32px;
+      align-items: center;
+      gap: 0.625rem;
+    }
+  }
+
+  /* Chip de saldo disponivel */
+  .mov-chip {
+    @apply inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold;
+    font-family: var(--font-mono);
+    background: rgba(16, 185, 129, 0.12);
+    border: 1px solid rgba(52, 211, 153, 0.35);
+    color: #34d399;
+  }
+  .mov-chip[data-excedido="true"] {
+    background: rgba(239, 68, 68, 0.12);
+    border-color: rgba(248, 113, 113, 0.4);
+    color: #f87171;
+  }
+
+  .mov-aviso {
+    @apply flex items-center gap-2 text-xs font-medium rounded-lg px-3 py-2;
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    color: #f87171;
+  }
+
+  /* Painel manifesto (romaneio) */
+  .manifesto {
+    @apply rounded-xl p-4 flex flex-col gap-3;
+    background: #0f0f18;
+    border: 1px dashed #3d3a6e;
+  }
+
+  .manifesto-label {
+    @apply text-[10px] font-bold uppercase tracking-widest;
+    color: #3d3a6e;
+  }
+
+  .manifesto-value {
+    @apply text-xs font-semibold text-white;
+    font-family: var(--font-mono);
+  }
+
+  .manifesto-rule {
+    height: 1px;
+    background: repeating-linear-gradient(90deg, #252540 0 5px, transparent 5px 10px);
+  }
+
+  .manifesto-total {
+    @apply text-xl font-bold;
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    color: var(--mov-accent, #fff);
+  }
+
+  /* Foco de teclado visivel */
+  .seg-btn:focus-visible,
+  .input-field:focus-visible,
+  .btn-primary:focus-visible,
+  .btn-secondary:focus-visible,
+  .btn-action:focus-visible,
+  .btn-danger:focus-visible,
+  .mov-icon-btn:focus-visible {
+    outline: 2px solid #8B83FF;
+    outline-offset: 2px;
+  }
+
+  .mov-icon-btn {
+    @apply p-2 rounded-lg text-red-400 transition-all duration-150;
+  }
+  .mov-icon-btn:hover { color: #fca5a5; background: rgba(239, 68, 68, 0.1); }
+
+  /* ============ Estetica romaneio ============
+     Escopada em .romaneio: nenhuma tela fora do painel e afetada.
+     Campo deixa de ser bolha e vira linha pautada; item vira linha de tabela. */
+  .romaneio {
+    --rom-rule: #252540;
+    --rom-rule-forte: #3d3a6e;
+  }
+
+  /* Cabecalho de documento */
+  .rom-doc-head {
+    @apply flex flex-wrap items-baseline justify-between gap-3 pb-3;
+    border-bottom: 2px solid var(--rom-rule-forte);
+  }
+  .rom-doc-tipo {
+    @apply text-[10px] font-bold uppercase;
+    letter-spacing: 0.18em;
+    color: #3d3a6e;
+  }
+  .rom-doc-id {
+    @apply text-2xl font-bold text-white;
+    font-family: var(--font-mono);
+    letter-spacing: 0.02em;
+  }
+
+  /* Campo pautado */
+  .rom-campo { @apply flex flex-col gap-1; }
+  .rom-label {
+    @apply text-[10px] font-bold uppercase;
+    letter-spacing: 0.14em;
+    color: #3d3a6e;
+  }
+  .rom-input {
+    @apply w-full text-sm text-white px-0.5 py-1.5;
+    background: transparent;
+    border: 0;
+    border-bottom: 1px solid var(--rom-rule-forte);
+    border-radius: 0;
+    outline: none;
+    font-family: var(--font-mono);
+    transition: border-color 0.15s, background 0.15s;
+  }
+  /* Mono e para dado tecnico (OF, NF, quantidade, data). Nome de produto e
+     texto livre continuam na fonte de leitura. */
+  .rom-input.rom-texto {
+    font-family: var(--font-inter), Inter, system-ui, sans-serif;
+  }
+
+  /* Sem as setinhas de incremento do type="number". O tipo continua number,
+     entao o teclado numerico no celular e a validacao seguem valendo. */
+  .rom-input[type="number"] {
+    appearance: textfield;
+    -moz-appearance: textfield;
+  }
+  .rom-input[type="number"]::-webkit-outer-spin-button,
+  .rom-input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    appearance: none;
+    margin: 0;
+  }
+
+  .rom-input::placeholder { color: #2c2a4d; }
+  .rom-input:focus {
+    border-bottom-color: #6C63FF;
+    background: rgba(108, 99, 255, 0.06);
+  }
+  .rom-input:focus-visible { outline: none; }
+
+  select.rom-input {
+    @apply cursor-pointer;
+    color: #fff;
+  }
+  /* A lista nativa herda o fundo do select. Com fundo transparente as opcoes
+     ficam ilegiveis (escuro sobre escuro), entao elas precisam ser explicitas. */
+  select.rom-input option {
+    background-color: #13131f;
+    color: #fff;
+  }
+
+  /* Tabela de itens */
+  .rom-tabela { @apply w-full; border-collapse: collapse; }
+  .rom-tabela th {
+    @apply text-left text-[10px] font-bold uppercase py-2 px-2;
+    letter-spacing: 0.14em;
+    color: #3d3a6e;
+    border-bottom: 1px solid var(--rom-rule-forte);
+  }
+  .rom-tabela td {
+    @apply py-1.5 px-2 align-middle;
+    border-bottom: 1px dashed var(--rom-rule);
+  }
+  .rom-tabela tr:hover td { background: rgba(108, 99, 255, 0.04); }
+  .rom-num {
+    @apply text-xs font-bold;
+    font-family: var(--font-mono);
+    color: #3d3a6e;
+  }
+
+  /* Escolha binaria em forma de radio de formulario */
+  .rom-radio {
+    @apply inline-flex items-center gap-1.5 text-[11px] font-bold uppercase transition-colors duration-150;
+    letter-spacing: 0.08em;
+    color: #3d3a6e;
+  }
+  .rom-radio:hover { color: #B3AEFF; }
+  .rom-radio[aria-pressed="true"] { color: #fff; }
+  .rom-radio-marca {
+    @apply rounded-full shrink-0;
+    width: 9px;
+    height: 9px;
+    border: 1.5px solid currentColor;
+  }
+  .rom-radio[aria-pressed="true"] .rom-radio-marca {
+    background: var(--mov-accent, #6C63FF);
+    border-color: var(--mov-accent, #6C63FF);
+    box-shadow: 0 0 0 2px rgba(108, 99, 255, 0.15);
+  }
+  .rom-radio:focus-visible { outline: 2px solid #8B83FF; outline-offset: 3px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }
