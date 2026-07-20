@@ -191,7 +191,7 @@ export default function OrdensFrete({ ofsIniciais, saldos }: Props) {
 
       {gruposFiltrados.length === 0 ? (
         <div className="saldo-lista">
-          <p className="py-11 px-4 text-center font-mono text-[13px] text-brand-muted">
+          <p className="py-11 px-4 text-center font-mono text-[13px] text-brand-label">
             {busca
               ? "Nenhum produto encontrado para essa busca."
               : "Nenhum produto com saldo disponível."}
@@ -256,10 +256,10 @@ export default function OrdensFrete({ ofsIniciais, saldos }: Props) {
                               <span className="font-mono text-[13px] text-white whitespace-nowrap">
                                 OF {item.ofNumero}
                               </span>
-                              <span className="saldo-of-nf font-mono text-xs text-brand-muted whitespace-nowrap">
+                              <span className="saldo-of-nf font-mono text-xs text-brand-label whitespace-nowrap">
                                 NF prod <span className="text-brand-light">{item.nota.numero || "—"}</span>
                               </span>
-                              <span className="saldo-of-nf font-mono text-xs text-brand-muted whitespace-nowrap">
+                              <span className="saldo-of-nf font-mono text-xs text-brand-label whitespace-nowrap">
                                 NF pal <span className="text-brand-light">{item.nota.nf_palete || "—"}</span>
                               </span>
                               <span className="saldo-barra">
@@ -287,7 +287,7 @@ export default function OrdensFrete({ ofsIniciais, saldos }: Props) {
             })}
           </div>
 
-          <p className="mt-3.5 text-right font-mono text-xs text-brand-muted">
+          <p className="mt-3.5 text-right font-mono text-xs text-brand-label">
             {gruposFiltrados.length} de {grupos.length} produtos
           </p>
         </>

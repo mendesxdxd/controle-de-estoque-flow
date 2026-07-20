@@ -100,7 +100,7 @@ export default function Manifesto({
         </span>
 
         {preenchidos.length === 0 ? (
-          <p className="text-xs" style={{ color: "#3d3a6e" }}>
+          <p className="text-xs text-brand-label">
             Nenhum item preenchido ainda.
           </p>
         ) : (

@@ -83,7 +83,7 @@ export default function TabelaEstoque({ movimentacoes, produtos, ofs, saldos, no
 
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
         <DatePicker value={dataSelecionada} onChange={setDataSelecionada} />
-        <span className="text-xs font-semibold uppercase tracking-wider text-brand-muted">
+        <span className="text-xs font-semibold uppercase tracking-wider text-brand-label">
           {movimentacoesFiltradas.length}{" "}
           {movimentacoesFiltradas.length === 1 ? "movimentação" : "movimentações"}
         </span>
