@@ -14,7 +14,14 @@ type DadosCadastro = {
 
 export async function cadastrarEmpresa(dados: DadosCadastro) {
   const hdrs = await headers();
-  const ip = hdrs.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
+  // x-real-ip e definido pela infra (Vercel) e nao pode ser injetado pelo
+  // cliente; o primeiro valor de x-forwarded-for e falsificavel, por isso
+  // fica so como fallback.
+  const ip = (
+    hdrs.get("x-real-ip") ??
+    hdrs.get("x-forwarded-for")?.split(",")[0] ??
+    "unknown"
+  ).trim();
   const permitido = await verificarRateLimit(ip, "cadastro");
   if (!permitido) return { erro: "Muitas tentativas. Aguarde um momento e tente novamente." };
 

@@ -26,6 +26,6 @@ export const getTenant = cache(async function getTenant() {
     ...tenant,
     pode_fechamento: perfil.pode_fechamento ?? false,
     nota_obrigatoria: perfil.nota_obrigatoria ?? false,
-    role: (perfil.role ?? "admin") as "admin" | "operador" | "visualizador",
+    role: (perfil.role ?? "visualizador") as "admin" | "operador" | "visualizador",
   } : null;
 });

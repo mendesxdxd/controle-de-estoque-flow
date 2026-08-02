@@ -6,7 +6,6 @@ import { listarUsuariosTenant, listarUsuariosSemTenant, excluirUsuarioTenantComS
 import BotoesUsuario from "./BotoesUsuario";
 import FormularioEditarTenant from "./FormularioEditarTenant";
 import VincularUsuario from "./VincularUsuario";
-import BotaoGerarPagamento from "./BotaoGerarPagamento";
 
 export default async function DetalheClientePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -48,7 +47,6 @@ export default async function DetalheClientePage({ params }: { params: Promise<{
               {tenant.ativo !== false ? "Ativo" : "Inativo"}
             </span>
           </div>
-          <BotaoGerarPagamento tenantId={id} />
           <FormularioEditarTenant
             id={id}
             nomeInicial={tenant.nome}

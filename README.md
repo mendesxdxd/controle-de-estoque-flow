@@ -4,7 +4,7 @@ Sistema de controle de estoque para operações logísticas, com foco em rastrea
 
 ## Visão geral
 
-Aplicação web completa com autenticação, controle de produtos, movimentações de entrada/saída, relatórios e exportação para Excel. Originalmente desenhada como SaaS multi-tenant (com isolamento de dados por RLS no Supabase e cobrança via Stripe), hoje opera como sistema interno de uma única empresa — a arquitetura multi-tenant permanece no código e pode ser reativada quando necessário.
+Aplicação web completa com autenticação, controle de produtos, movimentações de entrada/saída, relatórios e exportação para Excel. Originalmente desenhada como SaaS multi-tenant (com isolamento de dados por RLS no Supabase), hoje opera como sistema interno de uma única empresa — a arquitetura multi-tenant permanece no código e pode ser reativada quando necessário.
 
 ## Funcionalidades
 
@@ -28,8 +28,6 @@ Aplicação web completa com autenticação, controle de produtos, movimentaçõ
 | Estilização | Tailwind CSS + shadcn/ui |
 | Backend/DB | Supabase (PostgreSQL + Auth + RLS) |
 | Validação | Zod |
-| Pagamentos | Stripe |
-| Emails | Resend |
 | Deploy | Vercel |
 
 ## Segurança
@@ -38,7 +36,8 @@ Aplicação web completa com autenticação, controle de produtos, movimentaçõ
 - Validação Zod em todas as server actions
 - Rate limiting por IP no cadastro
 - Rota `/admin` protegida no middleware via variável de ambiente
-- Idempotência no webhook Stripe via tabela `stripe_events`
+- RLS por papel: escrita (inserir/alterar/excluir) restrita a `admin`/`operador` no próprio banco
+- Rate limiting atômico (à prova de condição de corrida) no cadastro
 - Audit log de ações destrutivas
 - Roles: `admin`, `operador`, `visualizador`
 
@@ -54,13 +53,11 @@ src/
 │   │   ├── produtos/     # Cadastro de produtos
 │   │   ├── categorias/   # Categorias de produtos
 │   │   └── relatorios/   # Relatórios e exportação
-│   └── api/stripe/       # Webhooks Stripe
 ├── lib/
 │   ├── supabase/         # Clients (server, client, admin, middleware)
 │   ├── auditoria.ts      # Log de auditoria
 │   ├── rateLimit.ts      # Rate limiting por IP
-│   ├── permissoes.ts     # Controle de roles
-│   └── emails.ts         # Templates de email
+│   └── permissoes.ts     # Controle de roles
 └── types/                # Tipos globais
 ```
 
@@ -70,9 +67,6 @@ src/
 NEXT_PUBLIC_SUPABASE_URL=
 NEXT_PUBLIC_SUPABASE_ANON_KEY=
 SUPABASE_SERVICE_ROLE_KEY=
-STRIPE_SECRET_KEY=
-STRIPE_WEBHOOK_SECRET=
-RESEND_API_KEY=
 ADMIN_EMAIL=
 ```
 

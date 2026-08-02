@@ -159,7 +159,7 @@ export async function criarUsuarioTenant(
 
   const { error: perfilError } = await admin
     .from("perfis")
-    .insert({ user_id: data.user.id, tenant_id: tenantId, pode_fechamento: podeFechamento, nome });
+    .insert({ user_id: data.user.id, tenant_id: tenantId, pode_fechamento: podeFechamento, nome, role: "visualizador" });
 
   if (perfilError) {
     await admin.auth.admin.deleteUser(data.user.id);
@@ -196,7 +196,7 @@ export async function vincularUsuarioExistente(
 
   const { error } = await admin
     .from("perfis")
-    .insert({ user_id: userId, tenant_id: tenantId, nome, pode_fechamento: podeFechamento });
+    .insert({ user_id: userId, tenant_id: tenantId, nome, pode_fechamento: podeFechamento, role: "visualizador" });
   if (error) return { erro: "Erro ao vincular usuario." };
   revalidatePath(`/admin/clientes/${tenantId}`);
   return { sucesso: true };

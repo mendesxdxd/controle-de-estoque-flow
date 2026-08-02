@@ -13,7 +13,7 @@ export default function InativoPage() {
         <div>
           <h1 className="text-lg font-bold text-white">Conta inativa</h1>
           <p className="text-sm text-brand-medium mt-1">
-            O acesso da sua empresa foi suspenso. Entre em contato para regularizar o pagamento.
+            O acesso da sua empresa foi suspenso. Entre em contato para regularizar a situação.
           </p>
         </div>
         <a
