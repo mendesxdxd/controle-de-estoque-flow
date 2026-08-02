@@ -59,6 +59,3 @@ skills-lock.json
 
 # Screenshots locais do script de captura
 scripts/.screenshots/
-
-# supabase (nao versionar)
-/supabase/
