@@ -21,6 +21,8 @@ type Props = {
   total: number;
   /** Unidade do total: a entrada e lancada em caixas, a saida em paletes. */
   unidade: "caixas" | "paletes";
+  /** Valor total da carga (R$). Opcional: so aparece na entrada. */
+  valorTotal?: number | null;
   aviso?: string | null;
 };
 
@@ -53,6 +55,7 @@ export default function Manifesto({
   itens,
   total,
   unidade,
+  valorTotal,
   aviso,
 }: Props) {
   const data = useSyncExternalStore(semInscricao, dataNoCliente, dataNoServidor);
@@ -139,6 +142,20 @@ export default function Manifesto({
         </div>
         <span className="manifesto-total">{fmt(total)}</span>
       </div>
+
+      {typeof valorTotal === "number" && valorTotal > 0 && (
+        <div className="flex items-end justify-between gap-2">
+          <div className="flex flex-col">
+            <span className="manifesto-label">Valor</span>
+            <span className="text-[10px] font-semibold" style={{ color: "#8B83FF" }}>
+              total da carga
+            </span>
+          </div>
+          <span className="manifesto-total">
+            {valorTotal.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
+          </span>
+        </div>
+      )}
 
       {aviso && (
         <div className="mov-aviso">

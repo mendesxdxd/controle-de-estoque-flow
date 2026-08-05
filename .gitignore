@@ -53,6 +53,7 @@ skills-lock.json
 # ai tooling
 .agents/
 .windsurf/
+.cursor/mcp.json
 
 .vercel
 .env*

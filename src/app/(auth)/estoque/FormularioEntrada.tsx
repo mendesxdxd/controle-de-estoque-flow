@@ -15,6 +15,8 @@ type ItemForm = {
   nfPalete: string;
   quantidade: string;
   unidade: "cx" | "palete";
+  // Valor unitario por CAIXA da carga (R$), informado na chegada.
+  valor: string;
 };
 
 type Props = {
@@ -26,7 +28,7 @@ type Props = {
 
 let seqItem = 0;
 function novoItem(): ItemForm {
-  return { uid: seqItem++, produto_id: "", numero: "", nfPalete: "", quantidade: "1", unidade: "cx" };
+  return { uid: seqItem++, produto_id: "", numero: "", nfPalete: "", quantidade: "1", unidade: "cx", valor: "" };
 }
 
 export default function FormularioEntrada({ produtos, notaObrigatoria, onFechar, onSucesso }: Props) {
@@ -74,6 +76,10 @@ export default function FormularioEntrada({ produtos, notaObrigatoria, onFechar,
         setErro("A quantidade de cada produto deve ser maior que zero.");
         return;
       }
+      if (!(parseFloat(item.valor) > 0)) {
+        setErro("Informe o valor unitário (R$/caixa) de cada produto.");
+        return;
+      }
     }
 
     type NotaPayload = {
@@ -82,6 +88,7 @@ export default function FormularioEntrada({ produtos, notaObrigatoria, onFechar,
       nf_palete: string | null;
       produto_id: string | null;
       quantidade_inicial: number;
+      valor_unitario: number;
       observacao: string | null;
     };
 
@@ -91,6 +98,7 @@ export default function FormularioEntrada({ produtos, notaObrigatoria, onFechar,
       nf_palete: item.nfPalete.trim() || null,
       produto_id: item.produto_id,
       quantidade_inicial: calcularQtdCaixas(item),
+      valor_unitario: parseFloat(item.valor) || 0,
       observacao: item.unidade === "palete" ? `${parseInt(item.quantidade)} palete(s)` : null,
     }));
 
@@ -137,6 +145,10 @@ export default function FormularioEntrada({ produtos, notaObrigatoria, onFechar,
   const totalCaixas = itensManifesto
     .filter((item) => item.produto)
     .reduce((soma, item) => soma + item.quantidade, 0);
+
+  const totalValor = itens
+    .filter((item) => item.produto_id && parseFloat(item.valor) > 0)
+    .reduce((soma, item) => soma + calcularQtdCaixas(item) * parseFloat(item.valor), 0);
 
   return (
     <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_280px]">
@@ -186,6 +198,7 @@ export default function FormularioEntrada({ produtos, notaObrigatoria, onFechar,
             <span className="mov-col-label">NF palete</span>
             <span className="mov-col-label">Unidade</span>
             <span className="mov-col-label">Qtd</span>
+            <span className="mov-col-label">Valor (R$/cx)</span>
             <span className="sr-only">Ações</span>
           </div>
 
@@ -287,6 +300,25 @@ export default function FormularioEntrada({ produtos, notaObrigatoria, onFechar,
                   )}
                 </div>
 
+                <div className="flex flex-col gap-1 min-w-0">
+                  <span className="mov-col-label mov-label-linha">Valor (R$/cx)</span>
+                  <input
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    value={item.valor}
+                    onChange={(e) => atualizarItem(index, "valor", e.target.value)}
+                    className="rom-input text-right"
+                    placeholder="0,00"
+                    aria-label={`Valor unitário por caixa da linha ${index + 1}`}
+                  />
+                  {qtdEmCaixas > 0 && parseFloat(item.valor) > 0 && (
+                    <span className="text-[10px] font-mono text-brand-primary text-right">
+                      = {(qtdEmCaixas * parseFloat(item.valor)).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
+                    </span>
+                  )}
+                </div>
+
                 <div className="flex justify-end">
                   {itens.length > 1 && (
                     <button
@@ -336,6 +368,7 @@ export default function FormularioEntrada({ produtos, notaObrigatoria, onFechar,
         itens={itensManifesto}
         total={totalCaixas}
         unidade="caixas"
+        valorTotal={totalValor}
       />
     </div>
   );

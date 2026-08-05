@@ -11,8 +11,6 @@ export type Produto = {
   codigo: string | null;
   categoria_id: string | null;
   unidade: string;
-  preco_custo: number;
-  preco_venda: number;
   estoque_minimo: number;
   caixas_por_palete: number | null;
   created_at: string;
@@ -59,6 +57,8 @@ export type Nota = {
   nf_palete: string | null;
   produto_id: string | null;
   quantidade_inicial: number;
+  /** Valor unitario (R$ por caixa) da carga no momento da entrada. */
+  valor_unitario: number;
   observacao: string | null;
   user_id: string | null;
   created_at: string;
@@ -97,10 +97,12 @@ export type EstoqueAtualRow = {
   nome: string;
   codigo: string | null;
   unidade: string;
-  preco_custo: number;
-  preco_venda: number;
   estoque_minimo: number;
   caixas_por_palete: number | null;
   categoria: string | null;
   estoque_atual: number;
+  /** Valor total em estoque deste produto: soma de (saldo x valor_unitario) das notas. */
+  valor_estoque: number;
+  /** Custo medio ponderado por caixa: valor_estoque / estoque_atual. */
+  custo_medio: number;
 };

@@ -54,7 +54,7 @@ function gerarPDF(rows: EstoqueAtualRow[], valorTotal: number, totalPaletes: num
       autoTable(doc, {
         startY: 34,
         margin: { left: 14, right: 14 },
-        head: [["Produto", "Categoria", "Un.", "Estoque Atual", "Paletes", "Mín.", "Preço Custo", "Valor em Estoque", "Status"]],
+        head: [["Produto", "Categoria", "Un.", "Estoque Atual", "Paletes", "Mín.", "Custo Médio", "Valor em Estoque", "Status"]],
         body: rows.map((r) => [
           r.nome,
           r.categoria ?? "—",
@@ -64,8 +64,8 @@ function gerarPDF(rows: EstoqueAtualRow[], valorTotal: number, totalPaletes: num
             ? Number((r.estoque_atual / r.caixas_por_palete).toFixed(1)).toLocaleString("pt-BR") + " paletes"
             : "—",
           r.estoque_minimo.toLocaleString("pt-BR"),
-          formatarMoeda(r.preco_custo),
-          formatarMoeda(r.estoque_atual * r.preco_custo),
+          formatarMoeda(Number(r.custo_medio)),
+          formatarMoeda(Number(r.valor_estoque)),
           r.estoque_atual <= r.estoque_minimo ? "Baixo" : "Ok",
         ]),
         headStyles: {
@@ -271,7 +271,7 @@ function gerarMensagem(rows: EstoqueAtualRow[], valorTotal: number, totalPaletes
 }
 
 function baixarCSV(rows: EstoqueAtualRow[]) {
-  const cabecalho = ["Produto", "Categoria", "Unidade", "Estoque Atual", "Paletes", "Est. Mínimo", "Preço Custo (R$)", "Valor em Estoque (R$)", "Status"];
+  const cabecalho = ["Produto", "Categoria", "Unidade", "Estoque Atual", "Paletes", "Est. Mínimo", "Custo Médio (R$)", "Valor em Estoque (R$)", "Status"];
   const linhas = rows.map((r) => [
     r.nome,
     r.categoria ?? "",
@@ -279,8 +279,8 @@ function baixarCSV(rows: EstoqueAtualRow[]) {
     r.estoque_atual,
     r.caixas_por_palete && r.estoque_atual > 0 ? Number((r.estoque_atual / r.caixas_por_palete).toFixed(1)) : "",
     r.estoque_minimo,
-    r.preco_custo.toFixed(2).replace(".", ","),
-    (r.estoque_atual * r.preco_custo).toFixed(2).replace(".", ","),
+    Number(r.custo_medio).toFixed(2).replace(".", ","),
+    Number(r.valor_estoque).toFixed(2).replace(".", ","),
     r.estoque_atual <= r.estoque_minimo ? "Baixo" : "Ok",
   ]);
 
@@ -301,7 +301,7 @@ function baixarCSV(rows: EstoqueAtualRow[]) {
 export default function TabelaEstoqueAtual({ rows, movimentacoes, podeFechamento, capacidadeArmazem, tenantNome }: Props) {
   const [toastMsg, setToastMsg] = useState<string | null>(null);
 
-  const valorTotal = rows.reduce((acc, r) => acc + r.estoque_atual * r.preco_custo, 0);
+  const valorTotal = rows.reduce((acc, r) => acc + Number(r.valor_estoque), 0);
   const totalPaletes = rows.reduce((acc, r) => {
     if (!r.caixas_por_palete) return acc;
     return acc + r.estoque_atual / r.caixas_por_palete;
@@ -394,7 +394,7 @@ export default function TabelaEstoqueAtual({ rows, movimentacoes, podeFechamento
               <th className="table-th">Unidade</th>
               <th className="table-th-right">Estoque Atual</th>
               <th className="table-th-right">Est. Mínimo</th>
-              <th className="table-th-right">Preço Custo</th>
+              <th className="table-th-right">Custo Médio</th>
               <th className="table-th-right">Valor em Estoque</th>
               <th className="table-th">Status</th>
             </tr>
@@ -419,9 +419,9 @@ export default function TabelaEstoqueAtual({ rows, movimentacoes, podeFechamento
                     )}
                   </td>
                   <td className="py-3 px-4 text-right text-brand-light td-num">{row.estoque_minimo.toLocaleString("pt-BR")}</td>
-                  <td className="py-3 px-4 text-right text-brand-light td-num"><ValorPrivado>{formatarMoeda(row.preco_custo)}</ValorPrivado></td>
+                  <td className="py-3 px-4 text-right text-brand-light td-num"><ValorPrivado>{formatarMoeda(Number(row.custo_medio))}</ValorPrivado></td>
                   <td className="py-3 px-4 text-right font-medium text-white td-num">
-                    <ValorPrivado>{formatarMoeda(row.estoque_atual * row.preco_custo)}</ValorPrivado>
+                    <ValorPrivado>{formatarMoeda(Number(row.valor_estoque))}</ValorPrivado>
                   </td>
                   <td className="py-3 px-4">
                     <span className={baixo ? "badge-status-baixo" : "badge-status-ok"}>

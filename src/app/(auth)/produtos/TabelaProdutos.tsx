@@ -5,7 +5,6 @@ import { Produto, Categoria } from "@/types";
 import FormularioProduto from "./FormularioProduto";
 import { excluirProduto } from "./actions";
 import Toast from "@/components/shared/Toast";
-import { formatarMoeda } from "@/lib/utils";
 
 type Props = {
   produtos: Produto[];
@@ -78,8 +77,6 @@ export default function TabelaProdutos({ produtos, categorias }: Props) {
                 <th className="table-th">Nome</th>
                 <th className="table-th">Categoria</th>
                 <th className="table-th">Unidade</th>
-                <th className="table-th-right">Custo</th>
-                <th className="table-th-right">Venda</th>
                 <th className="table-th-right">Est. Min.</th>
                 <th className="py-3 px-4" />
               </tr>
@@ -94,8 +91,6 @@ export default function TabelaProdutos({ produtos, categorias }: Props) {
                   <td className="py-3 px-4 font-medium text-white">{prod.nome}</td>
                   <td className="py-3 px-4 text-brand-medium">{prod.categorias?.nome ?? "—"}</td>
                   <td className="py-3 px-4 text-brand-medium">{prod.unidade}</td>
-                  <td className="py-3 px-4 text-right text-brand-light td-num">{formatarMoeda(prod.preco_custo)}</td>
-                  <td className="py-3 px-4 text-right text-brand-light td-num">{formatarMoeda(prod.preco_venda)}</td>
                   <td className="py-3 px-4 text-right text-brand-light td-num">{prod.estoque_minimo}</td>
                   <td className="py-3 px-4">
                     <div className="flex gap-4 justify-end">
