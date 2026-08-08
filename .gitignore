@@ -60,3 +60,6 @@ skills-lock.json
 
 # Screenshots locais do script de captura
 scripts/.screenshots/
+
+# cache local do Supabase CLI (supabase link)
+supabase/.temp/
