@@ -16,8 +16,6 @@ export default function FormularioProduto({ produto, categorias, onFechar, onSuc
   const [codigo, setCodigo] = useState(produto?.codigo ?? "");
   const [categoriaId, setCategoriaId] = useState(produto?.categoria_id ?? "");
   const [unidade, setUnidade] = useState(produto?.unidade ?? "un");
-  const [precoCusto, setPrecoCusto] = useState(produto?.preco_custo?.toString() ?? "0");
-  const [precoVenda, setPrecoVenda] = useState(produto?.preco_venda?.toString() ?? "0");
   const [estoqueMinimo, setEstoqueMinimo] = useState(produto?.estoque_minimo?.toString() ?? "0");
   const [caixasPorPalete, setCaixasPorPalete] = useState(produto?.caixas_por_palete?.toString() ?? "");
   const [erro, setErro] = useState("");
@@ -39,8 +37,6 @@ export default function FormularioProduto({ produto, categorias, onFechar, onSuc
       codigo: codigo.trim() || null,
       categoria_id: categoriaId || null,
       unidade,
-      preco_custo: parseFloat(precoCusto) || 0,
-      preco_venda: parseFloat(precoVenda) || 0,
       estoque_minimo: parseInt(estoqueMinimo) || 0,
       caixas_por_palete: caixasPorPalete.trim() ? parseInt(caixasPorPalete) : null,
     });
@@ -148,30 +144,6 @@ export default function FormularioProduto({ produto, categorias, onFechar, onSuc
             onChange={(e) => setCaixasPorPalete(e.target.value)}
             className="input-field"
             placeholder="Ex: 180"
-          />
-        </div>
-
-        <div className="flex flex-col gap-1">
-          <label className="text-xs font-semibold uppercase tracking-wider text-brand-light">Preço de custo</label>
-          <input
-            type="number"
-            min="0"
-            step="0.01"
-            value={precoCusto}
-            onChange={(e) => setPrecoCusto(e.target.value)}
-            className="input-field"
-          />
-        </div>
-
-        <div className="flex flex-col gap-1">
-          <label className="text-xs font-semibold uppercase tracking-wider text-brand-light">Preço de venda</label>
-          <input
-            type="number"
-            min="0"
-            step="0.01"
-            value={precoVenda}
-            onChange={(e) => setPrecoVenda(e.target.value)}
-            className="input-field"
           />
         </div>
 

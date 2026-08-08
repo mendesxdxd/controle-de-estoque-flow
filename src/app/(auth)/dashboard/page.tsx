@@ -47,7 +47,7 @@ const supabase = await createClient();
 
   const rows = (estoqueAtual as EstoqueAtualRow[]) ?? [];
   const totalProdutos = rows.length;
-  const valorEmEstoque = rows.reduce((acc, r) => acc + r.estoque_atual * r.preco_custo, 0);
+  const valorEmEstoque = rows.reduce((acc, r) => acc + Number(r.valor_estoque), 0);
   const estoqueBaixo = rows.filter((r) => r.estoque_atual <= r.estoque_minimo);
 
   return (

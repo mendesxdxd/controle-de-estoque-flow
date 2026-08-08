@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { getTenant } from "@/lib/tenant";
+import { getRole } from "@/lib/permissoes";
 import { OrdemFrete, NotaSaldo } from "@/types";
 import OrdensFrete from "./OrdensFrete";
 
@@ -7,6 +8,8 @@ export default async function OrdensFretePage() {
   const supabase = await createClient();
   const tenant = await getTenant();
   if (!tenant) return null;
+
+  const role = await getRole();
 
   // O historico de baixas saiu desta tela (agora vive em Conferencia), entao a
   // consulta a nota_baixas deixou de ser necessaria aqui.
@@ -28,6 +31,7 @@ export default async function OrdensFretePage() {
       <OrdensFrete
         ofsIniciais={(ofs as OrdemFrete[]) ?? []}
         saldos={(saldos as NotaSaldo[]) ?? []}
+        podeEditar={role === "admin"}
       />
     </div>
   );
