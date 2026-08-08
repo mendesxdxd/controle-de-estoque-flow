@@ -14,7 +14,6 @@ const schemaNotaInput = z
     nf_palete: z.string().max(100).nullable().optional(),
     produto_id: z.string().uuid().nullable(),
     quantidade_inicial: z.number().nonnegative().max(9999999),
-    valor_unitario: z.number().nonnegative().max(9999999).optional(),
     observacao: z.string().max(500).nullable(),
   })
   .refine((n) => (n.tipo === "produto" ? !!n.produto_id : n.produto_id === null), {
@@ -110,7 +109,6 @@ export async function criarEntradaOF(dados: DadosEntrada) {
       nf_palete: n.nf_palete ?? null,
       produto_id: n.produto_id,
       quantidade_inicial: n.quantidade_inicial,
-      valor_unitario: n.valor_unitario ?? 0,
       observacao: n.observacao,
     })),
   });
@@ -122,50 +120,6 @@ export async function criarEntradaOF(dados: DadosEntrada) {
   revalidatePath("/estoque");
   revalidatePath("/dashboard");
   return { sucesso: true, id: data as string };
-}
-
-const schemaEditarValor = z.object({
-  nota_id: z.string().uuid(),
-  valor_unitario: z.number().nonnegative().max(9999999),
-});
-
-/**
- * Ajusta o valor unitario (R$/caixa) de uma nota de entrada ja existente.
- * Serve para preencher o valor das entradas antigas (que entraram com 0) ou
- * corrigir um valor digitado errado. Recalcula o valor do estoque na hora,
- * pois a view estoque_atual soma (saldo x valor_unitario) das notas.
- */
-export async function editarValorNota(dados: z.infer<typeof schemaEditarValor>) {
-  try { await exigirRole("admin"); } catch { return { erro: "Sem permissao para editar o valor das entradas." }; }
-
-  const parse = schemaEditarValor.safeParse(dados);
-  if (!parse.success) return { erro: "Valor invalido." };
-
-  const supabase = await createClient();
-  const tenant = await getTenant();
-  if (!tenant) return { erro: "Tenant nao encontrado." };
-
-  const { error } = await supabase
-    .from("notas")
-    .update({ valor_unitario: parse.data.valor_unitario })
-    .eq("id", parse.data.nota_id)
-    .eq("tenant_id", tenant.id)
-    .eq("tipo", "produto");
-
-  if (error) return { erro: "Erro ao atualizar o valor da entrada." };
-
-  await logAuditoria({
-    acao: "editar_valor_nota",
-    tabela: "notas",
-    registro_id: parse.data.nota_id,
-    tenant_id: tenant.id,
-    detalhes: { valor_unitario: parse.data.valor_unitario },
-  });
-
-  revalidatePath("/ordens-frete");
-  revalidatePath("/relatorios");
-  revalidatePath("/dashboard");
-  return { sucesso: true };
 }
 
 export async function registrarSaidaNota(dados: DadosSaida) {

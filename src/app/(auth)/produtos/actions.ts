@@ -13,6 +13,8 @@ const schemaProduto = z.object({
   codigo: z.string().max(100).nullable(),
   categoria_id: z.string().uuid().nullable(),
   unidade: z.string().min(1).max(20),
+  preco_custo: z.number().nonnegative().max(9999999),
+  preco_venda: z.number().nonnegative().max(9999999),
   estoque_minimo: z.number().int().nonnegative(),
   caixas_por_palete: z.number().int().positive().nullable(),
 });
@@ -38,6 +40,8 @@ export async function salvarProduto(dados: DadosProduto) {
     codigo: rest.codigo,
     categoria_id: rest.categoria_id,
     unidade: rest.unidade,
+    preco_custo: rest.preco_custo,
+    preco_venda: rest.preco_venda,
     estoque_minimo: rest.estoque_minimo,
     caixas_por_palete: rest.caixas_por_palete,
   };

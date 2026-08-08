@@ -350,7 +350,7 @@
     .mov-grid {
       grid-template-columns:
         30px minmax(120px, 1.6fr) minmax(74px, 0.9fr) minmax(74px, 0.9fr)
-        auto minmax(74px, 0.9fr) minmax(84px, 0.9fr) 32px;
+        auto minmax(74px, 0.9fr) 32px;
       align-items: center;
       gap: 0.625rem;
     }

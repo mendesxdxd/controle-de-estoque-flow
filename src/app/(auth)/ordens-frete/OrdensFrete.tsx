@@ -1,15 +1,12 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
 import { Icon } from "@iconify/react";
 import { OrdemFrete, NotaSaldo, Nota } from "@/types";
-import { editarValorNota } from "./actions";
 
 type Props = {
   ofsIniciais: OrdemFrete[];
   saldos: NotaSaldo[];
-  podeEditar?: boolean;
 };
 
 type NotaEnriquecida = {
@@ -24,8 +21,6 @@ type NotaEnriquecida = {
   inicialPal: number;
   baixadoPal: number;
   saldoPal: number;
-  valorUnitario: number;
-  valorSaldo: number;
 };
 
 type Grupo = {
@@ -35,15 +30,10 @@ type Grupo = {
   cxp: number | null;
   notas: NotaEnriquecida[];
   saldoPalTotal: number;
-  valorSaldoTotal: number;
 };
 
 function fmt(n: number) {
   return Number(n).toLocaleString("pt-BR", { maximumFractionDigits: 2 });
-}
-
-function fmtMoeda(n: number) {
-  return Number(n).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 }
 
 function paletesDe(caixas: number, cxp: number | null) {
@@ -52,42 +42,13 @@ function paletesDe(caixas: number, cxp: number | null) {
 
 /**
  * Tela de consulta: saldo disponivel por produto e por OF.
- * Saida fica em Estoque e correcoes de lancamento em Conferencia.
- * Admin pode ajustar o valor unitario (R$/cx) de cada nota aqui.
+ * Sem acoes de escrita -- dar saida e na tela de Estoque, corrigir lancamento
+ * e em Conferencia. Assim o saldo nao pode ser alterado de dois lugares.
  */
-export default function OrdensFrete({ ofsIniciais, saldos, podeEditar = false }: Props) {
-  const router = useRouter();
+export default function OrdensFrete({ ofsIniciais, saldos }: Props) {
   const [busca, setBusca] = useState("");
   const [filtro, setFiltro] = useState<"saldo" | "todos">("saldo");
   const [gruposAbertos, setGruposAbertos] = useState<Set<string>>(new Set());
-  const [editando, setEditando] = useState<string | null>(null);
-  const [valorInput, setValorInput] = useState("");
-  const [salvandoValor, setSalvandoValor] = useState(false);
-  const [erroValor, setErroValor] = useState("");
-
-  function abrirEdicao(notaId: string, valorAtual: number) {
-    setEditando(notaId);
-    setValorInput(valorAtual > 0 ? String(valorAtual) : "");
-    setErroValor("");
-  }
-
-  async function salvarValor(notaId: string) {
-    const valor = parseFloat(valorInput);
-    if (!(valor >= 0)) {
-      setErroValor("Informe um valor válido.");
-      return;
-    }
-    setSalvandoValor(true);
-    setErroValor("");
-    const resultado = await editarValorNota({ nota_id: notaId, valor_unitario: valor });
-    setSalvandoValor(false);
-    if (resultado?.erro) {
-      setErroValor(resultado.erro);
-      return;
-    }
-    setEditando(null);
-    router.refresh();
-  }
 
   const saldoPorNota = useMemo(() => {
     const m = new Map<string, NotaSaldo>();
@@ -107,14 +68,13 @@ export default function OrdensFrete({ ofsIniciais, saldos, podeEditar = false }:
         const inicialCx = Number(nota.quantidade_inicial);
         const baixadoCx = s ? Number(s.total_baixado) : 0;
         const saldoCx = s ? Number(s.saldo) : inicialCx;
-        const valorUnitario = Number(nota.valor_unitario ?? 0);
 
         const key = nota.produto_id;
         const nome = nota.produtos?.nome ?? "Produto";
         const unidade = nota.produtos?.unidade ?? "cx";
 
         if (!map.has(key)) {
-          map.set(key, { key, nome, unidade, cxp, notas: [], saldoPalTotal: 0, valorSaldoTotal: 0 });
+          map.set(key, { key, nome, unidade, cxp, notas: [], saldoPalTotal: 0 });
         }
         const grupo = map.get(key)!;
         const item: NotaEnriquecida = {
@@ -129,12 +89,9 @@ export default function OrdensFrete({ ofsIniciais, saldos, podeEditar = false }:
           inicialPal: paletesDe(inicialCx, cxp),
           baixadoPal: paletesDe(baixadoCx, cxp),
           saldoPal: paletesDe(saldoCx, cxp),
-          valorUnitario,
-          valorSaldo: saldoCx * valorUnitario,
         };
         grupo.notas.push(item);
         grupo.saldoPalTotal += item.saldoPal;
-        grupo.valorSaldoTotal += item.valorSaldo;
       }
     }
     const arr = [...map.values()];
@@ -276,11 +233,6 @@ export default function OrdensFrete({ ofsIniciais, saldos, podeEditar = false }:
                       <span className="saldo-total block" data-zerado={zerado}>
                         {fmt(grupo.saldoPalTotal)}
                       </span>
-                      {grupo.valorSaldoTotal > 0 && (
-                        <span className="block font-mono text-[11px] text-brand-light">
-                          {fmtMoeda(grupo.valorSaldoTotal)}
-                        </span>
-                      )}
                     </span>
 
                     <span className="saldo-chevron" data-aberto={aberto} aria-hidden="true">
@@ -317,71 +269,12 @@ export default function OrdensFrete({ ofsIniciais, saldos, podeEditar = false }:
                                   style={{ width: `${notaZerada ? 4 : pct}%` }}
                                 />
                               </span>
-                              <span className="flex flex-col items-end gap-1 text-right min-w-[74px]">
-                                <span
-                                  className={`font-mono text-[13px] whitespace-nowrap ${
-                                    notaZerada ? "text-brand-muted" : "text-emerald-400"
-                                  }`}
-                                >
-                                  {fmt(item.saldoPal)} de {fmt(item.inicialPal)} pal
-                                </span>
-
-                                {editando === item.nota.id ? (
-                                  <span className="flex flex-col items-end gap-1">
-                                    <span className="flex items-center gap-1">
-                                      <input
-                                        type="number"
-                                        min="0"
-                                        step="0.01"
-                                        autoFocus
-                                        value={valorInput}
-                                        onChange={(e) => setValorInput(e.target.value)}
-                                        placeholder="R$/cx"
-                                        className="input-field h-7 w-[92px] px-2 py-1 text-right text-xs"
-                                        aria-label={`Valor por caixa da OF ${item.ofNumero}`}
-                                      />
-                                      <button
-                                        type="button"
-                                        onClick={() => salvarValor(item.nota.id)}
-                                        disabled={salvandoValor}
-                                        className="mov-icon-btn"
-                                        title="Salvar valor"
-                                        aria-label="Salvar valor"
-                                      >
-                                        <Icon icon="tabler:check" width={14} />
-                                      </button>
-                                      <button
-                                        type="button"
-                                        onClick={() => { setEditando(null); setErroValor(""); }}
-                                        className="mov-icon-btn"
-                                        title="Cancelar"
-                                        aria-label="Cancelar"
-                                      >
-                                        <Icon icon="tabler:x" width={14} />
-                                      </button>
-                                    </span>
-                                    {erroValor && (
-                                      <span className="text-[10px] text-red-400">{erroValor}</span>
-                                    )}
-                                  </span>
-                                ) : (
-                                  <span className="flex items-center gap-1.5 font-mono text-[11px]">
-                                    <span className={item.valorUnitario > 0 ? "text-brand-light" : "text-amber-400"}>
-                                      {item.valorUnitario > 0 ? `${fmtMoeda(item.valorUnitario)}/cx` : "sem valor"}
-                                    </span>
-                                    {podeEditar && (
-                                      <button
-                                        type="button"
-                                        onClick={() => abrirEdicao(item.nota.id, item.valorUnitario)}
-                                        className="mov-icon-btn"
-                                        title="Editar valor"
-                                        aria-label={`Editar valor da OF ${item.ofNumero}`}
-                                      >
-                                        <Icon icon="tabler:pencil" width={13} />
-                                      </button>
-                                    )}
-                                  </span>
-                                )}
+                              <span
+                                className={`font-mono text-[13px] whitespace-nowrap text-right min-w-[74px] ${
+                                  notaZerada ? "text-brand-muted" : "text-emerald-400"
+                                }`}
+                              >
+                                {fmt(item.saldoPal)} de {fmt(item.inicialPal)} pal
                               </span>
                             </div>
                           );
